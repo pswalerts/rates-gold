@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rates.gold</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #d4a853;
+      --gold-dim: rgba(212, 168, 83, 0.12);
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --bg: #060b14;
+      --surface: #0d1626;
+      --surface2: #111e33;
+      --border: rgba(255,255,255,0.07);
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --mono: 'DM Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(212,168,83,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,168,83,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 2s infinite;
+    }
+
+    .dot.error { background: var(--red); animation: none; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Hero price */
+    .hero {
+      margin-top: 64px;
+    }
+
+    .hero-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .hero-price {
+      font-family: var(--mono);
+      font-size: clamp(48px, 8vw, 80px);
+      font-weight: 500;
+      color: #f8fafc;
+      line-height: 1;
+      transition: color 0.3s;
+    }
+
+    .hero-price.flash-up { color: var(--green); }
+    .hero-price.flash-dn { color: var(--red); }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .signal {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--mono);
+      letter-spacing: 0.03em;
+      transition: all 0.3s;
+    }
+
+    .signal.buy {
+      background: rgba(34,197,94,0.12);
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,0.25);
+    }
+
+    .signal.wait {
+      background: rgba(234,179,8,0.1);
+      color: var(--yellow);
+      border: 1px solid rgba(234,179,8,0.2);
+    }
+
+    .signal.error {
+      background: rgba(239,68,68,0.1);
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-top: 52px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 24px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: rgba(255,255,255,0.14); }
+
+    .card-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .card-value {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-weight: 500;
+      color: #f1f5f9;
+      margin-top: 10px;
+      transition: color 0.3s;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .card-sub.positive { color: var(--green); }
+    .card-sub.negative { color: var(--red); }
+
+    /* FX row */
+    .fx-bar {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-top: 28px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      flex-wrap: wrap;
+    }
+
+    .fx-item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .fx-label {
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .fx-value {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .divider {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .footer-note {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .refresh-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .refresh-btn:hover {
+      border-color: rgba(255,255,255,0.2);
+      color: var(--text);
+    }
+
+    .refreshing { opacity: 0.4; pointer-events: none; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo">rates.gold</div>
+    <div class="status">
+      <div class="dot" id="statusDot"></div>
+      <span id="statusText">connecting...</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-label">24K Gold · India · ₹ per gram</div>
+    <div class="hero-price" id="mainPrice">—</div>
+    <div class="hero-meta">
+      <div class="hero-sub" id="lastUpdated">fetching live rate...</div>
+      <div class="signal wait" id="signal">analyzing...</div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">India 24K</div>
+      <div class="card-value" id="ind24">—</div>
+      <div class="card-sub" id="ind24sub">per gram</div>
+    </div>
+    <div class="card">
+      <div class="card-label">India 22K</div>
+      <div class="card-value" id="ind22">—</div>
+      <div class="card-sub">916 hallmark · per gram</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Dubai rate</div>
+      <div class="card-value" id="dxb">—</div>
+      <div class="card-sub">per gram · AED basis</div>
+    </div>
+    <div class="card">
+      <div class="card-label">India–Dubai spread</div>
+      <div class="card-value" id="spread">—</div>
+      <div class="card-sub" id="spreadSub">—</div>
+    </div>
+  </div>
+
+  <div class="fx-bar">
+    <div class="fx-item">
+      <span class="fx-label">XAU/USD</span>
+      <span class="fx-value" id="fxGold">—</span>
+    </div>
+    <div class="divider"></div>
+    <div class="fx-item">
+      <span class="fx-label">USD/INR</span>
+      <span class="fx-value" id="fxInr">—</span>
+    </div>
+    <div class="divider"></div>
+    <div class="fx-item">
+      <span class="fx-label">Troy oz</span>
+      <span class="fx-value">31.1035 g</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-note" id="footerNote">Auto-refreshes every 60 seconds</div>
+    <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">↻ refresh now</button>
+  </div>
+
+</div>
+
+<script>
+  let prevPrice = null;
+
+  function fmt(n) {
+    return "₹\u202f" + n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function timeStr(iso) {
+    const d = iso ? new Date(iso) : new Date();
+    return d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " IST";
+  }
+
+  async function loadPrice() {
+    try {
+      const res = await fetch("/api/gold");
+      if (!res.ok) throw new Error("API error " + res.status);
+      const data = await res.json();
+
+      const gramUSD  = data.price / 31.1035;
+      const usdInr   = data.usdInr || 84.4;
+      const india24  = gramUSD * usdInr;
+      const india22  = india24 * 0.916;
+      const dubai    = india24 * 0.99;
+      const spread   = india24 - dubai;
+
+      // Price flash animation
+      const priceEl = document.getElementById("mainPrice");
+      if (prevPrice !== null) {
+        const cls = india24 > prevPrice ? "flash-up" : india24 < prevPrice ? "flash-dn" : "";
+        if (cls) {
+          priceEl.classList.add(cls);
+          setTimeout(() => priceEl.classList.remove(cls), 600);
+        }
+      }
+      prevPrice = india24;
+
+      // Update DOM
+      priceEl.textContent = fmt(india24);
+      document.getElementById("ind24").textContent = fmt(india24);
+      document.getElementById("ind22").textContent = fmt(india22);
+      document.getElementById("dxb").textContent   = fmt(dubai);
+      document.getElementById("spread").textContent = fmt(spread);
+      document.getElementById("fxGold").textContent = "$ " + data.price.toFixed(2);
+      document.getElementById("fxInr").textContent  = "₹ " + usdInr.toFixed(2);
+      document.getElementById("lastUpdated").textContent = "updated " + timeStr(data.timestamp);
+
+      // Spread sub-label
+      const spreadPct = ((spread / india24) * 100).toFixed(2);
+      const spreadSub = document.getElementById("spreadSub");
+      spreadSub.textContent = spreadPct + "% of India rate";
+      spreadSub.className = "card-sub " + (spread > 0 ? "positive" : "negative");
+
+      // Signal badge — threshold is ₹80 (adjust to taste)
+      const sigEl = document.getElementById("signal");
+      if (spread > 80) {
+        sigEl.textContent = "▲ BUY · Dubai edge";
+        sigEl.className = "signal buy";
+      } else {
+        sigEl.textContent = "◆ WAIT · spread tight";
+        sigEl.className = "signal wait";
+      }
+
+      // Status dot
+      document.getElementById("statusDot").className = "dot";
+      document.getElementById("statusText").textContent = "live";
+      document.getElementById("footerNote").textContent = "Auto-refreshes every 60 s · last: " + timeStr(data.timestamp);
+
+    } catch (e) {
+      document.getElementById("mainPrice").textContent = "—";
+      document.getElementById("signal").textContent = "error";
+      document.getElementById("signal").className = "signal error";
+      document.getElementById("statusDot").className = "dot error";
+      document.getElementById("statusText").textContent = "connection error";
+      document.getElementById("footerNote").textContent = e.message;
+      console.error(e);
+    }
+  }
+
+  function manualRefresh() {
+    const btn = document.getElementById("refreshBtn");
+    btn.classList.add("refreshing");
+    btn.textContent = "↻ refreshing...";
+    loadPrice().finally(() => {
+      btn.classList.remove("refreshing");
+      btn.textContent = "↻ refresh now";
+    });
+  }
+
+  loadPrice();
+  setInterval(loadPrice, 60_000);
+</script>
+</body>
+</html>
