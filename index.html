@@ -253,6 +253,15 @@
           <div class="hero-sub" id="lastUpdated">fetching live rate...</div>
           <div class="signal wait" id="signal">analyzing...</div>
         </div>
+        <div class="ibja-row" id="ibjaRow" style="display:none;margin-top:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">IBJA rates</div>
+          <div style="display:flex;gap:20px;flex-wrap:wrap;">
+            <div><span style="font-size:11px;color:var(--muted);">999 (24K) </span><span style="font-family:var(--mono);font-size:13px;color:var(--accent);" id="ibja24k">—</span></div>
+            <div><span style="font-size:11px;color:var(--muted);">916 (22K) </span><span style="font-family:var(--mono);font-size:13px;color:var(--text);" id="ibja22k">—</span></div>
+            <div><span style="font-size:11px;color:var(--muted);">995 </span><span style="font-family:var(--mono);font-size:13px;color:var(--text);" id="ibja995">—</span></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">ibjarates.com · per gram</div>
+        </div>
       </div>
 
       <!-- PHYSICAL -->
@@ -644,7 +653,20 @@
       prevSilverPrice = silverGram;
 
       // ── Gold DOM ──
-      priceEl.textContent = fmt(india24);
+      // Use IBJA rate if available, else calculated
+      const displayRate = data.ibja24k || india24;
+      priceEl.textContent = fmt(displayRate);
+
+      // Show IBJA cross reference
+      const ibjaRow = document.getElementById("ibjaRow");
+      if (data.ibja24k) {
+        document.getElementById("ibja24k").textContent = fmt(data.ibja24k);
+        document.getElementById("ibja22k").textContent = data.ibja22k ? fmt(data.ibja22k) : "—";
+        document.getElementById("ibja995").textContent = data.ibja995 ? fmt(data.ibja995) : "—";
+        ibjaRow.style.display = "flex";
+      } else {
+        ibjaRow.style.display = "none";
+      }
       document.getElementById("fxGold").textContent  = fmtUSD(data.price);
       document.getElementById("fxInr").textContent   = "₹ "+usdInr.toFixed(2);
       document.getElementById("fxAed").textContent   = "₹ "+aedInr.toFixed(2);
@@ -652,13 +674,13 @@
 
       // Physical
       document.getElementById("opt-physical").textContent = fmt(physicalGold);
-      document.getElementById("pb-base").textContent    = fmt(india24);
-      document.getElementById("pb-making").textContent  = fmt(making)+" (3%)";
-      document.getElementById("pb-gst").textContent     = fmt(gst)+" (3%)";
-      document.getElementById("pb-total").textContent   = fmt(physicalGold);
+      document.getElementById("pb-base").textContent    = fmt(displayRate);
+      const makingAmt = displayRate * 0.03; document.getElementById("pb-making").textContent = fmt(makingAmt)+" (3%)";
+      const gstAmt = (displayRate + makingAmt) * 0.03; document.getElementById("pb-gst").textContent = fmt(gstAmt)+" (3%)";
+      document.getElementById("pb-total").textContent   = fmt(displayRate + makingAmt + gstAmt); document.getElementById("opt-physical").textContent = fmt(displayRate + makingAmt + gstAmt);
 
       // Digital
-      document.getElementById("opt-digital").textContent = fmt(digitalGold);
+      document.getElementById("opt-digital").textContent = fmt(displayRate);
 
       // ETF NAVs (async, live fetch)
       fetchETFNavs(india24);
