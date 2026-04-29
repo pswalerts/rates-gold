@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/gold", "destination": "/api/gold.js" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
