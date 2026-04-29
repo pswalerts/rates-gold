@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     }
 
     // Hardcoded fallback — updated to current rate
-    if (!usdInr) { usdInr = 94.5; console.log("USD/INR fallback:", usdInr); }
+    if (!usdInr) { usdInr = 84.5; console.log("USD/INR fallback:", usdInr); }
 
     // ── Step 2: Get XAU/USD gold price ──
     let goldPriceUSD = null;
