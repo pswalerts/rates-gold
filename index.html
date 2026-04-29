@@ -600,7 +600,7 @@
 
   async function loadPrice() {
     try {
-      const res = await fetch("/api/gold");
+      const res = await fetch("/api/price");
       if (!res.ok) throw new Error("API error " + res.status);
       const data = await res.json();
 
