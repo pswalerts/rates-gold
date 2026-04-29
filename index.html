@@ -31,7 +31,7 @@
     /* ── TICKER ── */
     .ticker-wrap { position:relative; z-index:10; width:100%; background:#080e1a; border-bottom:1px solid var(--border); overflow:hidden; height:44px; display:flex; align-items:center; }
     .ticker-label { flex-shrink:0; padding:0 18px; font-family:var(--mono); font-size:11px; letter-spacing:0.12em; color:var(--accent); text-transform:uppercase; border-right:1px solid var(--border); height:100%; display:flex; align-items:center; background:#080e1a; z-index:2; transition:color 0.4s; font-weight:500; }
-    .ticker-track { display:flex; animation:ticker 42s linear infinite; white-space:nowrap; }
+    .ticker-track { display:flex; animation:ticker 50s linear infinite; white-space:nowrap; }
     .ticker-track:hover { animation-play-state:paused; }
     @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
     .ticker-item { display:inline-flex; align-items:center; gap:10px; padding:0 32px; font-family:var(--mono); font-size:13px; color:var(--muted); border-right:1px solid var(--border); }
@@ -49,62 +49,25 @@
     .main-col { flex:1; min-width:0; }
     .side-col { width:160px; flex-shrink:0; display:flex; flex-direction:column; gap:16px; padding-top:8px; }
 
-    /* ══════════════════════════════════════
-       LOGO — redesigned, no mobile collision
-    ══════════════════════════════════════ */
-    .logo-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
+    /* ── LOGO — no coin icon ── */
+    .logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .logo-type { display:flex; flex-direction:column; line-height:1; gap:2px; }
+    .logo-domain { font-family:var(--mono); font-size:20px; font-weight:500; letter-spacing:-0.01em; display:flex; align-items:baseline; gap:0; }
+    .logo-domain .ld-rate { color:#94a3b8; }
+    .logo-domain .ld-of   { color:#64748b; }
+    .logo-domain .ld-dot  { color:var(--accent); transition:color 0.4s; }
+    .logo-domain .ld-tld  { color:var(--accent); font-weight:700; transition:color 0.4s; }
+    .logo-tagline { font-family:var(--mono); font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
 
-    /* The coin mark */
-    .logo-coin {
-      position: relative;
-      width: 34px;
-      height: 34px;
-      flex-shrink: 0;
-    }
-    .logo-coin svg { display: block; width: 34px; height: 34px; }
-
-    /* Text lockup — stacked on one line, no word repeat */
-    .logo-type {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-      gap: 1px;
-    }
-    .logo-domain {
-      font-family: var(--mono);
-      font-size: 17px;
-      font-weight: 500;
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: baseline;
-      gap: 0;
-    }
-    .logo-domain .ld-rate { color: #94a3b8; }
-    .logo-domain .ld-of   { color: #64748b; }
-    .logo-domain .ld-dot  { color: var(--accent); transition: color 0.4s; }
-    .logo-domain .ld-tld  { color: var(--accent); font-weight: 700; transition: color 0.4s; }
-    .logo-tagline {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .header { display:flex; justify-content:space-between; align-items:center; gap: 12px; }
-    .header-right { display:flex; align-items:center; gap:16px; flex-shrink: 0; }
+    .header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .header-right { display:flex; align-items:center; gap:16px; flex-shrink:0; }
 
     /* ── TOGGLE ── */
     .toggle-wrap { display:flex; background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:4px; gap:3px; }
     .toggle-btn { padding:7px 20px; border-radius:999px; border:none; font-family:var(--sans); font-size:13px; font-weight:700; letter-spacing:0.04em; cursor:pointer; transition:all 0.25s; background:none; }
     .toggle-btn.active-gold { background:linear-gradient(135deg,#b8860b,#d4a853,#f0c060,#d4a853); color:#060b14; text-shadow:0 1px 2px rgba(0,0,0,0.2); box-shadow:0 2px 12px rgba(212,168,83,0.35); }
     .toggle-btn.active-silver { background:linear-gradient(135deg,#8a9baa,#a8b8c8,#d0dce8,#a8b8c8); color:#060b14; text-shadow:0 1px 2px rgba(0,0,0,0.2); box-shadow:0 2px 12px rgba(168,184,200,0.35); }
-    #btnGold:not(.active-gold) { color:var(--gold); }
+    #btnGold:not(.active-gold)     { color:var(--gold); }
     #btnSilver:not(.active-silver) { color:var(--silver); }
 
     .status { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
@@ -114,258 +77,186 @@
 
     /* ── HERO ── */
     .hero { margin-top:48px; }
-    .hero-label { font-size:15px; letter-spacing:0.06em; text-transform:uppercase; color:#94a3b8; margin-bottom:14px; font-weight:600; }
-    .hero-price { font-family:var(--mono); font-size:clamp(48px,8vw,80px); font-weight:500; color:var(--accent); line-height:1; transition:color 0.4s; text-shadow:0 0 40px rgba(212,168,83,0.2); }
+    .hero-label { font-size:16px; letter-spacing:0.05em; text-transform:uppercase; color:#94a3b8; margin-bottom:16px; font-weight:600; }
+    .hero-price { font-family:var(--mono); font-size:clamp(52px,9vw,88px); font-weight:500; color:var(--accent); line-height:1; transition:color 0.4s; text-shadow:0 0 40px rgba(212,168,83,0.2); }
     body.silver-mode .hero-price { text-shadow:0 0 40px rgba(168,184,200,0.2); }
     .hero-price.flash-up { color:var(--green) !important; }
-    .hero-price.flash-dn { color:var(--red) !important; }
-    .hero-meta { display:flex; align-items:center; gap:16px; margin-top:14px; flex-wrap:wrap; }
-    .hero-sub { font-size:13px; color:var(--muted); }
-    .signal { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-size:12px; font-weight:500; font-family:var(--mono); letter-spacing:0.03em; transition:all 0.3s; }
+    .hero-price.flash-dn { color:var(--red)   !important; }
+    .hero-meta { display:flex; align-items:center; gap:16px; margin-top:16px; flex-wrap:wrap; }
+    .hero-sub { font-size:14px; color:var(--muted); }
+    .signal { display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:999px; font-size:13px; font-weight:500; font-family:var(--mono); letter-spacing:0.03em; transition:all 0.3s; }
     .signal.buy  { background:rgba(34,197,94,0.12);  color:var(--green);  border:1px solid rgba(34,197,94,0.25); }
     .signal.wait { background:rgba(234,179,8,0.1);   color:var(--yellow); border:1px solid rgba(234,179,8,0.2); }
     .signal.error{ background:rgba(239,68,68,0.1);   color:var(--red);    border:1px solid rgba(239,68,68,0.2); }
 
+    /* ── SOURCE BADGE ── */
+    .source-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px; font-family:var(--mono); font-size:10px; letter-spacing:0.07em; text-transform:uppercase; background:rgba(212,168,83,0.08); color:var(--gold); border:1px solid rgba(212,168,83,0.2); margin-left:4px; }
+    .source-badge.live-src { background:rgba(34,197,94,0.08); color:var(--green); border-color:rgba(34,197,94,0.2); }
+    .source-badge.calc-src { background:rgba(100,116,139,0.1); color:var(--muted); border-color:rgba(255,255,255,0.08); }
+
     /* ── IBJA BOX ── */
-    .ibja-box {
-      display: none;
-      margin-top: 20px;
-      background: var(--surface);
-      border: 1px solid rgba(212,168,83,0.2);
-      border-radius: 12px;
-      padding: 16px 20px;
-    }
-    .ibja-box.visible { display: block; }
-    .ibja-box-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .ibja-box-title {
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-family: var(--mono);
-    }
-    .ibja-badge {
-      font-size: 9px;
-      font-family: var(--mono);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: rgba(212,168,83,0.1);
-      color: var(--gold);
-      border: 1px solid rgba(212,168,83,0.25);
-      border-radius: 999px;
-      padding: 2px 8px;
-    }
-    .ibja-rates {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    .ibja-item { display: flex; flex-direction: column; gap: 3px; }
-    .ibja-item-label { font-size: 10px; color: var(--muted); }
-    .ibja-item-val { font-family: var(--mono); font-size: 15px; font-weight: 500; color: var(--gold); }
-    .ibja-item-val.dim { color: var(--text); }
-    .ibja-source { margin-top: 10px; font-size: 10px; color: var(--muted); font-family: var(--mono); }
+    .ibja-box { display:none; margin-top:24px; background:var(--surface); border:1px solid rgba(212,168,83,0.25); border-radius:14px; padding:20px 24px; }
+    .ibja-box.visible { display:block; }
+    .ibja-box-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .ibja-box-title { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
+    .ibja-badge { font-size:10px; font-family:var(--mono); letter-spacing:0.07em; text-transform:uppercase; background:rgba(34,197,94,0.08); color:var(--green); border:1px solid rgba(34,197,94,0.2); border-radius:999px; padding:3px 10px; }
+    .ibja-rates { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .ibja-item { display:flex; flex-direction:column; gap:5px; }
+    .ibja-item-label { font-size:11px; color:var(--muted); letter-spacing:0.04em; }
+    .ibja-item-val { font-family:var(--mono); font-size:22px; font-weight:500; color:var(--gold); }
+    .ibja-item-val.dim { color:var(--text); font-size:20px; }
+    .ibja-source { margin-top:12px; font-size:11px; color:var(--muted); font-family:var(--mono); }
 
     /* ── CONVERTED RATE BOX ── */
     .converted-box {
-      margin-top: 12px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
+      margin-top:16px; background:var(--surface2); border:1px solid var(--border);
+      border-radius:14px; padding:18px 24px; display:flex; align-items:center;
+      justify-content:space-between; flex-wrap:wrap; gap:14px;
     }
-    .converted-left { display: flex; flex-direction: column; gap: 3px; }
-    .converted-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-family: var(--mono); }
-    .converted-val { font-family: var(--mono); font-size: 18px; color: var(--text); font-weight: 500; }
-    .converted-formula { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+    .converted-left { display:flex; flex-direction:column; gap:4px; }
+    .converted-label { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
+    .converted-val { font-family:var(--mono); font-size:22px; color:var(--text); font-weight:500; }
+    .converted-formula { font-size:12px; color:var(--muted); font-family:var(--mono); margin-top:2px; }
 
     /* ── SECTION TITLE ── */
-    .section-title { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:44px; margin-bottom:16px; }
+    .section-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:48px; margin-bottom:18px; font-weight:600; }
 
     /* ── PHYSICAL CARD ── */
-    .physical-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px 24px; transition:border-color 0.2s,box-shadow 0.3s; position:relative; overflow:hidden; }
+    .physical-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px 28px; transition:border-color 0.2s; }
     .physical-card:hover { border-color:rgba(255,255,255,0.14); }
-    .pc-label { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
-    .pc-total { font-family:var(--mono); font-size:22px; font-weight:500; color:#f1f5f9; margin-top:8px; }
-    .pc-breakdown { margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:6px; }
-    .pc-row { display:flex; justify-content:space-between; align-items:center; font-size:12px; }
+    .pc-label { font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+    .pc-total { font-family:var(--mono); font-size:28px; font-weight:500; color:#f1f5f9; margin-top:10px; }
+    .pc-breakdown { margin-top:18px; padding-top:18px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:10px; }
+    .pc-row { display:flex; justify-content:space-between; align-items:center; font-size:14px; }
     .pc-row .pc-name { color:var(--muted); }
-    .pc-row .pc-val { font-family:var(--mono); color:var(--text); }
-    .pc-row.total-row { margin-top:4px; padding-top:8px; border-top:1px solid var(--border); font-weight:600; }
-    .pc-row.total-row .pc-name { color:var(--text); }
-    .pc-row.total-row .pc-val { color:var(--gold); font-size:15px; }
+    .pc-row .pc-val { font-family:var(--mono); color:var(--text); font-size:15px; }
+    .pc-row.total-row { margin-top:6px; padding-top:10px; border-top:1px solid var(--border); }
+    .pc-row.total-row .pc-name { color:var(--text); font-weight:600; font-size:15px; }
+    .pc-row.total-row .pc-val { color:var(--gold); font-size:18px; font-weight:600; }
 
     /* ── DIGITAL CARD ── */
-    .option-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 22px; transition:border-color 0.2s,box-shadow 0.3s; position:relative; overflow:hidden; }
+    .option-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px 26px; transition:border-color 0.2s; position:relative; overflow:hidden; }
     .option-card:hover { border-color:rgba(255,255,255,0.14); }
-    .option-label { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
-    .option-value { font-family:var(--mono); font-size:22px; font-weight:500; color:#f1f5f9; margin-top:10px; }
-    .option-sub { font-size:11px; color:var(--muted); margin-top:5px; }
+    .option-label { font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+    .option-value { font-family:var(--mono); font-size:28px; font-weight:500; color:#f1f5f9; margin-top:12px; }
+    .option-sub { font-size:12px; color:var(--muted); margin-top:6px; }
 
     /* ── ETF SECTION ── */
-    .etf-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-    .etf-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; transition:border-color 0.2s,box-shadow 0.3s; position:relative; overflow:hidden; }
+    .etf-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .etf-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px; transition:border-color 0.2s; position:relative; overflow:hidden; }
     .etf-card:hover { border-color:rgba(255,255,255,0.14); }
     .etf-card.best-buy { border-color:rgba(34,197,94,0.4); box-shadow:0 0 24px rgba(34,197,94,0.08),inset 0 0 20px rgba(34,197,94,0.04); animation:pulse-green 2s ease-in-out infinite; }
     @keyframes pulse-green { 0%,100%{box-shadow:0 0 24px rgba(34,197,94,0.08),inset 0 0 24px rgba(34,197,94,0.04)} 50%{box-shadow:0 0 36px rgba(34,197,94,0.18),inset 0 0 32px rgba(34,197,94,0.08)} }
     .best-badge { position:absolute; top:12px; right:12px; background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); font-family:var(--mono); font-size:9px; letter-spacing:0.08em; padding:3px 8px; border-radius:999px; text-transform:uppercase; }
-    .etf-name { font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); }
-    .etf-ticker { font-family:var(--mono); font-size:13px; color:var(--accent); margin-top:4px; font-weight:500; }
-    .etf-nav-row { display:flex; align-items:baseline; gap:8px; margin-top:10px; }
-    .etf-price { font-family:var(--mono); font-size:20px; font-weight:500; color:#f1f5f9; }
+    .etf-name { font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); }
+    .etf-ticker { font-family:var(--mono); font-size:15px; color:var(--accent); margin-top:5px; font-weight:500; }
+    .etf-nav-row { display:flex; align-items:baseline; gap:10px; margin-top:12px; }
+    .etf-price { font-family:var(--mono); font-size:24px; font-weight:500; color:#f1f5f9; }
     .etf-card.best-buy .etf-price { color:var(--green); }
-    .etf-nav-label { font-size:10px; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; }
-    .etf-sub { font-size:11px; color:var(--muted); margin-top:6px; }
-    .etf-delta { font-size:11px; margin-top:6px; font-family:var(--mono); }
-    .etf-delta.over { color:var(--red); }
+    .etf-nav-label { font-size:11px; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; }
+    .etf-sub { font-size:11px; color:var(--muted); margin-top:7px; }
+    .etf-delta { font-size:12px; margin-top:7px; font-family:var(--mono); }
+    .etf-delta.over  { color:var(--red); }
     .etf-delta.under { color:var(--green); }
-    .etf-delta.par { color:var(--muted); }
+    .etf-delta.par   { color:var(--muted); }
+    .etf-live-badge { display:inline-block; font-size:9px; font-family:var(--mono); background:rgba(34,197,94,0.1); color:var(--green); border:1px solid rgba(34,197,94,0.2); border-radius:999px; padding:2px 7px; letter-spacing:0.06em; margin-top:5px; }
+    .etf-calc-badge { display:inline-block; font-size:9px; font-family:var(--mono); background:rgba(100,116,139,0.1); color:var(--muted); border:1px solid rgba(255,255,255,0.07); border-radius:999px; padding:2px 7px; letter-spacing:0.06em; margin-top:5px; }
 
-    /* ETF vs Physical vs Digital comparison panel */
-    .etf-compare-panel {
-      margin-top: 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
+    /* ── ANALYSIS PANEL (replaces comparison table) ── */
+    .analysis-panel {
+      margin-top:18px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
     }
-    .ecp-header {
-      padding: 14px 20px;
-      background: rgba(212,168,83,0.05);
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-family: var(--mono);
+    .ap-header {
+      padding:16px 24px;
+      background:rgba(212,168,83,0.05);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
     }
-    .ecp-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .ecp-table th {
-      padding: 10px 16px;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-family: var(--mono);
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      font-weight: 500;
-    }
-    .ecp-table th.col-etf   { color: var(--gold); }
-    .ecp-table th.col-phys  { color: #a78bfa; }
-    .ecp-table th.col-digi  { color: #38bdf8; }
-    .ecp-table td {
-      padding: 9px 16px;
-      font-size: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      vertical-align: top;
-    }
-    .ecp-table tr:last-child td { border-bottom: none; }
-    .ecp-table td:first-child { color: var(--muted); font-size: 11px; white-space: nowrap; }
-    .ecp-table td.good { color: var(--green); font-family: var(--mono); }
-    .ecp-table td.bad  { color: var(--red);   font-family: var(--mono); }
-    .ecp-table td.mid  { color: var(--yellow); font-family: var(--mono); }
-    .ecp-table td.mono { font-family: var(--mono); color: var(--text); }
-    .ecp-verdict {
-      padding: 12px 16px;
-      font-size: 12px;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-    .ecp-verdict span { color: var(--gold); font-weight: 600; }
+    .ap-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); font-weight:600; }
+    .ap-body { padding:20px 24px; display:flex; flex-direction:column; gap:14px; }
 
-    /* ── DUBAI CARD ── */
-    .dubai-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 22px 24px;
-      transition: border-color 0.2s;
-    }
-    .dubai-card:hover { border-color: rgba(255,255,255,0.14); }
+    /* Cost comparison bar */
+    .cost-row { display:flex; align-items:center; gap:14px; }
+    .cost-label { font-size:12px; color:var(--muted); width:110px; flex-shrink:0; }
+    .cost-bar-wrap { flex:1; position:relative; height:28px; background:rgba(255,255,255,0.04); border-radius:6px; overflow:hidden; }
+    .cost-bar { height:100%; border-radius:6px; display:flex; align-items:center; padding-left:10px; font-family:var(--mono); font-size:12px; font-weight:500; color:#fff; transition:width 0.6s ease; min-width:60px; }
+    .cost-bar.etf-bar   { background:linear-gradient(90deg,rgba(212,168,83,0.6),rgba(212,168,83,0.4)); color:var(--gold-bright); }
+    .cost-bar.phys-bar  { background:linear-gradient(90deg,rgba(239,68,68,0.5),rgba(239,68,68,0.35)); color:#fca5a5; }
+    .cost-bar.digi-bar  { background:linear-gradient(90deg,rgba(56,189,248,0.5),rgba(56,189,248,0.35)); color:#7dd3fc; }
 
-    .dubai-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .dubai-title {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-family: var(--mono);
-    }
-    .dubai-flag {
-      font-size: 18px;
-      line-height: 1;
-    }
+    /* Factor grid */
+    .factor-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:4px; }
+    .factor-card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+    .factor-card-title { font-size:12px; font-weight:700; margin-bottom:10px; }
+    .factor-card-title.etf-color  { color:var(--gold); }
+    .factor-card-title.phys-color { color:#a78bfa; }
+    .factor-card-title.digi-color { color:#38bdf8; }
+    .factor-item { display:flex; justify-content:space-between; align-items:flex-start; font-size:12px; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); gap:8px; }
+    .factor-item:last-child { border-bottom:none; }
+    .factor-item .fi-key { color:var(--muted); flex-shrink:0; }
+    .factor-item .fi-val { font-family:var(--mono); text-align:right; }
+    .fi-val.good { color:var(--green); }
+    .fi-val.bad  { color:var(--red); }
+    .fi-val.mid  { color:var(--yellow); }
 
-    /* Dubai price rows — gold coloured, bold */
-    .dubai-price-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 24px;
-      margin-bottom: 18px;
+    /* Day verdict */
+    .day-verdict { background:rgba(212,168,83,0.06); border:1px solid rgba(212,168,83,0.2); border-radius:10px; padding:14px 18px; margin-top:4px; }
+    .dv-label { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); margin-bottom:6px; }
+    .dv-text { font-size:14px; color:var(--text); line-height:1.55; }
+    .dv-text strong { color:var(--gold); }
+
+    /* ── DUBAI CARD — redesigned ── */
+    .dubai-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px 28px; transition:border-color 0.2s; }
+    .dubai-card:hover { border-color:rgba(255,255,255,0.14); }
+    .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:8px; }
+    .dubai-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
+    .dubai-flag { font-size:20px; line-height:1; }
+
+    /* FX rates strip inside Dubai box */
+    .dxb-fx-strip {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+      background:rgba(255,255,255,0.03); border:1px solid var(--border);
+      border-radius:10px; padding:16px 18px; margin-bottom:22px;
     }
-    .dpg-item { display: flex; flex-direction: column; gap: 4px; }
-    .dpg-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-    .dpg-val {
-      font-family: var(--mono);
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--gold);
-    }
-    .dpg-sub { font-size: 11px; color: var(--muted); }
+    .dxb-fx-item { display:flex; flex-direction:column; gap:4px; }
+    .dxb-fx-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
+    .dxb-fx-val { font-family:var(--mono); font-size:18px; font-weight:600; color:var(--text); }
+    .dxb-fx-sub { font-size:11px; color:var(--muted); }
+
+    /* Dubai gold prices */
+    .dubai-price-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px 24px; margin-bottom:22px; }
+    .dpg-item { display:flex; flex-direction:column; gap:5px; }
+    .dpg-label { font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); }
+    .dpg-val { font-family:var(--mono); font-size:22px; font-weight:700; color:var(--gold); }
+    .dpg-sub { font-size:11px; color:var(--muted); }
 
     /* Divider */
-    .dubai-divider { height: 1px; background: var(--border); margin-bottom: 16px; }
+    .dubai-divider { height:1px; background:var(--border); margin-bottom:18px; }
 
     /* Spread rows */
-    .dubai-spread-bar { display: flex; flex-direction: column; gap: 8px; }
-    .dubai-spread-row { display: flex; justify-content: space-between; font-size: 12px; }
-    .dubai-spread-row .dsn { color: var(--muted); }
-    .dubai-spread-row .dsv { font-family: var(--mono); font-weight: 600; color: var(--gold); }
-    .dubai-spread-row .dsv.pos { color: var(--green); }
-    .dubai-spread-row .dsv.neg { color: var(--red); }
-    .dubai-spread-row .dsv.dim { color: var(--text); font-weight: 400; }
-
-    .dubai-note {
-      margin-top: 14px;
-      font-size: 11px;
-      color: var(--muted);
-      font-style: italic;
-    }
+    .dubai-spread-bar { display:flex; flex-direction:column; gap:10px; }
+    .dubai-spread-row { display:flex; justify-content:space-between; font-size:14px; }
+    .dubai-spread-row .dsn { color:var(--muted); }
+    .dubai-spread-row .dsv { font-family:var(--mono); font-weight:600; color:var(--gold); font-size:15px; }
+    .dubai-spread-row .dsv.pos { color:var(--green); }
+    .dubai-spread-row .dsv.neg { color:var(--red); }
+    .dubai-spread-row .dsv.dim { color:var(--text); font-weight:400; }
+    .dubai-note { margin-top:16px; font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }
 
     /* ── SOURCE TAG ── */
     .source-tag { display:inline-flex; align-items:center; gap:5px; margin-top:8px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:10px; font-family:var(--mono); color:var(--muted); letter-spacing:0.04em; }
     .source-tag span { color:var(--accent); }
 
     /* ── FX BAR ── */
-    .fx-bar { display:flex; align-items:center; gap:24px; margin-top:28px; padding:14px 20px; background:var(--surface); border:1px solid var(--border); border-radius:12px; flex-wrap:wrap; }
+    .fx-bar { display:flex; align-items:center; gap:24px; margin-top:32px; padding:16px 24px; background:var(--surface); border:1px solid var(--border); border-radius:12px; flex-wrap:wrap; }
     .fx-item { display:flex; align-items:baseline; gap:8px; }
     .fx-label { font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); }
-    .fx-value { font-family:var(--mono); font-size:14px; color:var(--text); }
-    .divider { width:1px; height:16px; background:var(--border); }
+    .fx-value { font-family:var(--mono); font-size:16px; color:var(--text); font-weight:500; }
+    .divider { width:1px; height:18px; background:var(--border); }
 
     /* ── SILVER CARDS ── */
     .option-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
@@ -374,73 +265,52 @@
 
     /* ── STAT CARDS ── */
     .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; margin-top:16px; }
-    .card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px 24px; transition:border-color 0.2s; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; transition:border-color 0.2s; }
     .card:hover { border-color:rgba(255,255,255,0.14); }
-    .card-label { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
-    .card-value { font-family:var(--mono); font-size:24px; font-weight:500; color:#f1f5f9; margin-top:10px; }
-    .card-sub { font-size:12px; color:var(--muted); margin-top:6px; }
+    .card-label { font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+    .card-value { font-family:var(--mono); font-size:26px; font-weight:500; color:#f1f5f9; margin-top:12px; }
+    .card-sub { font-size:13px; color:var(--muted); margin-top:7px; }
 
     /* ── ETF LOADING ── */
-    .etf-loading { font-size:11px; color:var(--muted); font-family:var(--mono); animation:blink 1.5s infinite; }
+    .etf-loading { font-size:12px; color:var(--muted); font-family:var(--mono); animation:blink 1.5s infinite; }
 
     /* ── FOOTER ── */
     .footer { margin-top:48px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
-    .footer-note { font-size:11px; color:var(--muted); }
-    .refresh-btn { background:none; border:1px solid var(--border); color:var(--muted); font-family:var(--mono); font-size:11px; padding:5px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s; }
+    .footer-note { font-size:12px; color:var(--muted); }
+    .refresh-btn { background:none; border:1px solid var(--border); color:var(--muted); font-family:var(--mono); font-size:12px; padding:6px 14px; border-radius:6px; cursor:pointer; transition:all 0.2s; }
     .refresh-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
     .refreshing { opacity:0.4; pointer-events:none; }
 
     /* ── VISIBILITY ── */
-    .gold-section { display:block; }
+    .gold-section   { display:block; }
     .silver-section { display:none; }
-    body.silver-mode .gold-section { display:none; }
+    body.silver-mode .gold-section   { display:none; }
     body.silver-mode .silver-section { display:block; }
 
-    /* ══════════════════════════════════════
-       MOBILE — key fixes
-    ══════════════════════════════════════ */
-    @media (max-width: 768px) {
-      .side-col { display: none; }
-      .etf-grid { grid-template-columns: 1fr; }
-      .page-wrap { padding: 20px 14px 60px; }
-
-      /* Header: stack toggle below logo on very small screens */
-      .header { flex-wrap: wrap; gap: 10px; }
-      .header-right { gap: 10px; }
-
-      /* Logo: coin + single-line text, no overflow */
-      .logo-coin { width: 28px; height: 28px; }
-      .logo-coin svg { width: 28px; height: 28px; }
-      .logo-domain { font-size: 15px; }
-      .logo-tagline { display: none; } /* hide tagline on small screens */
-
-      /* Toggle: smaller padding */
-      .toggle-btn { padding: 6px 14px; font-size: 12px; }
-
-      /* Status text: hide on very small, just show dot */
-      @media (max-width: 380px) {
-        #statusText { display: none; }
-      }
-
-      /* Dubai grid: single col */
-      .dubai-price-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-      .dpg-val { font-size: 17px; }
-
-      /* ETF compare table: scrollable */
-      .etf-compare-panel { overflow-x: auto; }
-      .ecp-table th, .ecp-table td { padding: 8px 12px; }
-
-      /* IBJA rates: flex row → wrap */
-      .ibja-rates { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .ibja-item-val { font-size: 13px; }
-
-      /* FX bar: scroll */
-      .fx-bar { overflow-x: auto; flex-wrap: nowrap; gap: 16px; }
+    /* ── MOBILE ── */
+    @media (max-width:768px) {
+      .side-col { display:none; }
+      .etf-grid { grid-template-columns:1fr; }
+      .page-wrap { padding:20px 14px 60px; }
+      .header { flex-wrap:wrap; gap:10px; }
+      .header-right { gap:10px; }
+      .logo-domain { font-size:17px; }
+      .logo-tagline { display:none; }
+      .toggle-btn { padding:6px 14px; font-size:12px; }
+      .dubai-price-grid { grid-template-columns:1fr 1fr; gap:12px; }
+      .dpg-val { font-size:18px; }
+      .analysis-panel { overflow-x:auto; }
+      .factor-grid { grid-template-columns:1fr; }
+      .dxb-fx-strip { grid-template-columns:1fr 1fr; }
+      .fx-bar { overflow-x:auto; flex-wrap:nowrap; gap:16px; }
+      .ibja-rates { grid-template-columns:repeat(3,1fr); gap:8px; }
+      .ibja-item-val { font-size:18px; }
+      @media (max-width:380px) { #statusText { display:none; } }
     }
-
-    @media (max-width: 480px) {
-      .dubai-price-grid { grid-template-columns: 1fr; }
-      .ibja-rates { grid-template-columns: 1fr 1fr; }
+    @media (max-width:480px) {
+      .dubai-price-grid { grid-template-columns:1fr; }
+      .ibja-rates { grid-template-columns:1fr 1fr; }
+      .dxb-fx-strip { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -466,49 +336,8 @@
 
     <!-- HEADER -->
     <div class="header">
-      <!-- LOGO: redesigned — coin mark + "rateof.gold" — no word duplication -->
+      <!-- LOGO: text only, no coin -->
       <a class="logo-wrap" href="/" aria-label="rateof.gold home">
-        <div class="logo-coin">
-          <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="cg" cx="38%" cy="32%" r="65%">
-                <stop offset="0%"   stop-color="#f7e08a"/>
-                <stop offset="45%"  stop-color="#d4a853"/>
-                <stop offset="100%" stop-color="#7a5210"/>
-              </radialGradient>
-              <radialGradient id="cg2" cx="50%" cy="50%" r="50%">
-                <stop offset="0%"   stop-color="rgba(255,240,160,0.35)"/>
-                <stop offset="100%" stop-color="rgba(255,240,160,0)"/>
-              </radialGradient>
-              <filter id="gs" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.5)"/>
-              </filter>
-            </defs>
-            <!-- Outer coin -->
-            <circle cx="17" cy="17" r="16" fill="url(#cg)" filter="url(#gs)"/>
-            <!-- Rim detail -->
-            <circle cx="17" cy="17" r="16" fill="none" stroke="#b8860b" stroke-width="0.75"/>
-            <circle cx="17" cy="17" r="13" fill="none" stroke="rgba(255,240,160,0.2)" stroke-width="0.5"/>
-            <!-- Shine -->
-            <circle cx="17" cy="17" r="15.5" fill="url(#cg2)"/>
-            <!-- AU symbol — clean, two letters only -->
-            <text x="17" y="20.5"
-              text-anchor="middle"
-              font-family="Georgia, 'Times New Roman', serif"
-              font-size="10.5"
-              font-weight="bold"
-              letter-spacing="1"
-              fill="#3d2200"
-              opacity="0.85">Au</text>
-            <!-- Subscript 79 — element number -->
-            <text x="17" y="26.5"
-              text-anchor="middle"
-              font-family="Georgia, serif"
-              font-size="5.5"
-              fill="#3d2200"
-              opacity="0.5">79</text>
-          </svg>
-        </div>
         <div class="logo-type">
           <div class="logo-domain" id="logoDomain">
             <span class="ld-rate">rateof</span><span class="ld-dot">.</span><span class="ld-tld" id="logoTld">gold</span>
@@ -519,8 +348,8 @@
 
       <div class="header-right">
         <div class="toggle-wrap">
-          <button class="toggle-btn active-gold" id="btnGold" onclick="setMode('gold')">GOLD</button>
-          <button class="toggle-btn" id="btnSilver" onclick="setMode('silver')">SILVER</button>
+          <button class="toggle-btn active-gold" id="btnGold"   onclick="setMode('gold')">GOLD</button>
+          <button class="toggle-btn"             id="btnSilver" onclick="setMode('silver')">SILVER</button>
         </div>
         <div class="status">
           <div class="dot" id="statusDot"></div>
@@ -535,20 +364,21 @@
     ══════════════════════════════════════ -->
     <div class="gold-section">
 
-      <!-- HERO: primary rate (IBJA 24K if available, else calculated) -->
+      <!-- HERO -->
       <div class="hero">
-        <div class="hero-label" id="heroLabel">24K Gold · India · ₹ per gram · IBJA</div>
+        <div class="hero-label" id="heroLabel">24K Gold · India · ₹ per gram</div>
         <div class="hero-price" id="mainPrice">—</div>
         <div class="hero-meta">
           <div class="hero-sub" id="lastUpdated">fetching live rate…</div>
           <div class="signal wait" id="signal">analyzing…</div>
+          <span class="source-badge calc-src" id="sourceTag">—</span>
         </div>
 
-        <!-- IBJA Dedicated Box -->
+        <!-- IBJA Official Box -->
         <div class="ibja-box" id="ibjaBox">
           <div class="ibja-box-header">
             <div class="ibja-box-title">IBJA Official Rates · per gram</div>
-            <div class="ibja-badge">ibjarates.com</div>
+            <div class="ibja-badge">● LIVE — ibjarates.com</div>
           </div>
           <div class="ibja-rates">
             <div class="ibja-item">
@@ -564,17 +394,17 @@
               <div class="ibja-item-val dim" id="ibja22k">—</div>
             </div>
           </div>
-          <div class="ibja-source">India Bullion & Jewellers Association · official benchmark rate</div>
+          <div class="ibja-source">India Bullion &amp; Jewellers Association · official benchmark rate</div>
         </div>
 
-        <!-- Converted Rate (XAU/USD × USD/INR) shown separately -->
+        <!-- XAU/USD → INR Converted Rate -->
         <div class="converted-box" id="convertedBox" style="display:none">
           <div class="converted-left">
-            <div class="converted-label">XAU/USD → INR Converted Rate</div>
+            <div class="converted-label">XAU/USD → INR Calculated Rate</div>
             <div class="converted-val" id="convertedRate">—</div>
             <div class="converted-formula" id="convertedFormula">—</div>
           </div>
-          <div style="font-size:11px;color:var(--muted);text-align:right;font-family:var(--mono);">
+          <div style="font-size:12px;color:var(--muted);text-align:right;font-family:var(--mono);">
             International<br>spot basis
           </div>
         </div>
@@ -594,7 +424,7 @@
       </div>
 
       <!-- DIGITAL GOLD -->
-      <div class="section-title" style="margin-top:36px">Digital Gold</div>
+      <div class="section-title" style="margin-top:40px">Digital Gold</div>
       <div class="option-card">
         <div class="option-label">Digital Gold Rate · per gram</div>
         <div class="option-value" id="opt-digital">—</div>
@@ -604,136 +434,141 @@
 
       <div class="ad-inline" style="margin-top:32px;margin-bottom:0">Advertisement · 728×50</div>
 
-      <!-- ETFs -->
+      <!-- ETFs — Live NAV -->
       <div class="section-title" style="margin-top:32px">Gold ETFs — Live NAV</div>
       <div class="etf-grid">
-        <!-- Nippon -->
         <div class="etf-card" id="etf-nippon">
           <div class="etf-name">Nippon Gold ETF</div>
           <div class="etf-ticker">GOLDBEES</div>
           <div class="etf-nav-row">
             <div class="etf-price" id="etf-nippon-price"><span class="etf-loading">loading…</span></div>
-            <div class="etf-nav-label">NAV/unit</div>
+            <div class="etf-nav-label">per unit</div>
           </div>
+          <div id="etf-nippon-livebadge"></div>
           <div class="etf-sub" id="etf-nippon-sub">Expense: 0.51% · AUM: ₹9,800Cr+</div>
           <div class="etf-delta" id="etf-nippon-delta">—</div>
-          <div class="source-tag" style="margin-top:8px">Source: <span>NSE live</span></div>
         </div>
-        <!-- SBI -->
         <div class="etf-card" id="etf-sbi">
           <div class="etf-name">SBI Gold ETF</div>
           <div class="etf-ticker">SBIGETS</div>
           <div class="etf-nav-row">
             <div class="etf-price" id="etf-sbi-price"><span class="etf-loading">loading…</span></div>
-            <div class="etf-nav-label">NAV/unit</div>
+            <div class="etf-nav-label">per unit</div>
           </div>
+          <div id="etf-sbi-livebadge"></div>
           <div class="etf-sub" id="etf-sbi-sub">Expense: 0.65% · AUM: ₹2,100Cr+</div>
           <div class="etf-delta" id="etf-sbi-delta">—</div>
-          <div class="source-tag" style="margin-top:8px">Source: <span>NSE live</span></div>
         </div>
-        <!-- HDFC -->
         <div class="etf-card" id="etf-hdfc">
           <div class="etf-name">HDFC Gold ETF</div>
           <div class="etf-ticker">HDFCMFGETF</div>
           <div class="etf-nav-row">
             <div class="etf-price" id="etf-hdfc-price"><span class="etf-loading">loading…</span></div>
-            <div class="etf-nav-label">NAV/unit</div>
+            <div class="etf-nav-label">per unit</div>
           </div>
+          <div id="etf-hdfc-livebadge"></div>
           <div class="etf-sub" id="etf-hdfc-sub">Expense: 0.59% · AUM: ₹3,200Cr+</div>
           <div class="etf-delta" id="etf-hdfc-delta">—</div>
-          <div class="source-tag" style="margin-top:8px">Source: <span>NSE live</span></div>
         </div>
       </div>
 
-      <!-- ETF vs Physical vs Digital analysis table -->
-      <div class="etf-compare-panel">
-        <div class="ecp-header">ETF vs Physical vs Digital — Live Analysis</div>
-        <table class="ecp-table">
-          <thead>
-            <tr>
-              <th>Factor</th>
-              <th class="col-etf">Gold ETF</th>
-              <th class="col-phys">Physical Gold</th>
-              <th class="col-digi">Digital Gold</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Entry cost / gram</td>
-              <td class="mono" id="cmp-etf-price">—</td>
-              <td class="mono" id="cmp-phys-price">—</td>
-              <td class="mono" id="cmp-digi-price">—</td>
-            </tr>
-            <tr>
-              <td>Buying charges</td>
-              <td class="good">~0.1% brokerage</td>
-              <td class="bad">3% making + 3% GST</td>
-              <td class="mid">~1–3% platform fee</td>
-            </tr>
-            <tr>
-              <td>Annual charges</td>
-              <td class="mid" id="cmp-etf-exp">0.51–0.65% expense</td>
-              <td class="good">Nil</td>
-              <td class="mid">~0.5% storage</td>
-            </tr>
-            <tr>
-              <td>Purity guaranteed</td>
-              <td class="good">✓ 99.5% minimum</td>
-              <td class="mid">Hallmark only</td>
-              <td class="good">✓ 99.9% MMTC-PAMP</td>
-            </tr>
-            <tr>
-              <td>Storage / locker</td>
-              <td class="good">Not required</td>
-              <td class="bad">Locker needed</td>
-              <td class="good">Not required</td>
-            </tr>
-            <tr>
-              <td>Liquidity</td>
-              <td class="good">Instant · NSE/BSE</td>
-              <td class="bad">Days · jeweller</td>
-              <td class="mid">Same day · app</td>
-            </tr>
-            <tr>
-              <td>Tax (LTCG after 2yr)</td>
-              <td class="good">12.5% LTCG</td>
-              <td class="good">12.5% LTCG</td>
-              <td class="good">12.5% LTCG</td>
-            </tr>
-            <tr>
-              <td>Demat required</td>
-              <td class="mid">Yes</td>
-              <td class="good">No</td>
-              <td class="good">No</td>
-            </tr>
-            <tr>
-              <td>Min. buy</td>
-              <td class="good">1 unit (~1g)</td>
-              <td class="bad">Usually 1g+</td>
-              <td class="good">₹1</td>
-            </tr>
-            <tr>
-              <td>Effective cost now</td>
-              <td class="good" id="cmp-etf-effective">—</td>
-              <td class="bad"  id="cmp-phys-effective">—</td>
-              <td class="mid"  id="cmp-digi-effective">—</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="ecp-verdict" id="ecpVerdict">
-          <span>⚡ Analysis:</span> Loading live rates…
+      <!-- ANALYSIS PANEL — replaces old comparison table -->
+      <div class="analysis-panel">
+        <div class="ap-header">
+          <div class="ap-title">Best Way to Buy Gold Today — Live Analysis</div>
+          <span class="source-badge live-src" id="analysisUpdated">—</span>
+        </div>
+        <div class="ap-body">
+
+          <!-- Cost comparison bars -->
+          <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);margin-bottom:4px;">Entry cost per gram (all-in)</div>
+          <div class="cost-row">
+            <div class="cost-label">Gold ETF</div>
+            <div class="cost-bar-wrap">
+              <div class="cost-bar etf-bar" id="bar-etf" style="width:0%">—</div>
+            </div>
+          </div>
+          <div class="cost-row">
+            <div class="cost-label">Digital Gold</div>
+            <div class="cost-bar-wrap">
+              <div class="cost-bar digi-bar" id="bar-digi" style="width:0%">—</div>
+            </div>
+          </div>
+          <div class="cost-row">
+            <div class="cost-label">Physical</div>
+            <div class="cost-bar-wrap">
+              <div class="cost-bar phys-bar" id="bar-phys" style="width:0%">—</div>
+            </div>
+          </div>
+
+          <!-- Factor cards per option -->
+          <div class="factor-grid">
+            <div class="factor-card">
+              <div class="factor-card-title etf-color">Gold ETF</div>
+              <div class="factor-item"><span class="fi-key">Entry cost</span><span class="fi-val good" id="fa-etf-price">—</span></div>
+              <div class="factor-item"><span class="fi-key">Brokerage</span><span class="fi-val mid">~0.1%</span></div>
+              <div class="factor-item"><span class="fi-key">Annual exp.</span><span class="fi-val mid" id="fa-etf-exp">0.51–0.65%</span></div>
+              <div class="factor-item"><span class="fi-key">GST on buy</span><span class="fi-val good">None</span></div>
+              <div class="factor-item"><span class="fi-key">Tax (2yr+)</span><span class="fi-val good">12.5% LTCG</span></div>
+              <div class="factor-item"><span class="fi-key">Purity</span><span class="fi-val good">99.5%+</span></div>
+            </div>
+            <div class="factor-card">
+              <div class="factor-card-title phys-color">Physical Gold</div>
+              <div class="factor-item"><span class="fi-key">Entry cost</span><span class="fi-val bad" id="fa-phys-price">—</span></div>
+              <div class="factor-item"><span class="fi-key">Making</span><span class="fi-val bad">3% of base</span></div>
+              <div class="factor-item"><span class="fi-key">GST</span><span class="fi-val bad">3% on buy</span></div>
+              <div class="factor-item"><span class="fi-key">Storage</span><span class="fi-val bad">Locker needed</span></div>
+              <div class="factor-item"><span class="fi-key">Tax (2yr+)</span><span class="fi-val good">12.5% LTCG</span></div>
+              <div class="factor-item"><span class="fi-key">Best for</span><span class="fi-val mid">Gifting/jewellery</span></div>
+            </div>
+            <div class="factor-card">
+              <div class="factor-card-title digi-color">Digital Gold</div>
+              <div class="factor-item"><span class="fi-key">Entry cost</span><span class="fi-val mid" id="fa-digi-price">—</span></div>
+              <div class="factor-item"><span class="fi-key">Platform fee</span><span class="fi-val mid">~1–3%</span></div>
+              <div class="factor-item"><span class="fi-key">Annual</span><span class="fi-val mid">~0.5% storage</span></div>
+              <div class="factor-item"><span class="fi-key">GST on buy</span><span class="fi-val good">None</span></div>
+              <div class="factor-item"><span class="fi-key">Min buy</span><span class="fi-val good">₹1</span></div>
+              <div class="factor-item"><span class="fi-key">Best for</span><span class="fi-val good">Micro-accumulation</span></div>
+            </div>
+          </div>
+
+          <!-- Today's verdict -->
+          <div class="day-verdict">
+            <div class="dv-label">Today's Recommendation</div>
+            <div class="dv-text" id="dayVerdict">Analyzing live rates…</div>
+          </div>
+
         </div>
       </div>
 
-      <!-- DUBAI consolidated box -->
-      <div class="section-title" style="margin-top:40px">Dubai Gold Rates</div>
+      <!-- DUBAI — redesigned with FX strip -->
+      <div class="section-title" style="margin-top:44px">Dubai Gold Rates</div>
       <div class="dubai-card">
         <div class="dubai-header">
           <div class="dubai-title">🇦🇪 Dubai · Live Gold Prices</div>
-          <div style="font-size:11px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">—</div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">—</div>
         </div>
 
-        <!-- All Dubai prices in gold colour, bold -->
+        <!-- FX Strip: USD/INR · AED/INR · XAU/USD -->
+        <div class="dxb-fx-strip">
+          <div class="dxb-fx-item">
+            <div class="dxb-fx-label">USD / INR</div>
+            <div class="dxb-fx-val" id="dxb-usd-inr">—</div>
+            <div class="dxb-fx-sub">live rate</div>
+          </div>
+          <div class="dxb-fx-item">
+            <div class="dxb-fx-label">AED / INR</div>
+            <div class="dxb-fx-val" id="dxb-aed-inr-strip">—</div>
+            <div class="dxb-fx-sub">USD peg 3.6725</div>
+          </div>
+          <div class="dxb-fx-item">
+            <div class="dxb-fx-label">XAU / USD</div>
+            <div class="dxb-fx-val" id="dxb-xau-usd">—</div>
+            <div class="dxb-fx-sub">international spot</div>
+          </div>
+        </div>
+
+        <!-- Dubai gold prices -->
         <div class="dubai-price-grid">
           <div class="dpg-item">
             <div class="dpg-label">24K · per gram (AED)</div>
@@ -790,8 +625,8 @@
         </div>
 
         <div class="dubai-note">
-          Dubai gold has no import duty locally. India import duty is ~15% on international price.
-          Buying in Dubai only makes financial sense accounting for personal allowance limits.
+          Dubai gold has no import duty locally. India levies ~15% import duty on international spot.
+          Buying in Dubai only makes financial sense within personal allowance limits (20g duty-free for women, 10g for men on valid passport).
         </div>
       </div>
 
@@ -867,7 +702,7 @@
     </div>
 
     <div class="footer">
-      <div class="footer-note" id="footerNote">Auto-refreshes every 15 minutes</div>
+      <div class="footer-note" id="footerNote">Auto-refreshes every 60 minutes</div>
       <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">↻ refresh now</button>
     </div>
 
@@ -883,21 +718,14 @@
   let prevGoldPrice = null, prevSilverPrice = null;
   const TROY = 31.1035;
 
-  function fmt(n) {
-    return "₹\u202f" + Number(n).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
-  }
-  function fmtAED(n) {
-    return "د.إ\u202f" + Number(n).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
-  }
-  function fmtUSD(n) {
-    return "$ " + Number(n).toFixed(2);
-  }
+  function fmt(n)    { return "₹\u202f" + Number(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmtAED(n) { return "د.إ\u202f" + Number(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmtUSD(n) { return "$\u202f" + Number(n).toFixed(2); }
   function timeStr(iso) {
     const d = iso ? new Date(iso) : new Date();
-    return d.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"}) + " IST";
+    return d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit"}) + " IST";
   }
 
-  /* ── Mode toggle ── */
   function setMode(mode) {
     const btnG = document.getElementById("btnGold");
     const btnS = document.getElementById("btnSilver");
@@ -919,18 +747,16 @@
 
   /* ── Ticker ── */
   function buildTicker(d) {
-    const aedInr  = d.usdInr / 3.6725;
-    const india18 = d.india24 * 0.75;
     const items = [
-      {name:"Gold 24K",   val:fmt(d.india24)},
-      {name:"Gold 22K",   val:fmt(d.india22)},
-      {name:"Gold 18K",   val:fmt(india18)},
-      {name:"Silver/g",   val:fmt(d.silverGram)},
-      {name:"XAU/USD",    val:fmtUSD(d.price)},
-      {name:"USD/INR",    val:"₹ "+d.usdInr.toFixed(2)},
-      {name:"AED/INR",    val:"₹ "+aedInr.toFixed(4)},
-      {name:"Dubai 24K",  val:fmt(d.dubai24)},
-      {name:"Dubai 22K",  val:fmt(d.dubai22)},
+      {name:"Gold 24K",  val:fmt(d.india24)},
+      {name:"Gold 22K",  val:fmt(d.india22)},
+      {name:"Gold 18K",  val:fmt(d.india24 * 0.75)},
+      {name:"Silver/g",  val:fmt(d.silverGram)},
+      {name:"XAU/USD",   val:fmtUSD(d.price)},
+      {name:"USD/INR",   val:"₹ " + d.usdInr.toFixed(2)},
+      {name:"AED/INR",   val:"₹ " + d.aedInr.toFixed(4)},
+      {name:"Dubai 24K", val:fmt(d.dubai24)},
+      {name:"Dubai 22K", val:fmt(d.dubai22)},
     ];
     const all = [...items, ...items];
     document.getElementById("tickerTrack").innerHTML = all.map(i =>
@@ -938,8 +764,8 @@
     ).join("");
   }
 
-  /* ── ETF NAVs ── */
-  async function fetchETFNavs(baseRate) {
+  /* ── ETF NAVs — live from NSE/BSE, fallback calculated ── */
+  async function fetchETFNavs(baseRate, serverNavs) {
     const etfs = [
       {id:"nippon", symbol:"GOLDBEES",    expense:0.0051, aum:"₹9,800Cr+"},
       {id:"sbi",    symbol:"SBIGETS",     expense:0.0065, aum:"₹2,100Cr+"},
@@ -949,31 +775,67 @@
     const navs = {};
 
     for (const etf of etfs) {
-      let nav = null;
-      try {
-        const res = await fetch(
-          `https://groww.in/v1/api/stocks_data/v1/accord_points/exchange/NSE/segment/CASH/latest_prices_ohlc/${etf.symbol}`,
-          {headers:{"Accept":"application/json"}}
-        );
-        if (res.ok) {
-          const d = await res.json();
-          nav = d?.ltp || d?.close || null;
-        }
-      } catch(e) {}
+      let nav  = null;
+      let live = false;
 
-      // Fallback: estimate from base rate + 1 unit ≈ 1g
-      if (!nav || nav <= 0) {
-        nav = baseRate * (1 + etf.expense);
+      // Use server-fetched NAV first (already tried NSE in api/price)
+      if (serverNavs && serverNavs[etf.symbol] > 0) {
+        nav  = serverNavs[etf.symbol];
+        live = true;
       }
+
+      // Client-side fallback: try Groww public API
+      if (!nav) {
+        try {
+          const r = await fetch(
+            `https://groww.in/v1/api/stocks_data/v1/accord_points/exchange/NSE/segment/CASH/latest_prices_ohlc/${etf.symbol}`,
+            {headers:{Accept:"application/json"}}
+          );
+          if (r.ok) {
+            const d = await r.json();
+            const ltp = d?.ltp ?? d?.close;
+            if (ltp > 0) { nav = ltp; live = true; }
+          }
+        } catch(e) {}
+      }
+
+      // Client-side fallback 2: Yahoo Finance proxy
+      if (!nav) {
+        try {
+          const ticker = etf.symbol + ".NS";
+          const r = await fetch(
+            `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`,
+            {headers:{Accept:"application/json"}}
+          );
+          if (r.ok) {
+            const d = await r.json();
+            const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
+            if (p > 0) { nav = p; live = true; }
+          }
+        } catch(e) {}
+      }
+
+      // Final fallback: calculated from spot
+      if (!nav || nav <= 0) {
+        nav  = baseRate * (1 + etf.expense);
+        live = false;
+      }
+
       navs[etf.id] = nav;
 
       const priceEl = document.getElementById(`etf-${etf.id}-price`);
       const deltaEl = document.getElementById(`etf-${etf.id}-delta`);
       const subEl   = document.getElementById(`etf-${etf.id}-sub`);
+      const badgeEl = document.getElementById(`etf-${etf.id}-livebadge`);
+
       if (priceEl) priceEl.textContent = fmt(nav);
       if (subEl)   subEl.textContent   = `Expense: ${(etf.expense*100).toFixed(2)}% · AUM: ${etf.aum}`;
+      if (badgeEl) {
+        badgeEl.innerHTML = live
+          ? `<span class="etf-live-badge">● NSE LIVE</span>`
+          : `<span class="etf-calc-badge">estimated</span>`;
+      }
 
-      // Delta vs spot
       if (deltaEl && baseRate) {
         const diff = nav - baseRate;
         const pct  = ((diff / baseRate) * 100).toFixed(2);
@@ -990,7 +852,7 @@
       }
     }
 
-    // Highlight best (lowest NAV)
+    // Highlight best
     const minNav = Math.min(...Object.values(navs));
     for (const [id, nav] of Object.entries(navs)) {
       const card  = document.getElementById(`etf-${id}`);
@@ -1011,33 +873,58 @@
     return navs;
   }
 
-  /* ── ETF comparison table ── */
-  function updateCompareTable(india24, physicalTotal, digitalRate, etfNavs) {
-    const bestNav = Math.min(...Object.values(etfNavs));
-    const etfEffective = bestNav * 1.001; // ~0.1% brokerage
+  /* ── Analysis panel update ── */
+  function updateAnalysis(india24, physicalTotal, digitalRate, etfNavs) {
+    const bestNav    = Math.min(...Object.values(etfNavs));
+    const etfTotal   = bestNav * 1.001; // ~0.1% brokerage
+    const digiTotal  = digitalRate * 1.02; // ~2% platform fee
 
-    // Entry cost per gram (approximation — ETF 1 unit ≈ 1g)
-    document.getElementById("cmp-etf-price").textContent   = fmt(bestNav);
-    document.getElementById("cmp-phys-price").textContent  = fmt(physicalTotal);
-    document.getElementById("cmp-digi-price").textContent  = fmt(digitalRate);
+    // Factor card prices
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set("fa-etf-price",  fmt(etfTotal) + "/g");
+    set("fa-phys-price", fmt(physicalTotal) + "/g");
+    set("fa-digi-price", fmt(digiTotal) + "/g");
 
-    // Effective buy cost including all charges
-    document.getElementById("cmp-etf-effective").textContent  = fmt(etfEffective) + "/g";
-    document.getElementById("cmp-phys-effective").textContent = fmt(physicalTotal) + "/g";
-    document.getElementById("cmp-digi-effective").textContent = fmt(digitalRate * 1.02) + "/g";
+    // Cost bars — scale relative to max (physical is always highest)
+    const max = physicalTotal;
+    const etfPct  = Math.round((etfTotal  / max) * 100);
+    const digiPct = Math.round((digiTotal / max) * 100);
+    const physPct = 100;
 
-    // Verdict
-    const verdictEl = document.getElementById("ecpVerdict");
-    const etfSaving  = physicalTotal - etfEffective;
-    const etfSavPct  = ((etfSaving / physicalTotal) * 100).toFixed(1);
-    const digiSaving = physicalTotal - (digitalRate * 1.02);
-    verdictEl.innerHTML = `<span>⚡ Analysis:</span> 
-      ETF (${fmt(etfEffective)}/g) saves ${fmt(etfSaving)} per gram vs physical (${etfSavPct}% cheaper). 
-      Digital gold (${fmt(digitalRate * 1.02)}/g) saves ${fmt(digiSaving)}/g vs physical.
-      Best for long-term accumulation: <strong style="color:var(--gold)">ETF</strong> — 
-      liquid, no storage cost, 99.5%+ purity. 
-      Best for gifting/jewellery: <strong style="color:#a78bfa">Physical</strong>. 
-      Best for micro-buys: <strong style="color:#38bdf8">Digital</strong>.`;
+    const barSet = (id, pct, label) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.width = Math.max(pct, 15) + "%";
+      el.textContent = label;
+    };
+    barSet("bar-etf",  etfPct,  fmt(etfTotal));
+    barSet("bar-digi", digiPct, fmt(digiTotal));
+    barSet("bar-phys", physPct, fmt(physicalTotal));
+
+    // Savings
+    const etfSav   = physicalTotal - etfTotal;
+    const etfSavPct = ((etfSav / physicalTotal) * 100).toFixed(1);
+    const digiSav  = physicalTotal - digiTotal;
+
+    // Day verdict
+    const now  = new Date();
+    const hour = now.getHours();
+    const isMarketHours = hour >= 9 && hour < 16;
+
+    let verdict = `<strong>ETF (${fmt(etfTotal)}/g)</strong> saves ${fmt(etfSav)} per gram vs physical — that's ${etfSavPct}% cheaper. `;
+
+    if (etfSav > 0) {
+      verdict += `For long-term holding, <strong>Gold ETF is the best buy today</strong> — zero storage cost, 99.5%+ purity, instant liquidity on NSE/BSE. `;
+    }
+    if (isMarketHours) {
+      verdict += `Markets are open — ETF NAVs are live. `;
+    } else {
+      verdict += `Markets are closed — ETF prices are from last close, may differ at open. `;
+    }
+    verdict += `Physical gold makes sense only for jewellery or gifting. Digital gold suits ₹500–₹5,000 micro-investments.`;
+
+    document.getElementById("dayVerdict").innerHTML = verdict;
+    document.getElementById("analysisUpdated").textContent = "updated " + timeStr(null);
   }
 
   /* ── Silver best-buy highlight ── */
@@ -1069,47 +956,42 @@
       if (!res.ok) throw new Error("API error " + res.status);
       const data = await res.json();
 
-      const usdInr    = data.usdInr || 84.5;
-      const aedInr    = usdInr / 3.6725;
-      const gramUSD   = data.price / TROY;
-      const calc24k   = gramUSD * usdInr;   // XAU/USD converted
-      const calc22k   = calc24k * 0.916;
+      const usdInr   = data.usdInr  || 84.5;
+      const aedInr   = data.aedInr  || (usdInr / 3.6725);
+      const gramUSD  = data.price   / TROY;
+      const calc24k  = gramUSD * usdInr;
 
-      /* ─ Primary rate: IBJA if available, else calculated ─ */
-      const india24   = data.ibja24k || calc24k;
-      const india22   = data.ibja22k || (india24 * 0.916);
-      const india18   = india24 * 0.75;
+      /* Primary rate: IBJA if available, else calculated */
+      const india24  = data.ibja24k || calc24k;
+      const india22  = data.ibja22k || (india24 * 0.916);
 
-      /* ─ Physical cost ─ */
-      const making    = india24 * 0.03;
-      const gst       = (india24 + making) * 0.03;
-      const physical  = india24 + making + gst;
+      /* Physical cost */
+      const making   = india24 * 0.03;
+      const gst      = (india24 + making) * 0.03;
+      const physical = india24 + making + gst;
 
-      /* ─ Digital ─ */
-      const digital   = india24; // spot, no GST on buy
+      /* Digital */
+      const digital  = india24;
 
-      /* ─ Silver ─ */
-      const silverUSD  = data.silverPrice || (data.price / 80);
+      /* Silver */
+      const silverUSD  = data.silverPrice || (data.price / 85);
       const silverGram = (silverUSD / TROY) * usdInr;
       const physSilver = silverGram * 1.03 * 1.03;
       const digiSilver = silverGram * 1.015;
       const etfSilver  = silverGram * 1.005;
 
-      /* ─ Dubai rates ─
-         Dubai gold price ≈ international spot, typically slightly above/below
-         Dubai 24K AED/g ≈ XAU/USD / TROY × (1/AED per USD) + small DGCX premium (~0.3%)
-      */
-      const usdAed      = 3.6725; // fixed peg
-      const dubai24Usd  = gramUSD * 1.003;     // ~0.3% DGCX premium
-      const dubai24Aed  = dubai24Usd * usdAed;
-      const dubai22Aed  = dubai24Aed * 0.916;
-      const dubai18Aed  = dubai24Aed * 0.75;
-      const dubai24Inr  = dubai24Aed * aedInr;
-      const dubai22Inr  = dubai22Aed * aedInr;
-      const spread      = india24 - dubai24Inr;
-      const spreadPct   = ((spread / india24) * 100).toFixed(2);
+      /* Dubai */
+      const usdAed     = 3.6725;
+      const dubai24Usd = gramUSD * 1.003;
+      const dubai24Aed = dubai24Usd * usdAed;
+      const dubai22Aed = dubai24Aed * 0.916;
+      const dubai18Aed = dubai24Aed * 0.75;
+      const dubai24Inr = dubai24Aed * aedInr;
+      const dubai22Inr = dubai22Aed * aedInr;
+      const spread     = india24 - dubai24Inr;
+      const spreadPct  = ((spread / india24) * 100).toFixed(2);
 
-      /* ─ Flash gold price ─ */
+      /* Flash gold price */
       const priceEl = document.getElementById("mainPrice");
       if (prevGoldPrice !== null) {
         const cls = india24 > prevGoldPrice ? "flash-up" : india24 < prevGoldPrice ? "flash-dn" : "";
@@ -1117,7 +999,7 @@
       }
       prevGoldPrice = india24;
 
-      /* ─ Flash silver ─ */
+      /* Flash silver */
       const silverEl = document.getElementById("silverPrice");
       if (prevSilverPrice !== null) {
         const cls = silverGram > prevSilverPrice ? "flash-up" : silverGram < prevSilverPrice ? "flash-dn" : "";
@@ -1125,20 +1007,31 @@
       }
       prevSilverPrice = silverGram;
 
-      /* ─ Hero ─ */
+      /* Hero */
       priceEl.textContent = fmt(india24);
       document.getElementById("heroLabel").textContent =
-        data.ibja24k
-          ? "24K Gold · India · ₹ per gram · IBJA Official"
-          : "24K Gold · India · ₹ per gram · International Spot";
+        data.ibja24k ? "24K Gold · India · ₹ per gram · IBJA Official" : "24K Gold · India · ₹ per gram · International Spot";
       document.getElementById("lastUpdated").textContent = "updated " + timeStr(data.timestamp);
 
-      /* ─ Signal ─ */
+      /* Source tag */
+      const srcEl = document.getElementById("sourceTag");
+      if (data.ibja24k) {
+        srcEl.textContent = "IBJA LIVE";
+        srcEl.className   = "source-badge live-src";
+      } else if (data.sources?.gold === "live") {
+        srcEl.textContent = "XAU/USD LIVE";
+        srcEl.className   = "source-badge live-src";
+      } else {
+        srcEl.textContent = "CALCULATED";
+        srcEl.className   = "source-badge calc-src";
+      }
+
+      /* Signal */
       const sigEl = document.getElementById("signal");
       sigEl.textContent = "◆ Rates aligned · spread tight";
       sigEl.className   = "signal wait";
 
-      /* ─ IBJA box ─ */
+      /* IBJA box */
       const ibjaBox = document.getElementById("ibjaBox");
       if (data.ibja24k) {
         document.getElementById("ibja24k").textContent = fmt(data.ibja24k);
@@ -1149,29 +1042,34 @@
         ibjaBox.classList.remove("visible");
       }
 
-      /* ─ Converted rate box (always show) ─ */
+      /* Converted rate box */
       const convBox = document.getElementById("convertedBox");
       convBox.style.display = "flex";
-      document.getElementById("convertedRate").textContent    = fmt(calc24k);
+      document.getElementById("convertedRate").textContent   = fmt(calc24k);
       document.getElementById("convertedFormula").textContent =
         `XAU/USD ${fmtUSD(data.price)} ÷ ${TROY}g × ₹${usdInr.toFixed(2)} = ${fmt(calc24k)}/g`;
 
-      /* ─ Physical breakdown ─ */
+      /* Physical breakdown */
       document.getElementById("opt-physical").textContent = fmt(physical);
       document.getElementById("pb-base").textContent      = fmt(india24);
       document.getElementById("pb-making").textContent    = fmt(making) + " (3%)";
       document.getElementById("pb-gst").textContent       = fmt(gst) + " (3%)";
       document.getElementById("pb-total").textContent     = fmt(physical);
 
-      /* ─ Digital ─ */
+      /* Digital */
       document.getElementById("opt-digital").textContent = fmt(digital);
 
-      /* ─ ETFs (async) then comparison table ─ */
-      fetchETFNavs(india24).then(etfNavs => {
-        updateCompareTable(india24, physical, digital, etfNavs);
+      /* ETFs — live NAV fetch then analysis */
+      fetchETFNavs(india24, data.etfNavs).then(etfNavs => {
+        updateAnalysis(india24, physical, digital, etfNavs);
       });
 
-      /* ─ Dubai box ─ */
+      /* Dubai FX strip */
+      document.getElementById("dxb-usd-inr").textContent      = "₹ " + usdInr.toFixed(2);
+      document.getElementById("dxb-aed-inr-strip").textContent = "₹ " + aedInr.toFixed(4);
+      document.getElementById("dxb-xau-usd").textContent       = fmtUSD(data.price);
+
+      /* Dubai gold prices */
       document.getElementById("dxb-24k-aed").textContent = fmtAED(dubai24Aed);
       document.getElementById("dxb-24k-inr").textContent = fmt(dubai24Inr);
       document.getElementById("dxb-22k-aed").textContent = fmtAED(dubai22Aed);
@@ -1180,21 +1078,20 @@
       document.getElementById("dxb-aed-inr").textContent = "₹ " + aedInr.toFixed(4);
       document.getElementById("dubaiUpdated").textContent = "updated " + timeStr(data.timestamp);
 
-      document.getElementById("ds-india").textContent   = fmt(india24);
-      document.getElementById("ds-dubai").textContent   = fmt(dubai24Inr);
-
-      const spreadEl  = document.getElementById("ds-spread");
+      document.getElementById("ds-india").textContent = fmt(india24);
+      document.getElementById("ds-dubai").textContent = fmt(dubai24Inr);
+      const spreadEl = document.getElementById("ds-spread");
       spreadEl.textContent = (spread >= 0 ? "+" : "−") + fmt(Math.abs(spread));
       spreadEl.className   = "dsv " + (spread >= 0 ? "pos" : "neg");
       document.getElementById("ds-spreadpct").textContent = Math.abs(spreadPct) + "% " + (spread >= 0 ? "India pricier" : "Dubai pricier");
 
-      /* ─ FX bar ─ */
+      /* FX bar */
       document.getElementById("fxGold").textContent   = fmtUSD(data.price);
       document.getElementById("fxSilver").textContent = fmtUSD(silverUSD);
       document.getElementById("fxInr").textContent    = "₹ " + usdInr.toFixed(2);
       document.getElementById("fxAed").textContent    = "₹ " + aedInr.toFixed(4);
 
-      /* ─ Silver section ─ */
+      /* Silver */
       silverEl.textContent = fmt(silverGram);
       document.getElementById("silverUpdated").textContent = "updated " + timeStr(data.timestamp);
       document.getElementById("silverKg").textContent      = fmt(silverGram * 1000);
@@ -1205,20 +1102,19 @@
       document.getElementById("sopt-intl").textContent     = fmtUSD(silverUSD);
       highlightBest({physical:physSilver, digital:digiSilver, etf:etfSilver}, "s");
 
-      const ratio    = data.price / silverUSD;
-      const sSignal  = document.getElementById("silverSignal");
-      if (ratio > 85)      { sSignal.textContent = "▲ BUY · Silver undervalued"; sSignal.className = "signal buy"; }
+      const ratio   = data.price / silverUSD;
+      const sSignal = document.getElementById("silverSignal");
+      if      (ratio > 85) { sSignal.textContent = "▲ BUY · Silver undervalued"; sSignal.className = "signal buy"; }
       else if (ratio < 70) { sSignal.textContent = "◆ WAIT · Silver expensive";  sSignal.className = "signal wait"; }
       else                 { sSignal.textContent = "◆ NEUTRAL · Fair value";      sSignal.className = "signal wait"; }
 
-      /* ─ Ticker ─ */
-      buildTicker({price:data.price, india24, india22, dubai24:dubai24Inr, dubai22:dubai22Inr, silverUSD, silverGram, usdInr});
+      /* Ticker */
+      buildTicker({price:data.price, india24, india22, dubai24:dubai24Inr, dubai22:dubai22Inr, silverUSD, silverGram, usdInr, aedInr});
 
-      /* ─ Status ─ */
-      document.getElementById("statusDot").className   = "dot";
+      /* Status */
+      document.getElementById("statusDot").className    = "dot";
       document.getElementById("statusText").textContent = "live";
-      document.getElementById("footerNote").textContent =
-        "Auto-refreshes every 15 min · last: " + timeStr(data.timestamp);
+      document.getElementById("footerNote").textContent = "Auto-refreshes every 60 min · last: " + timeStr(data.timestamp);
 
     } catch(e) {
       document.getElementById("mainPrice").textContent   = "—";
@@ -1239,7 +1135,7 @@
   }
 
   loadPrice();
-  setInterval(loadPrice, 15 * 60 * 1000);
+  setInterval(loadPrice, 60 * 60 * 1000);
 </script>
 </body>
 </html>
