@@ -13,7 +13,49 @@ export default async function handler(req, res) {
 
     const GOLD_API_KEY = process.env.GOLD_API_KEY;
     const METAL_PRICE_API_KEY = process.env.METAL_PRICE_API_KEY;
-    let goldPrice = null;
+
+    // ── Step 1: Get USD/INR from multiple sources ──
+    let usdInr = null;
+
+    // Source 1: exchangerate.host (reliable, free)
+    try {
+      const fx1 = await fetch("https://api.exchangerate.host/live?access_key=free&currencies=INR&source=USD");
+      if (fx1.ok) {
+        const d = await fx1.json();
+        const rate = d?.quotes?.USDINR;
+        if (rate && rate > 80 && rate < 110) { usdInr = rate; console.log("USD/INR source1:", usdInr); }
+      }
+    } catch(e) {}
+
+    // Source 2: open.er-api.com
+    if (!usdInr) {
+      try {
+        const fx2 = await fetch("https://open.er-api.com/v6/latest/USD");
+        if (fx2.ok) {
+          const d = await fx2.json();
+          const rate = d?.rates?.INR;
+          if (rate && rate > 80 && rate < 110) { usdInr = rate; console.log("USD/INR source2:", usdInr); }
+        }
+      } catch(e) {}
+    }
+
+    // Source 3: frankfurter
+    if (!usdInr) {
+      try {
+        const fx3 = await fetch("https://api.frankfurter.app/latest?from=USD&to=INR");
+        if (fx3.ok) {
+          const d = await fx3.json();
+          const rate = d?.rates?.INR;
+          if (rate && rate > 80 && rate < 110) { usdInr = rate; console.log("USD/INR source3:", usdInr); }
+        }
+      } catch(e) {}
+    }
+
+    // Hardcoded fallback — updated to current rate
+    if (!usdInr) { usdInr = 94.5; console.log("USD/INR fallback:", usdInr); }
+
+    // ── Step 2: Get XAU/USD gold price ──
+    let goldPriceUSD = null;
 
     // Try goldapi.io first
     try {
@@ -21,76 +63,68 @@ export default async function handler(req, res) {
         headers: { "x-access-token": GOLD_API_KEY }
       });
       if (goldRes.ok) {
-        const goldData = await goldRes.json();
-        goldPrice = goldData.price;
-        console.log("Gold price from goldapi.io:", goldPrice);
+        const d = await goldRes.json();
+        goldPriceUSD = d.price;
+        console.log("Gold USD from goldapi.io:", goldPriceUSD);
       }
-    } catch (e) {
-      console.log("goldapi.io error:", e.message);
-    }
+    } catch(e) {}
 
     // Fallback to metalpriceapi.com
-    if (!goldPrice) {
+    if (!goldPriceUSD) {
       try {
         const metalRes = await fetch(
           `https://api.metalpriceapi.com/v1/latest?api_key=${METAL_PRICE_API_KEY}&base=XAU&currencies=USD`
         );
         if (metalRes.ok) {
-          const metalData = await metalRes.json();
-          goldPrice = metalData.rates.USD;
-          console.log("Gold price from metalpriceapi.com:", goldPrice);
+          const d = await metalRes.json();
+          goldPriceUSD = d.rates.USD;
+          console.log("Gold USD from metalpriceapi:", goldPriceUSD);
         }
-      } catch (e) {
-        console.log("metalpriceapi.com error:", e.message);
-      }
+      } catch(e) {}
     }
 
-    if (!goldPrice) throw new Error("All gold price sources failed");
+    if (!goldPriceUSD) throw new Error("All gold price sources failed");
 
-    // Get USD/INR rate
-    let usdInr = null;
-
-    // Source 1: open.er-api.com
+    // ── Step 3: Try IBJA for direct INR rate ──
+    let ibja24k = null;
+    let ibja22k = null;
+    let ibja995 = null;
     try {
-      const fx1 = await fetch("https://open.er-api.com/v6/latest/USD");
-      if (fx1.ok) {
-        const fx1Data = await fx1.json();
-        const rate = fx1Data?.rates?.INR;
-        if (rate && rate > 75 && rate < 120) {
-          usdInr = rate;
-          console.log("USD/INR from open.er-api:", usdInr);
-        }
+      const ibjaRes = await fetch("https://ibjarates.com/api/goldrates", {
+        headers: { "Accept": "application/json" }
+      });
+      if (ibjaRes.ok) {
+        const ibjaData = await ibjaRes.json();
+        // IBJA returns rates per 10 grams
+        ibja24k = ibjaData?.Gold999 ? ibjaData.Gold999 / 10 : null;
+        ibja22k = ibjaData?.Gold916 ? ibjaData.Gold916 / 10 : null;
+        ibja995 = ibjaData?.Gold995 ? ibjaData.Gold995 / 10 : null;
+        console.log("IBJA 24K per gram:", ibja24k);
       }
-    } catch (e) {
-      console.log("open.er-api error:", e.message);
+    } catch(e) {
+      console.log("IBJA API error:", e.message);
     }
 
-    // Source 2: frankfurter.app as backup
-    if (!usdInr) {
-      try {
-        const fx2 = await fetch("https://api.frankfurter.app/latest?from=USD&to=INR");
-        if (fx2.ok) {
-          const fx2Data = await fx2.json();
-          const rate = fx2Data?.rates?.INR;
-          if (rate && rate > 75 && rate < 120) {
-            usdInr = rate;
-            console.log("USD/INR from frankfurter:", usdInr);
-          }
-        }
-      } catch (e) {
-        console.log("frankfurter error:", e.message);
+    // ── Step 4: Get silver price ──
+    let silverUSD = null;
+    try {
+      const silverRes = await fetch("https://www.goldapi.io/api/XAG/USD", {
+        headers: { "x-access-token": GOLD_API_KEY }
+      });
+      if (silverRes.ok) {
+        const d = await silverRes.json();
+        silverUSD = d.price;
       }
-    }
-
-    // Final fallback
-    if (!usdInr) {
-      usdInr = 84.5;
-      console.log("Using fallback USD/INR:", usdInr);
-    }
+    } catch(e) {}
+    if (!silverUSD) silverUSD = goldPriceUSD / 80;
 
     cache = {
-      price: goldPrice,
+      price: goldPriceUSD,
       usdInr: usdInr,
+      silverPrice: silverUSD,
+      ibja24k: ibja24k,
+      ibja22k: ibja22k,
+      ibja995: ibja995,
       timestamp: new Date().toISOString()
     };
     cacheTime = Date.now();
