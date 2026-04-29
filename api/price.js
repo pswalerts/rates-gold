@@ -102,12 +102,11 @@ export default async function handler(req, res) {
       } catch(e) {}
     }
 
-    // â”€â”€ STEP 5: ETFs â€” ALL 6 fetched server-side in parallel â”€â”€
-    // Each ETF on NSE is ~1g of 99.5% gold. NAV in INR per unit â‰ˆ â‚¹/gram.
+    // â”€â”€ STEP 5: ETFs â€” all 6 fetched server-side in parallel â”€â”€
     const ALL_ETF_SYMBOLS = ["GOLDBEES", "SBIGETS", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
 
     async function fetchETFQuote(sym) {
-      // Attempt 1: Yahoo Finance (most reliable, no auth)
+      // Attempt 1: Yahoo Finance
       try {
         const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`, { headers: { Accept: "application/json" } });
         if (r.ok) {
@@ -116,22 +115,19 @@ export default async function handler(req, res) {
           if (meta?.regularMarketPrice > 0) return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true };
         }
       } catch(e) {}
-
-      // Attempt 2: NSE India official
+      // Attempt 2: NSE India
       try {
         const r = await fetch(`https://www.nseindia.com/api/quote-equity?symbol=${sym}`, { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36", Referer: "https://www.nseindia.com/" } });
         if (r.ok) {
           const d = await r.json();
-          const ltp = d?.priceInfo?.lastPrice ?? d?.priceInfo?.close;
+          const ltp  = d?.priceInfo?.lastPrice ?? d?.priceInfo?.close;
           const prev = d?.priceInfo?.previousClose;
           if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
         }
       } catch(e) {}
-
       return { nav: null, prevClose: null, live: false };
     }
 
-    // Fetch all ETFs in parallel with a timeout wrapper
     async function withTimeout(promise, ms = 6000) {
       return Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
     }
@@ -140,8 +136,7 @@ export default async function handler(req, res) {
       ALL_ETF_SYMBOLS.map(sym => withTimeout(fetchETFQuote(sym)))
     );
 
-    const etfNavs = {};
-    const etfPrevClose = {};
+    const etfNavs = {}, etfPrevClose = {};
     etfResults.forEach((result, i) => {
       const sym = ALL_ETF_SYMBOLS[i];
       if (result.status === "fulfilled" && result.value?.nav > 0) {
@@ -150,8 +145,7 @@ export default async function handler(req, res) {
       }
     });
 
-    // â”€â”€ STEP 6: Historical sparkline data for ETFs (1 year, weekly) â”€â”€
-    // Fetched server-side to avoid client CORS issues
+    // â”€â”€ STEP 6: Historical sparklines (1 year, weekly) â”€â”€
     async function fetchSparkline(sym) {
       try {
         const r = await withTimeout(
@@ -160,18 +154,14 @@ export default async function handler(req, res) {
         );
         if (!r.ok) return null;
         const d = await r.json();
-        const result = d?.chart?.result?.[0];
-        const closes = result?.indicators?.quote?.[0]?.close;
-        const timestamps = result?.timestamp;
-        if (!closes || !timestamps) return null;
-        // Return compact arrays: [price, price, ...] weekly for ~52 weeks
-        // Filter out nulls
-        const filtered = closes.map((c, i) => c != null ? Math.round(c * 100) / 100 : null).filter(Boolean);
-        return filtered.slice(-52); // max 52 data points
+        const result     = d?.chart?.result?.[0];
+        const closes     = result?.indicators?.quote?.[0]?.close;
+        if (!closes) return null;
+        const filtered = closes.map(c => c != null ? Math.round(c * 100) / 100 : null).filter(Boolean);
+        return filtered.slice(-52);
       } catch(e) { return null; }
     }
 
-    // Fetch sparklines for all 6 ETFs in parallel (best effort)
     const sparklineResults = await Promise.allSettled(
       ALL_ETF_SYMBOLS.map(sym => fetchSparkline(sym))
     );
@@ -186,18 +176,18 @@ export default async function handler(req, res) {
     // Build and cache response
     cache = {
       price:         goldPriceUSD,
-      usdInr:        usdInr,
-      aedInr:        aedInr,
+      usdInr,
+      aedInr,
       silverPrice:   silverUSD,
-      ibja24k:       ibja24k,
-      ibja22k:       ibja22k,
-      ibja995:       ibja995,
-      etfNavs:       etfNavs,
-      etfPrevClose:  etfPrevClose,
-      etfSparklines: etfSparklines,
+      ibja24k,
+      ibja22k,
+      ibja995,
+      etfNavs,
+      etfPrevClose,
+      etfSparklines,
       timestamp:     new Date().toISOString(),
       sources: {
-        fx:   usdInr === 84.5   ? "fallback" : "live",
+        fx:   usdInr === 84.5 ? "fallback" : "live",
         gold: goldSource,
         ibja: ibjaSource,
         etf:  Object.keys(etfNavs).length > 0 ? "live" : "none",
