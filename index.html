@@ -375,6 +375,7 @@
               <div class="ibja-item-val dim" id="ibja22k">—</div>
             </div>
           </div>
+          <!-- Inline formula row stays inside IBJA box -->
           <div class="spot-formula-bar" id="spotFormula" style="display:none">
             <span class="sf-label">Intl spot</span>
             <span class="sf-val" id="sf-xau">—</span>
@@ -387,15 +388,52 @@
           </div>
         </div>
 
-        <div class="spot-formula-bar" id="spotFormulaAlt" style="display:none; margin-top:16px;">
-          <span class="sf-label">Intl spot</span>
-          <span class="sf-val" id="sf-xau-alt">—</span>
-          <span class="sf-arrow">÷ 31.1035g</span>
-          <span class="sf-arrow">×</span>
-          <span class="sf-val" id="sf-inr-alt">—</span>
-          <span class="sf-arrow">=</span>
-          <span class="sf-val" id="sf-result-alt">—</span>
-          <span class="sf-label" style="margin-left:4px">/g calculated</span>
+        <!-- ── INTERNATIONAL SPOT PANEL (shown always, replaces old formula bar) ── -->
+        <div id="intlSpotPanel" style="display:none;margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+          <!-- Header row -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;">
+            <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">International Spot · Converted to INR/gram</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <span style="font-family:var(--mono);font-size:11px;color:var(--muted);">XAU/USD <span id="isp-xau" style="color:var(--text);">—</span></span>
+              <span style="color:var(--border)">·</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--muted);">USD/INR <span id="isp-inr" style="color:var(--text);">—</span></span>
+            </div>
+          </div>
+          <!-- Current converted value -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border);">
+            <div style="padding:16px 20px;border-right:1px solid var(--border);">
+              <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">24K · ₹/gram</div>
+              <div style="font-family:var(--mono);font-size:22px;font-weight:600;color:var(--gold);" id="isp-24k">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px;">international</div>
+            </div>
+            <div style="padding:16px 20px;border-right:1px solid var(--border);">
+              <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">22K · ₹/gram</div>
+              <div style="font-family:var(--mono);font-size:22px;font-weight:600;color:var(--text);" id="isp-22k">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px;">×0.916</div>
+            </div>
+            <div style="padding:16px 20px;">
+              <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">18K · ₹/gram</div>
+              <div style="font-family:var(--mono);font-size:22px;font-weight:600;color:var(--text);" id="isp-18k">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px;">×0.75</div>
+            </div>
+          </div>
+          <!-- Historical change table -->
+          <div style="overflow-x:auto;">
+            <table id="ispHistTable" style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <th style="padding:10px 20px;text-align:left;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-weight:500;">Period</th>
+                  <th style="padding:10px 16px;text-align:right;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-weight:500;">Price Then</th>
+                  <th style="padding:10px 16px;text-align:right;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-weight:500;">Change ₹</th>
+                  <th style="padding:10px 16px;text-align:right;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-weight:500;">Change %</th>
+                  <th style="padding:10px 20px;text-align:right;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-weight:500;">Signal</th>
+                </tr>
+              </thead>
+              <tbody id="ispHistBody">
+                <tr><td colspan="5" style="padding:16px 20px;color:var(--muted);text-align:center;">Loading historical data…</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- ── HISTORICAL CHANGE PANEL ── -->
@@ -1084,6 +1122,83 @@
   }
 
   /* ══════════════════════════════════════════
+     INTERNATIONAL SPOT PANEL with historical table
+     Uses GOLDBEES sparkline (weekly ₹/unit ≈ ₹/gram 995) as price history proxy.
+     We rescale each weekly point to calc24k equivalent: point * (calc24k / lastPoint)
+  ══════════════════════════════════════════ */
+  function buildIntlSpotPanel(xauUsd, usdInr, calc24k, sparklines) {
+    const panel = document.getElementById("intlSpotPanel");
+    panel.style.display = "block";
+
+    // Header FX values
+    document.getElementById("isp-xau").textContent = fmtUSD(xauUsd);
+    document.getElementById("isp-inr").textContent = "₹" + usdInr.toFixed(2);
+
+    // Current karat prices
+    document.getElementById("isp-24k").textContent = fmt(calc24k);
+    document.getElementById("isp-22k").textContent = fmt(calc24k * 0.916);
+    document.getElementById("isp-18k").textContent = fmt(calc24k * 0.75);
+
+    // Build historical table using sparkline as proxy
+    const spark = sparklines?.GOLDBEES || sparklines?.HDFCMFGETF || sparklines?.KOTAKGOLD;
+    const tbody = document.getElementById("ispHistBody");
+
+    if (!spark || spark.length < 4) {
+      tbody.innerHTML = `<tr><td colspan="5" style="padding:16px 20px;color:var(--muted);text-align:center;font-family:var(--mono);font-size:12px;">Historical data unavailable</td></tr>`;
+      return;
+    }
+
+    const n = spark.length;
+    // Rescale: the last sparkline point maps to calc24k. Apply same ratio to all historical points.
+    const lastSpark = spark[n - 1];
+    const scale = calc24k / lastSpark;
+
+    const now = new Date();
+    const ytdWeeks = Math.max(1, Math.ceil((now - new Date(now.getFullYear(), 0, 1)) / (7 * 86400000)));
+
+    const periods = [
+      { label: "1 Day",     weeks: 0,         approxDaily: true },
+      { label: "1 Week",    weeks: 1                            },
+      { label: "1 Month",   weeks: 4                            },
+      { label: "3 Months",  weeks: 13                           },
+      { label: "6 Months",  weeks: 26                           },
+      { label: "1 Year",    weeks: 52                           },
+      { label: "YTD",       weeks: ytdWeeks                     },
+    ];
+
+    const rows = periods.map(p => {
+      let pastRaw;
+      if (p.approxDaily) {
+        // Estimate yesterday from last two weekly points ÷ 7
+        const wChg = spark[n-1] - (spark[n-2] || spark[n-1]);
+        pastRaw = spark[n-1] - wChg / 7;
+      } else {
+        const idx = Math.max(0, n - 1 - Math.min(p.weeks, n - 1));
+        pastRaw = spark[idx];
+      }
+      const past    = pastRaw * scale;
+      const chg     = calc24k - past;
+      const chgPct  = (chg / past) * 100;
+      const up      = chg >= 0;
+      const clr     = up ? "#22c55e" : "#ef4444";
+      const sign    = up ? "+" : "−";
+      const signal  = Math.abs(chgPct) < 0.3 ? "→ Flat"
+                    : up ? "▲ Up" : "▼ Down";
+      const sigClr  = Math.abs(chgPct) < 0.3 ? "var(--muted)" : clr;
+
+      return `<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:11px 20px;color:var(--text);font-family:var(--mono);font-size:12px;">${p.label}</td>
+        <td style="padding:11px 16px;text-align:right;color:var(--muted);font-family:var(--mono);font-size:12px;">${fmt(past)}</td>
+        <td style="padding:11px 16px;text-align:right;font-family:var(--mono);font-size:12px;color:${clr};">${sign}${fmt(Math.abs(chg))}</td>
+        <td style="padding:11px 16px;text-align:right;font-family:var(--mono);font-size:12px;font-weight:600;color:${clr};">${sign}${Math.abs(chgPct).toFixed(2)}%</td>
+        <td style="padding:11px 20px;text-align:right;font-family:var(--mono);font-size:11px;color:${sigClr};">${signal}</td>
+      </tr>`;
+    });
+
+    tbody.innerHTML = rows.join("");
+  }
+
+  /* ══════════════════════════════════════════
      MAIN LOAD — PATCH 4: ETFs via server data only
   ══════════════════════════════════════════ */
   async function loadPrice() {
@@ -1154,16 +1269,13 @@
         document.getElementById("sf-xau").textContent    = fmtUSD(data.price);
         document.getElementById("sf-inr").textContent    = "₹" + usdInr.toFixed(2);
         document.getElementById("sf-result").textContent = fmt(calc24k);
-        document.getElementById("spotFormulaAlt").style.display = "none";
       } else {
         ibjaBox.classList.remove("visible");
         document.getElementById("spotFormula").style.display = "none";
-        const sfAlt = document.getElementById("spotFormulaAlt");
-        sfAlt.style.display = "flex";
-        document.getElementById("sf-xau-alt").textContent    = fmtUSD(data.price);
-        document.getElementById("sf-inr-alt").textContent    = "₹" + usdInr.toFixed(2);
-        document.getElementById("sf-result-alt").textContent = fmt(calc24k);
       }
+
+      /* International Spot Panel — always shown, with historical table */
+      buildIntlSpotPanel(data.price, usdInr, calc24k, data.etfSparklines);
 
       /* Physical + Digital */
       buildPhysicalRetailers(india24);
@@ -1172,9 +1284,6 @@
       /* PATCH 4 — ETFs server-side only, instant render */
       const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfPrevClose, data.etfSparklines);
       buildTrafficLight(india24, etfNavsForTL);
-
-      /* Hero historical change panel */
-      buildHeroHistPanel(india24, data.etfSparklines);
 
       /* Dubai */
       document.getElementById("dxb-usd-inr").textContent       = "₹ " + usdInr.toFixed(2);
