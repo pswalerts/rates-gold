@@ -165,7 +165,7 @@
     .dubai-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px 28px; transition:border-color 0.2s; }
     .dubai-card:hover { border-color:rgba(255,255,255,0.14); }
     .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px; }
-    .dubai-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .dubai-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:#f97316; font-family:var(--mono); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .dubai-title-arabic { font-size:13px; color:#f97316; opacity:0.85; letter-spacing:0; text-transform:none; font-family:var(--sans); direction:rtl; }
     .dxb-fx-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:18px; }
     .dxb-fx-item { display:flex; flex-direction:column; gap:4px; }
@@ -374,11 +374,10 @@
 
       <!-- HERO -->
       <div class="hero">
-        <div class="hero-label" id="heroLabel">24K Gold · India · ₹ per gram</div>
+        <div class="hero-label">24K Gold · India · ₹ per gram</div>
         <div class="hero-price" id="mainPrice">—</div>
         <div class="hero-meta">
           <div class="hero-sub" id="lastUpdated">fetching live rate…</div>
-          <span class="source-badge calc-src" id="sourceTag">—</span>
         </div>
 
         <!-- ══ 2-COLUMN RATE BOX ══ -->
@@ -1148,18 +1147,7 @@
 
       /* Hero */
       priceEl.textContent = fmt(india24);
-      document.getElementById("heroLabel").textContent =
-        hasLive  ? "24K Gold · India · ₹ per gram · IBJA Official" :
-        hasStale ? "24K Gold · India · ₹ per gram · IBJA (prev session)" :
-                   "24K Gold · India · ₹ per gram · International Spot";
       document.getElementById("lastUpdated").textContent = "updated " + timeStr(data.timestamp);
-
-      /* Source badge */
-      const srcEl = document.getElementById("sourceTag");
-      if      (hasLive)                      { srcEl.textContent="IBJA LIVE";    srcEl.className="source-badge live-src";  }
-      else if (hasStale)                     { srcEl.textContent="IBJA STALE";   srcEl.className="source-badge stale-src"; }
-      else if (data.sources?.gold==="live")  { srcEl.textContent="XAU/USD LIVE"; srcEl.className="source-badge live-src";  }
-      else                                   { srcEl.textContent="CALCULATED";   srcEl.className="source-badge calc-src";  }
 
       /* Dual Rate Box — Col 1: Int Spot */
       document.getElementById("intl-xau").textContent    = fmtUSD(data.price);
