@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     const GOLD_API_KEY        = process.env.GOLD_API_KEY;
     const METAL_PRICE_API_KEY = process.env.METAL_PRICE_API_KEY;
 
-    // â”€â”€ STEP 1: USD/INR â”€â”€
+    // ── STEP 1: USD/INR ──
     let usdInr = null;
     const fxSources = [
       async () => {
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     const usdAed = 3.6725;
     const aedInr = usdInr / usdAed;
 
-    // â”€â”€ STEP 2: Gold spot â”€â”€
+    // ── STEP 2: Gold spot ──
     let goldPriceUSD = null, goldSource = "unknown";
     try {
       const r = await fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Accept: "application/json", Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } });
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
     }
     if (!goldPriceUSD) throw new Error("All gold price sources failed");
 
-    // â”€â”€ STEP 3: Silver â”€â”€
+    // ── STEP 3: Silver ──
     let silverUSD = null;
     try {
       const r = await fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Accept: "application/json", Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } });
@@ -83,7 +83,7 @@ export default async function handler(req, res) {
     }
     if (!silverUSD) silverUSD = goldPriceUSD / 85;
 
-    // â”€â”€ STEP 4: IBJA â”€â”€
+    // ── STEP 4: IBJA ──
     let ibja24k = null, ibja22k = null, ibja995 = null, ibjaSource = "none";
     try {
       const r = await fetch("https://ibjarates.com/api/goldrates", { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0 (compatible; rateof.gold/1.0)" } });
@@ -102,22 +102,89 @@ export default async function handler(req, res) {
       } catch(e) {}
     }
 
-    // â”€â”€ STEP 5: ETFs â€” all 6 fetched server-side in parallel â”€â”€
+    // ── STEP 5: ETFs — all 6 fetched server-side in parallel ──
+    // Known approximate NAVs per gram (995 purity, ~1g/unit) based on gold price
+    // Used only as last-resort fallback when all live sources fail
+    const ETF_EXPENSE = {
+      GOLDBEES:   0.0051,
+      SBIGETS:    0.0065,
+      HDFCMFGETF: 0.0059,
+      AXISGOLD:   0.0060,
+      KOTAKGOLD:  0.0055,
+      ICICIGOLD:  0.0050,
+    };
     const ALL_ETF_SYMBOLS = ["GOLDBEES", "SBIGETS", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
 
+    // BSE scrip codes for gold ETFs (for BSE API fallback)
+    const BSE_CODES = {
+      GOLDBEES:   "590096",
+      SBIGETS:    "590091",
+      HDFCMFGETF: "590094",
+      AXISGOLD:   "590102",
+      KOTAKGOLD:  "590103",
+      ICICIGOLD:  "590100",
+    };
+
+    async function withTimeout(promise, ms = 7000) {
+      return Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
+    }
+
     async function fetchETFQuote(sym) {
-      // Attempt 1: Yahoo Finance
+      const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+      // Attempt 1: Yahoo Finance query1
       try {
-        const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`, { headers: { Accept: "application/json" } });
+        const r = await fetch(
+          `https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`,
+          { headers: { Accept: "application/json", "User-Agent": ua } }
+        );
         if (r.ok) {
           const d = await r.json();
           const meta = d?.chart?.result?.[0]?.meta;
-          if (meta?.regularMarketPrice > 0) return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true };
+          if (meta?.regularMarketPrice > 0) {
+            return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true };
+          }
         }
       } catch(e) {}
-      // Attempt 2: NSE India
+
+      // Attempt 2: Yahoo Finance query2 (different endpoint, less rate-limited)
       try {
-        const r = await fetch(`https://www.nseindia.com/api/quote-equity?symbol=${sym}`, { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36", Referer: "https://www.nseindia.com/" } });
+        const r = await fetch(
+          `https://query2.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`,
+          { headers: { Accept: "application/json", "User-Agent": ua } }
+        );
+        if (r.ok) {
+          const d = await r.json();
+          const meta = d?.chart?.result?.[0]?.meta;
+          if (meta?.regularMarketPrice > 0) {
+            return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true };
+          }
+        }
+      } catch(e) {}
+
+      // Attempt 3: BSE India API
+      const bseCode = BSE_CODES[sym];
+      if (bseCode) {
+        try {
+          const r = await fetch(
+            `https://api.bseindia.com/BseIndiaAPI/api/getScripHeaderData/w?Debtflag=&scripcode=${bseCode}&seriesid=`,
+            { headers: { Accept: "application/json", Referer: "https://www.bseindia.com/", "User-Agent": ua } }
+          );
+          if (r.ok) {
+            const d = await r.json();
+            const ltp  = parseFloat(d?.CurrRate || d?.Ltp || d?.LastRate || 0);
+            const prev = parseFloat(d?.PrevClose || d?.PrevRate || 0);
+            if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
+          }
+        } catch(e) {}
+      }
+
+      // Attempt 4: NSE India (requires session cookie in prod, often blocked, try anyway)
+      try {
+        const r = await fetch(
+          `https://www.nseindia.com/api/quote-equity?symbol=${sym}`,
+          { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://www.nseindia.com/", Cookie: "nsit=; nseappid=" } }
+        );
         if (r.ok) {
           const d = await r.json();
           const ltp  = d?.priceInfo?.lastPrice ?? d?.priceInfo?.close;
@@ -125,11 +192,22 @@ export default async function handler(req, res) {
           if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
         }
       } catch(e) {}
-      return { nav: null, prevClose: null, live: false };
-    }
 
-    async function withTimeout(promise, ms = 6000) {
-      return Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
+      // Attempt 5: MF API (for ETFs that have AMC NAV pages) — uses groww's public API
+      try {
+        const r = await fetch(
+          `https://groww.in/v1/api/stocks_data/v1/tr_live_data/segment/NSECM/exchange_token/${sym}/`,
+          { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://groww.in/" } }
+        );
+        if (r.ok) {
+          const d = await r.json();
+          const ltp  = d?.ltp || d?.price;
+          const prev = d?.close || d?.previousClose;
+          if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
+        }
+      } catch(e) {}
+
+      return { nav: null, prevClose: null, live: false };
     }
 
     const etfResults = await Promise.allSettled(
@@ -145,21 +223,27 @@ export default async function handler(req, res) {
       }
     });
 
-    // â”€â”€ STEP 6: Historical sparklines (1 year, weekly) â”€â”€
+    // ── STEP 6: Historical sparklines (1 year, weekly) ──
     async function fetchSparkline(sym) {
-      try {
-        const r = await withTimeout(
-          fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1wk&range=1y`, { headers: { Accept: "application/json" } }),
-          8000
-        );
-        if (!r.ok) return null;
-        const d = await r.json();
-        const result     = d?.chart?.result?.[0];
-        const closes     = result?.indicators?.quote?.[0]?.close;
-        if (!closes) return null;
-        const filtered = closes.map(c => c != null ? Math.round(c * 100) / 100 : null).filter(Boolean);
-        return filtered.slice(-52);
-      } catch(e) { return null; }
+      const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
+      // Try query1 then query2
+      for (const host of ["query1", "query2"]) {
+        try {
+          const r = await withTimeout(
+            fetch(`https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1wk&range=1y`,
+              { headers: { Accept: "application/json", "User-Agent": ua } }),
+            9000
+          );
+          if (!r.ok) continue;
+          const d = await r.json();
+          const result = d?.chart?.result?.[0];
+          const closes = result?.indicators?.quote?.[0]?.close;
+          if (!closes) continue;
+          const filtered = closes.map(c => c != null ? Math.round(c * 100) / 100 : null).filter(Boolean);
+          if (filtered.length > 4) return filtered.slice(-52);
+        } catch(e) {}
+      }
+      return null;
     }
 
     const sparklineResults = await Promise.allSettled(
