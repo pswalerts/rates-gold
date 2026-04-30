@@ -1,7 +1,7 @@
 let cache = null;
 let cacheTime = 0;
 const CACHE_DURATION = 60 * 60 * 1000; // 60 minutes
- 
+
 export default async function handler(req, res) {
   try {
     if (cache && Date.now() - cacheTime < CACHE_DURATION) {
@@ -9,10 +9,10 @@ export default async function handler(req, res) {
       res.setHeader("Cache-Control", "public, max-age=3600");
       return res.status(200).json({ ...cache, cached: true });
     }
- 
+
     const GOLD_API_KEY        = process.env.GOLD_API_KEY;
     const METAL_PRICE_API_KEY = process.env.METAL_PRICE_API_KEY;
- 
+
     // ── STEP 1: USD/INR ──
     let usdInr = null;
     const fxSources = [
@@ -39,10 +39,10 @@ export default async function handler(req, res) {
       try { const rate = await src(); if (rate && rate > 75 && rate < 120) { usdInr = rate; break; } } catch(e) {}
     }
     if (!usdInr) { usdInr = 84.5; console.log("USD/INR: fallback"); }
- 
+
     const usdAed = 3.6725;
     const aedInr = usdInr / usdAed;
- 
+
     // ── STEP 2: Gold spot ──
     let goldPriceUSD = null, goldSource = "unknown";
     try {
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
       try { const r = await fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${METAL_PRICE_API_KEY}&base=XAU&currencies=USD`); if (r.ok) { const d = await r.json(); if (d?.rates?.USD > 0) { goldPriceUSD = d.rates.USD; goldSource = "metalpriceapi.com"; } } } catch(e) {}
     }
     if (!goldPriceUSD) throw new Error("All gold price sources failed");
- 
+
     // ── STEP 3: Silver ──
     let silverUSD = null;
     try {
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
       try { const r = await fetch("https://query1.finance.yahoo.com/v8/finance/chart/SI%3DF?interval=1d&range=1d", { headers: { Accept: "application/json" } }); if (r.ok) { const d = await r.json(); const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (p > 0) silverUSD = p; } } catch(e) {}
     }
     if (!silverUSD) silverUSD = goldPriceUSD / 85;
- 
+
     // ── STEP 4: IBJA ──
     let ibja24k = null, ibja22k = null, ibja995 = null, ibjaSource = "none";
     try {
@@ -101,7 +101,7 @@ export default async function handler(req, res) {
         if (r.ok) { const d = await r.json(); const p = d?.data?.pricecurrent ?? d?.data?.price; if (p && p > 10000) { ibja24k = p/10; ibja22k = ibja24k*0.916; ibja995 = ibja24k*0.995; ibjaSource = "moneycontrol-mcx"; } }
       } catch(e) {}
     }
- 
+
     // ── STEP 5: ETF config ──
     // Grams of 995 gold per 1 ETF unit on NSE/BSE
     // All major Indian gold ETFs track approximately 0.995g per unit
@@ -113,7 +113,7 @@ export default async function handler(req, res) {
       KOTAKGOLD:  0.9950,
       ICICIGOLD:  0.9950,
     };
- 
+
     const ETF_EXPENSE = {
       GOLDBEES:   0.0051,
       SBIGETS:    0.0065,
@@ -122,9 +122,9 @@ export default async function handler(req, res) {
       KOTAKGOLD:  0.0055,
       ICICIGOLD:  0.0050,
     };
- 
+
     const ALL_ETF_SYMBOLS = ["GOLDBEES", "SBIGETS", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
- 
+
     // BSE scrip codes for gold ETFs (BSE API fallback)
     const BSE_CODES = {
       GOLDBEES:   "590096",
@@ -134,14 +134,14 @@ export default async function handler(req, res) {
       KOTAKGOLD:  "590103",
       ICICIGOLD:  "590100",
     };
- 
+
     async function withTimeout(promise, ms = 7000) {
       return Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
     }
- 
+
     async function fetchETFQuote(sym) {
       const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
- 
+
       // Attempt 1: Yahoo Finance query1
       try {
         const r = await fetch(
@@ -156,7 +156,7 @@ export default async function handler(req, res) {
           }
         }
       } catch(e) {}
- 
+
       // Attempt 2: Yahoo Finance query2
       try {
         const r = await fetch(
@@ -171,7 +171,7 @@ export default async function handler(req, res) {
           }
         }
       } catch(e) {}
- 
+
       // Attempt 3: BSE India API
       const bseCode = BSE_CODES[sym];
       if (bseCode) {
@@ -188,7 +188,7 @@ export default async function handler(req, res) {
           }
         } catch(e) {}
       }
- 
+
       // Attempt 4: NSE India
       try {
         const r = await fetch(
@@ -202,7 +202,7 @@ export default async function handler(req, res) {
           if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
         }
       } catch(e) {}
- 
+
       // Attempt 5: Groww public API
       try {
         const r = await fetch(
@@ -216,14 +216,14 @@ export default async function handler(req, res) {
           if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
         }
       } catch(e) {}
- 
+
       return { nav: null, prevClose: null, live: false };
     }
- 
+
     const etfResults = await Promise.allSettled(
       ALL_ETF_SYMBOLS.map(sym => withTimeout(fetchETFQuote(sym)))
     );
- 
+
     // Raw unit prices (₹/unit from NSE/BSE)
     const etfNavsRaw = {}, etfPrevCloseRaw = {};
     etfResults.forEach((result, i) => {
@@ -233,7 +233,7 @@ export default async function handler(req, res) {
         if (result.value.prevClose) etfPrevCloseRaw[sym] = result.value.prevClose;
       }
     });
- 
+
     // Convert unit prices → ₹ per gram of gold
     // e.g. GOLDBEES at ₹72.50/unit ÷ 0.995g/unit = ₹72.86/gram
     const etfNavs = {};
@@ -247,44 +247,81 @@ export default async function handler(req, res) {
         etfPrevClose[sym] = etfPrevCloseRaw[sym] / unitGrams;
       }
     });
- 
-    // ── STEP 6: Historical sparklines (1 year, weekly) ──
-    async function fetchSparkline(sym) {
+
+    // ── STEP 6: Historical sparklines (multi-range) ──
+    //
+    // Each range key maps to the Yahoo Finance range + interval that best fits it.
+    // Data points include a Unix timestamp (t) and ₹/gram value (v).
+    //
+    // Frontend usage:
+    //   const points = etfSparklines[sym]?.[activeRange] ?? [];
+    //   const prices = points.map(p => p.v);
+    //   const labels = points.map(p => p.t ? new Date(p.t * 1000).toLocaleDateString() : "");
+    //
+    // For "1d": Yahoo returns the last 5 trading days at 5-min intervals.
+    // Filter to today's date on the frontend using the `t` timestamp.
+
+    const RANGE_CONFIG = [
+      { key: "1d",  range: "5d",  interval: "5m"  },
+      { key: "1w",  range: "5d",  interval: "1h"  },
+      { key: "1m",  range: "1mo", interval: "1d"  },
+      { key: "3m",  range: "3mo", interval: "1d"  },
+      { key: "6m",  range: "6mo", interval: "1wk" },
+      { key: "1y",  range: "1y",  interval: "1wk" },
+      { key: "3y",  range: "3y",  interval: "1mo" },
+      { key: "5y",  range: "5y",  interval: "1mo" },
+      { key: "ytd", range: "ytd", interval: "1d"  },
+    ];
+
+    async function fetchSparklineRange(sym, range, interval) {
       const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
+      const unitGrams = ETF_UNIT_GRAMS[sym] || 0.9950;
       for (const host of ["query1", "query2"]) {
         try {
           const r = await withTimeout(
-            fetch(`https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1wk&range=1y`,
-              { headers: { Accept: "application/json", "User-Agent": ua } }),
+            fetch(
+              `https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=${interval}&range=${range}`,
+              { headers: { Accept: "application/json", "User-Agent": ua } }
+            ),
             9000
           );
           if (!r.ok) continue;
           const d = await r.json();
           const result = d?.chart?.result?.[0];
+          const timestamps = result?.timestamp;
           const closes = result?.indicators?.quote?.[0]?.close;
-          if (!closes) continue;
-          // Convert sparkline unit prices → ₹/gram as well
-          const unitGrams = ETF_UNIT_GRAMS[sym] || 0.9950;
-          const filtered = closes
-            .map(c => c != null ? Math.round((c / unitGrams) * 100) / 100 : null)
+          if (!closes || closes.length < 2) continue;
+          const points = closes
+            .map((c, i) => c != null ? {
+              t: timestamps?.[i] ?? null,
+              v: Math.round((c / unitGrams) * 100) / 100,
+            } : null)
             .filter(Boolean);
-          if (filtered.length > 4) return filtered.slice(-52);
+          if (points.length >= 2) return points;
         } catch(e) {}
       }
       return null;
     }
- 
-    const sparklineResults = await Promise.allSettled(
-      ALL_ETF_SYMBOLS.map(sym => fetchSparkline(sym))
-    );
+
+    // Fetch all ranges for all ETFs in parallel
+    const sparklineJobs = [];
+    const sparklineIndex = [];
+    for (const sym of ALL_ETF_SYMBOLS) {
+      for (const { key, range, interval } of RANGE_CONFIG) {
+        sparklineJobs.push(fetchSparklineRange(sym, range, interval));
+        sparklineIndex.push({ sym, key });
+      }
+    }
+    const sparklineResults = await Promise.allSettled(sparklineJobs);
     const etfSparklines = {};
     sparklineResults.forEach((result, i) => {
-      const sym = ALL_ETF_SYMBOLS[i];
-      if (result.status === "fulfilled" && result.value?.length > 4) {
-        etfSparklines[sym] = result.value;
+      const { sym, key } = sparklineIndex[i];
+      if (result.status === "fulfilled" && result.value?.length >= 2) {
+        if (!etfSparklines[sym]) etfSparklines[sym] = {};
+        etfSparklines[sym][key] = result.value;
       }
     });
- 
+
     // Build and cache response
     cache = {
       price:       goldPriceUSD,
@@ -296,7 +333,7 @@ export default async function handler(req, res) {
       ibja995,
       etfNavs,        // ₹ per gram (already converted)
       etfPrevClose,   // ₹ per gram (already converted)
-      etfSparklines,  // weekly closes in ₹ per gram
+      etfSparklines,  // keyed by sym → range → [{t, v}]
       timestamp:   new Date().toISOString(),
       sources: {
         fx:   usdInr === 84.5 ? "fallback" : "live",
@@ -306,11 +343,11 @@ export default async function handler(req, res) {
       }
     };
     cacheTime = Date.now();
- 
+
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Cache-Control", "public, max-age=3600");
     res.status(200).json(cache);
- 
+
   } catch (err) {
     console.error("price API error:", err);
     if (cache) return res.status(200).json({ ...cache, cached: true, stale: true });
