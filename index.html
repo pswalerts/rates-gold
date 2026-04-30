@@ -184,27 +184,50 @@
     /* ── DUBAI ── */
     .dubai-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px 28px; transition:border-color 0.2s; }
     .dubai-card:hover { border-color:rgba(255,255,255,0.14); }
-    .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:8px; }
+    .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px; }
     .dubai-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
-    .dxb-fx-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:16px 18px; margin-bottom:22px; }
+    .dxb-fx-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:18px; }
     .dxb-fx-item { display:flex; flex-direction:column; gap:4px; }
     .dxb-fx-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
     .dxb-fx-val { font-family:var(--mono); font-size:18px; font-weight:600; color:var(--text); }
     .dxb-fx-sub { font-size:11px; color:var(--muted); }
-    .dubai-price-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px 24px; margin-bottom:22px; }
-    .dpg-item { display:flex; flex-direction:column; gap:5px; }
-    .dpg-label { font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); }
-    .dpg-val { font-family:var(--mono); font-size:22px; font-weight:700; color:var(--gold); }
-    .dpg-sub { font-size:11px; color:var(--muted); }
-    .dubai-divider { height:1px; background:var(--border); margin-bottom:18px; }
-    .dubai-spread-bar { display:flex; flex-direction:column; gap:10px; }
-    .dubai-spread-row { display:flex; justify-content:space-between; font-size:14px; }
-    .dubai-spread-row .dsn { color:var(--muted); }
-    .dubai-spread-row .dsv { font-family:var(--mono); font-weight:600; color:var(--gold); font-size:15px; }
-    .dubai-spread-row .dsv.pos { color:var(--green); }
-    .dubai-spread-row .dsv.neg { color:var(--red); }
-    .dubai-spread-row .dsv.dim { color:var(--text); font-weight:400; }
-    .dubai-note { margin-top:16px; font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }
+    /* New 3-col prices layout */
+    .dxb-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:18px; }
+    .dxb-col { display:flex; flex-direction:column; padding:16px 18px; gap:14px; }
+    .dxb-col:not(:last-child) { border-right:1px solid var(--border); }
+    .dxb-col-head { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); padding-bottom:10px; border-bottom:1px solid var(--border); }
+    .dxb-price-item { display:flex; flex-direction:column; gap:3px; }
+    .dxb-price-label { font-size:10px; color:var(--muted); letter-spacing:0.04em; }
+    .dxb-price-val { font-family:var(--mono); font-size:19px; font-weight:600; }
+    .dxb-price-val.aed { color:#f97316; }
+    .dxb-price-val.inr { color:var(--gold); }
+    .dxb-price-sub { font-size:10px; color:var(--muted); }
+    /* Spread col */
+    .dxb-spread-item { display:flex; flex-direction:column; gap:3px; }
+    .dxb-spread-label { font-size:10px; color:var(--muted); letter-spacing:0.04em; }
+    .dxb-spread-val { font-family:var(--mono); font-size:17px; font-weight:600; }
+    .dxb-spread-val.pos { color:var(--green); }
+    .dxb-spread-val.neg { color:var(--red); }
+    .dxb-spread-val.dim { color:var(--text); }
+    .dubai-note { margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }
+
+    /* ── HERO HISTORY PANEL ── */
+    .hero-hist-panel { margin-top:20px; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+    .hero-hist-tabs { display:flex; border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
+    .hero-hist-tabs::-webkit-scrollbar { display:none; }
+    .hero-hist-tab { flex-shrink:0; padding:9px 16px; font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; transition:all 0.2s; }
+    .hero-hist-tab:hover { color:var(--text); }
+    .hero-hist-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .hero-hist-body { display:grid; grid-template-columns:repeat(4,1fr); gap:0; }
+    .hero-hist-cell { padding:14px 18px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
+    .hero-hist-cell:nth-child(4n) { border-right:none; }
+    .hero-hist-cell:nth-last-child(-n+4) { border-bottom:none; }
+    .hero-hist-clabel { font-size:10px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; font-family:var(--mono); margin-bottom:6px; }
+    .hero-hist-cval { font-family:var(--mono); font-size:15px; font-weight:600; color:var(--text); }
+    .hero-hist-cchg { font-family:var(--mono); font-size:11px; margin-top:3px; }
+    .hero-hist-cchg.up { color:var(--green); }
+    .hero-hist-cchg.dn { color:var(--red); }
+    .hero-hist-cchg.flat { color:var(--muted); }
 
     /* ── FX BAR ── */
     .fx-bar { display:flex; align-items:center; gap:24px; margin-top:32px; padding:16px 24px; background:var(--surface); border:1px solid var(--border); border-radius:12px; flex-wrap:wrap; }
@@ -257,22 +280,23 @@
       .header-right { gap:10px; }
       .logo-domain { font-size:17px; }
       .toggle-btn { padding:6px 14px; font-size:12px; }
-      .dubai-price-grid { grid-template-columns:1fr 1fr; gap:12px; }
-      .dpg-val { font-size:18px; }
       .dxb-fx-strip { grid-template-columns:1fr 1fr; }
+      .dxb-3col { grid-template-columns:1fr; }
+      .dxb-col:not(:last-child) { border-right:none; border-bottom:1px solid var(--border); }
       .fx-bar { overflow-x:auto; flex-wrap:nowrap; gap:16px; }
       .ibja-rates { grid-template-columns:repeat(3,1fr); gap:8px; }
       .ibja-item-val { font-size:18px; }
       .tl-row { flex-wrap:wrap; gap:12px; }
       .tl-price-right { text-align:left; }
-      /* PATCH 5: hide history panel on mobile */
+      .hero-hist-body { grid-template-columns:repeat(2,1fr); }
+      /* PATCH 5: hide ETF history panel on mobile */
       #etfHistPanel { display:none !important; }
     }
     @media (max-width:480px) {
       .retailer-grid { grid-template-columns:1fr 1fr; }
-      .dubai-price-grid { grid-template-columns:1fr; }
       .ibja-rates { grid-template-columns:1fr 1fr; }
       .dxb-fx-strip { grid-template-columns:1fr; }
+      .hero-hist-body { grid-template-columns:1fr 1fr; }
     }
     @media (max-width:380px) { #statusText { display:none; } }
   </style>
@@ -373,6 +397,20 @@
           <span class="sf-val" id="sf-result-alt">—</span>
           <span class="sf-label" style="margin-left:4px">/g calculated</span>
         </div>
+
+        <!-- ── HISTORICAL CHANGE PANEL ── -->
+        <div class="hero-hist-panel" id="heroHistPanel" style="display:none;">
+          <div class="hero-hist-tabs">
+            <button class="hero-hist-tab active" onclick="showHistTab('1D',this)">1 Day</button>
+            <button class="hero-hist-tab" onclick="showHistTab('1W',this)">1 Week</button>
+            <button class="hero-hist-tab" onclick="showHistTab('1M',this)">1 Month</button>
+            <button class="hero-hist-tab" onclick="showHistTab('3M',this)">3 Months</button>
+            <button class="hero-hist-tab" onclick="showHistTab('6M',this)">6 Months</button>
+            <button class="hero-hist-tab" onclick="showHistTab('1Y',this)">1 Year</button>
+            <button class="hero-hist-tab" onclick="showHistTab('YTD',this)">YTD</button>
+          </div>
+          <div class="hero-hist-body" id="heroHistBody"></div>
+        </div>
       </div>
 
       <!-- ── PHYSICAL GOLD ── -->
@@ -431,6 +469,8 @@
           <div class="dubai-title">🇦🇪 Dubai · Live Gold Prices</div>
           <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">—</div>
         </div>
+
+        <!-- FX strip -->
         <div class="dxb-fx-strip">
           <div class="dxb-fx-item">
             <div class="dxb-fx-label">USD / INR</div>
@@ -448,57 +488,70 @@
             <div class="dxb-fx-sub">international spot</div>
           </div>
         </div>
-        <div class="dubai-price-grid">
-          <div class="dpg-item">
-            <div class="dpg-label">24K · per gram (AED)</div>
-            <div class="dpg-val" id="dxb-24k-aed">—</div>
-            <div class="dpg-sub">Dubai local price</div>
+
+        <!-- 3-column price grid: AED | INR | Spread -->
+        <div class="dxb-3col">
+          <!-- Col 1: AED prices -->
+          <div class="dxb-col">
+            <div class="dxb-col-head">🇦🇪 Dubai Rates (AED)</div>
+            <div class="dxb-price-item">
+              <div class="dxb-price-label">24K · per gram</div>
+              <div class="dxb-price-val aed" id="dxb-24k-aed">—</div>
+              <div class="dxb-price-sub">local price</div>
+            </div>
+            <div class="dxb-price-item">
+              <div class="dxb-price-label">22K · per gram</div>
+              <div class="dxb-price-val aed" id="dxb-22k-aed">—</div>
+              <div class="dxb-price-sub">local price</div>
+            </div>
+            <div class="dxb-price-item">
+              <div class="dxb-price-label">18K · per gram</div>
+              <div class="dxb-price-val aed" id="dxb-18k-aed">—</div>
+              <div class="dxb-price-sub">local price</div>
+            </div>
           </div>
-          <div class="dpg-item">
-            <div class="dpg-label">24K · per gram (INR equiv.)</div>
-            <div class="dpg-val" id="dxb-24k-inr">—</div>
-            <div class="dpg-sub">at live AED/INR</div>
+
+          <!-- Col 2: INR equivalent -->
+          <div class="dxb-col">
+            <div class="dxb-col-head">🇮🇳 INR Equivalent</div>
+            <div class="dxb-price-item">
+              <div class="dxb-price-label">24K · per gram</div>
+              <div class="dxb-price-val inr" id="dxb-24k-inr">—</div>
+              <div class="dxb-price-sub">at live AED/INR</div>
+            </div>
+            <div class="dxb-price-item">
+              <div class="dxb-price-label">22K · per gram</div>
+              <div class="dxb-price-val inr" id="dxb-22k-inr">—</div>
+              <div class="dxb-price-sub">at live AED/INR</div>
+            </div>
+            <div class="dxb-price-item">
+              <div class="dxb-price-label">AED / INR rate</div>
+              <div class="dxb-price-val inr" style="font-size:15px;" id="dxb-aed-inr">—</div>
+              <div class="dxb-price-sub">live exchange rate</div>
+            </div>
           </div>
-          <div class="dpg-item">
-            <div class="dpg-label">22K · per gram (AED)</div>
-            <div class="dpg-val" id="dxb-22k-aed">—</div>
-            <div class="dpg-sub">Dubai local price</div>
-          </div>
-          <div class="dpg-item">
-            <div class="dpg-label">22K · per gram (INR equiv.)</div>
-            <div class="dpg-val" id="dxb-22k-inr">—</div>
-            <div class="dpg-sub">at live AED/INR</div>
-          </div>
-          <div class="dpg-item">
-            <div class="dpg-label">18K · per gram (AED)</div>
-            <div class="dpg-val" id="dxb-18k-aed">—</div>
-            <div class="dpg-sub">Dubai local price</div>
-          </div>
-          <div class="dpg-item">
-            <div class="dpg-label">AED / INR rate</div>
-            <div class="dpg-val" id="dxb-aed-inr">—</div>
-            <div class="dpg-sub">live exchange rate</div>
+
+          <!-- Col 3: India vs Dubai spread -->
+          <div class="dxb-col">
+            <div class="dxb-col-head">📊 India vs Dubai</div>
+            <div class="dxb-spread-item">
+              <div class="dxb-spread-label">India 24K</div>
+              <div class="dxb-spread-val dim" id="ds-india">—</div>
+              <div class="dxb-price-sub">IBJA / calculated</div>
+            </div>
+            <div class="dxb-spread-item">
+              <div class="dxb-spread-label">Dubai 24K (INR)</div>
+              <div class="dxb-spread-val dim" id="ds-dubai">—</div>
+              <div class="dxb-price-sub">converted at live rate</div>
+            </div>
+            <div class="dxb-spread-item">
+              <div class="dxb-spread-label">Spread</div>
+              <div class="dxb-spread-val" id="ds-spread">—</div>
+              <div class="dxb-price-sub" id="ds-spreadpct">—</div>
+            </div>
           </div>
         </div>
-        <div class="dubai-divider"></div>
-        <div class="dubai-spread-bar">
-          <div class="dubai-spread-row">
-            <span class="dsn">India 24K (IBJA / calculated)</span>
-            <span class="dsv dim" id="ds-india">—</span>
-          </div>
-          <div class="dubai-spread-row">
-            <span class="dsn">Dubai 24K (INR equivalent)</span>
-            <span class="dsv" id="ds-dubai">—</span>
-          </div>
-          <div class="dubai-spread-row">
-            <span class="dsn">Spread (India − Dubai)</span>
-            <span class="dsv pos" id="ds-spread">—</span>
-          </div>
-          <div class="dubai-spread-row">
-            <span class="dsn">Spread %</span>
-            <span class="dsv dim" id="ds-spreadpct">—</span>
-          </div>
-        </div>
+
         <div class="dubai-note">
           Dubai gold has no import duty locally. India levies ~15% import duty on international spot.
           Buying in Dubai only makes financial sense within personal allowance limits (20g duty-free for women, 10g for men on valid passport).
@@ -937,6 +990,100 @@
   }
 
   /* ══════════════════════════════════════════
+     HERO HISTORICAL CHANGE PANEL
+     Uses the GOLDBEES sparkline (weekly, ~52 pts) as a proxy for gold price history.
+     Tabs: 1D, 1W, 1M, 3M, 6M, 1Y, YTD
+  ══════════════════════════════════════════ */
+  let _heroHistData = null; // { sparkline:[], current:₹, xauUsd:number, usdInr:number, ibja24k }
+
+  function buildHeroHistPanel(india24, sparklines) {
+    // Use GOLDBEES weekly sparkline as gold price proxy (₹/gram scale)
+    const spark = sparklines?.GOLDBEES || sparklines?.HDFCMFGETF || sparklines?.KOTAKGOLD;
+    if (!spark || spark.length < 4) return;
+    _heroHistData = { spark, current: india24 };
+    document.getElementById("heroHistPanel").style.display = "block";
+    showHistTab("1D", document.querySelector(".hero-hist-tab.active") || document.querySelector(".hero-hist-tab"));
+  }
+
+  function showHistTab(period, btn) {
+    // Update active tab
+    document.querySelectorAll(".hero-hist-tab").forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+
+    if (!_heroHistData) return;
+    const { spark, current } = _heroHistData;
+    const n = spark.length; // up to 52 weekly data points
+
+    // Map period to how many weeks back we look
+    const now = new Date();
+    const ytdWeeks = Math.ceil((now - new Date(now.getFullYear(), 0, 1)) / (7 * 86400000));
+
+    const periodMap = {
+      "1D":  { weeks: 0,  label: "vs yesterday",   approx: true  },
+      "1W":  { weeks: 1,  label: "vs 1 week ago"              },
+      "1M":  { weeks: 4,  label: "vs 1 month ago"             },
+      "3M":  { weeks: 13, label: "vs 3 months ago"            },
+      "6M":  { weeks: 26, label: "vs 6 months ago"            },
+      "1Y":  { weeks: 52, label: "vs 1 year ago"              },
+      "YTD": { weeks: ytdWeeks, label: "year-to-date"         },
+    };
+
+    const p = periodMap[period] || periodMap["1Y"];
+    let weeksBack = Math.min(p.weeks, n - 1);
+
+    // For 1D we have no intraday — use prevClose approximation (last 2 data points diff / 7 = daily est.)
+    let pastPrice;
+    if (period === "1D") {
+      // Estimate: last weekly candle divided by 7 for daily
+      const lastWeekly = spark[n - 1];
+      const prevWeekly = spark[n - 2] || lastWeekly;
+      const weeklyChg  = lastWeekly - prevWeekly;
+      pastPrice = current - (weeklyChg / 7);
+    } else {
+      pastPrice = weeksBack > 0 ? spark[n - 1 - weeksBack] : spark[0];
+    }
+
+    const chg    = current - pastPrice;
+    const chgPct = ((chg / pastPrice) * 100);
+    const chgDir = chg >= 0 ? "up" : "dn";
+    const chgSign = chg >= 0 ? "+" : "−";
+
+    // Build 4 cells: Current Price | Change ₹ | Change % | Reference Price
+    const cells = [
+      {
+        label: "Current Price",
+        val: fmt(current),
+        chg: null,
+      },
+      {
+        label: `Change (${p.label})`,
+        val: chgSign + fmt(Math.abs(chg)),
+        chg: chgDir,
+        chgTxt: chgSign + Math.abs(chgPct).toFixed(2) + "%",
+      },
+      {
+        label: period === "1D" ? "Est. Yesterday" : `Price ${p.label.replace("vs ", "")}`,
+        val: fmt(pastPrice),
+        chg: null,
+      },
+      {
+        label: period + " Performance",
+        val: chgSign + Math.abs(chgPct).toFixed(2) + "%",
+        chg: chgDir,
+        chgTxt: chgDir === "up" ? "▲ Gain" : "▼ Loss",
+      },
+    ];
+
+    document.getElementById("heroHistBody").innerHTML = cells.map(c => `
+      <div class="hero-hist-cell">
+        <div class="hero-hist-clabel">${c.label}</div>
+        <div class="hero-hist-cval ${c.chg ? ("hero-hist-cchg " + c.chg) : ""}" style="font-size:${c.chg ? "18px" : "15px"};">${c.val}</div>
+        ${c.chg ? `<div class="hero-hist-cchg ${c.chg}">${c.chgTxt}</div>` : ""}
+      </div>
+    `).join("");
+  }
+
+  /* ══════════════════════════════════════════
      MAIN LOAD — PATCH 4: ETFs via server data only
   ══════════════════════════════════════════ */
   async function loadPrice() {
@@ -1026,6 +1173,9 @@
       const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfPrevClose, data.etfSparklines);
       buildTrafficLight(india24, etfNavsForTL);
 
+      /* Hero historical change panel */
+      buildHeroHistPanel(india24, data.etfSparklines);
+
       /* Dubai */
       document.getElementById("dxb-usd-inr").textContent       = "₹ " + usdInr.toFixed(2);
       document.getElementById("dxb-aed-inr-strip").textContent  = "₹ " + aedInr.toFixed(4);
@@ -1041,7 +1191,7 @@
       document.getElementById("ds-dubai").textContent = fmt(dubai24Inr);
       const spreadEl = document.getElementById("ds-spread");
       spreadEl.textContent = (spread >= 0 ? "+" : "−") + fmt(Math.abs(spread));
-      spreadEl.className   = "dsv " + (spread >= 0 ? "pos" : "neg");
+      spreadEl.className   = "dxb-spread-val " + (spread >= 0 ? "pos" : "neg");
       document.getElementById("ds-spreadpct").textContent = Math.abs(spreadPct) + "% " + (spread >= 0 ? "India pricier" : "Dubai pricier");
 
       /* FX bar */
