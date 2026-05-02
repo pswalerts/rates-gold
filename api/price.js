@@ -35,7 +35,8 @@ export default async function handler(req, res) {
     if (!goldPriceUSD && METAL_PRICE_API_KEY) { try { const r = await fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${METAL_PRICE_API_KEY}&base=XAU&currencies=USD`); if (r.ok) { const d = await r.json(); if (d?.rates?.USD > 0) { goldPriceUSD = d.rates.USD; goldSource = "metalpriceapi.com"; } } } catch(e) {} }
     if (!goldPriceUSD) throw new Error("All gold price sources failed");
 
-    const calc24k = (goldPriceUSD / 31.1035) * usdInr;
+    const TROY = 31.1035;
+    const calc24k = (goldPriceUSD / TROY) * usdInr;
 
     // ── STEP 3: Silver XAG/USD ──
     let silverUSD = null;
@@ -44,12 +45,12 @@ export default async function handler(req, res) {
     if (!silverUSD) { try { const r = await fetch("https://query1.finance.yahoo.com/v8/finance/chart/SI%3DF?interval=1d&range=1d", { headers: { Accept: "application/json" } }); if (r.ok) { const d = await r.json(); const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (p > 0) silverUSD = p; } } catch(e) {} }
     if (!silverUSD) silverUSD = goldPriceUSD / 85;
 
-    // ── STEP 4: IBJA India gold rate — 8 sources ──
-    // IBJA 999 purity rate is per 10 grams. We convert to per gram.
-    // Sanity check: should be within ±15% of calc24k
+    // ── STEP 4: IBJA India gold rate ──
+    // IBJA 999 purity rate — we want ₹ per gram (999 purity, 24K).
+    // Sanity: must be within ±15% of international spot converted to INR.
     let ibja24k = null, ibja22k = null, ibja995 = null, ibjaSource = "none";
 
-    const ibjaCheck = (val) => val > calc24k * 0.85 && val < calc24k * 1.20;
+    const ibjaCheck = (val) => val > 0 && val > calc24k * 0.85 && val < calc24k * 1.20;
 
     // Source 1: ibjarates.com official API
     if (!ibja24k) {
@@ -60,15 +61,16 @@ export default async function handler(req, res) {
         if (r.ok) {
           const d = await r.json();
           console.log("ibjarates.com response:", JSON.stringify(d).slice(0, 300));
-          // Try many possible key names
           const g999 = d?.Gold999 ?? d?.gold999 ?? d?.["999"] ?? d?.rate999 ?? d?.Rate999 ?? d?.price999;
           const g916 = d?.Gold916 ?? d?.gold916 ?? d?.["916"] ?? d?.rate916 ?? d?.Rate916;
           const g995 = d?.Gold995 ?? d?.gold995 ?? d?.["995"] ?? d?.rate995 ?? d?.Rate995;
-          if (g999 > 1000) {
-            const per10g = g999 > 100000 ? g999 / 10 : g999; // some APIs return per 10g
-            if (ibjaCheck(per10g)) {
-              ibja24k = per10g; ibja22k = g916 ? (g916 > 100000 ? g916/10 : g916) : ibja24k*0.916;
-              ibja995 = g995 ? (g995 > 100000 ? g995/10 : g995) : ibja24k*0.995;
+          if (g999 > 0) {
+            // IBJA publishes per 10g — divide if value looks like per-10g
+            const per1g = g999 > 10000 ? g999 / 10 : g999;
+            if (ibjaCheck(per1g)) {
+              ibja24k = per1g;
+              ibja22k = g916 ? (g916 > 10000 ? g916 / 10 : g916) : ibja24k * 0.916;
+              ibja995 = g995 ? (g995 > 10000 ? g995 / 10 : g995) : ibja24k * 0.995;
               ibjaSource = "ibjarates.com";
             }
           }
@@ -76,7 +78,35 @@ export default async function handler(req, res) {
       } catch(e) { console.log("ibjarates.com error:", e.message); }
     }
 
-    // Source 2: Moneycontrol MCX Gold (per 10g INR)
+    // Source 2: Yahoo Finance MCX Gold continuous contract (GOLDM.MCX)
+    // Price is per 10g in INR on MCX — divide by 10 to get per gram
+    if (!ibja24k) {
+      const mcxSymbols = ["GOLDM.MCX", "GOLD.MCX"];
+      for (const sym of mcxSymbols) {
+        if (ibja24k) break;
+        try {
+          const r = await fetch(
+            `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=1d`,
+            { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0 (compatible; rateof.gold/1.0)" } }
+          );
+          if (r.ok) {
+            const d = await r.json();
+            const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
+            if (p > 0) {
+              // MCX gold futures price is per 10g in INR
+              const per1g = p / 10;
+              if (ibjaCheck(per1g)) {
+                ibja24k = per1g; ibja22k = ibja24k * 0.916; ibja995 = ibja24k * 0.995;
+                ibjaSource = `yahoo-mcx-${sym}`;
+                console.log(`IBJA from ${sym}:`, ibja24k.toFixed(2));
+              }
+            }
+          }
+        } catch(e) { console.log(`Yahoo MCX ${sym} error:`, e.message); }
+      }
+    }
+
+    // Source 3: Moneycontrol MCX Gold (per 10g INR)
     if (!ibja24k) {
       try {
         const r = await fetch(
@@ -86,15 +116,15 @@ export default async function handler(req, res) {
         if (r.ok) {
           const d = await r.json();
           const p = parseFloat(d?.data?.pricecurrent ?? d?.data?.price ?? 0);
-          if (p > 10000) {
+          if (p > 0) {
             const per1g = p / 10;
-            if (ibjaCheck(per1g)) { ibja24k = per1g; ibja22k = ibja24k*0.916; ibja995 = ibja24k*0.995; ibjaSource = "moneycontrol-mcx"; }
+            if (ibjaCheck(per1g)) { ibja24k = per1g; ibja22k = ibja24k * 0.916; ibja995 = ibja24k * 0.995; ibjaSource = "moneycontrol-mcx"; }
           }
         }
       } catch(e) { console.log("MCX moneycontrol error:", e.message); }
     }
 
-    // Source 3: GoodReturns gold rate today (scrape JSON embedded in page)
+    // Source 4: GoodReturns gold rate today
     if (!ibja24k) {
       try {
         const r = await fetch("https://www.goodreturns.in/gold-rates/", {
@@ -102,63 +132,28 @@ export default async function handler(req, res) {
         });
         if (r.ok) {
           const html = await r.text();
-          // GoodReturns embeds rate in multiple places — look for 24K per gram pattern
-          const m = html.match(/24\s*[Kk](?:arat)?[^₹]*₹\s*([\d,]+)/);
-          if (m) {
-            const val = parseFloat(m[1].replace(/,/g, ""));
-            if (val > 1000 && ibjaCheck(val)) {
-              ibja24k = val; ibja22k = ibja24k*0.916; ibja995 = ibja24k*0.995;
-              ibjaSource = "goodreturns.in";
-            }
-          }
-          // Also try JSON-LD schema
-          const jsonMatch = html.match(/"price"\s*:\s*"?([\d.]+)"?/);
-          if (!ibja24k && jsonMatch) {
-            const val = parseFloat(jsonMatch[1]);
-            if (val > 1000 && ibjaCheck(val)) {
-              ibja24k = val; ibja22k = ibja24k*0.916; ibja995 = ibja24k*0.995;
-              ibjaSource = "goodreturns.in-json";
+          // Look for 24K per gram figure in the page (goodreturns typically shows ₹XXXX per gram)
+          const patterns = [
+            /24\s*[Kk](?:arat)?\s*(?:gold)?\s*(?:rate|price)?[^₹\d]*₹?\s*([\d,]+)/i,
+            /"price"\s*:\s*"?([\d.]+)"?/,
+            /per\s*gram[^₹\d]*₹\s*([\d,]+)/i,
+          ];
+          for (const pat of patterns) {
+            const m = html.match(pat);
+            if (m) {
+              const val = parseFloat(m[1].replace(/,/g, ""));
+              if (val > 1000 && ibjaCheck(val)) {
+                ibja24k = val; ibja22k = ibja24k * 0.916; ibja995 = ibja24k * 0.995;
+                ibjaSource = "goodreturns.in";
+                break;
+              }
             }
           }
         }
       } catch(e) { console.log("goodreturns error:", e.message); }
     }
 
-    // Source 4: Yahoo Finance MCX Gold futures (GOLDM.MCX or GC=F converted)
-    if (!ibja24k) {
-      try {
-        // MCX Gold (GOLDM.MCX on Yahoo) — price is per 10g in INR
-        const r = await fetch(
-          "https://query1.finance.yahoo.com/v8/finance/chart/GOLD.MCX?interval=1d&range=1d",
-          { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } }
-        );
-        if (r.ok) {
-          const d = await r.json();
-          const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
-          if (p > 10000) {
-            const per1g = p / 10;
-            if (ibjaCheck(per1g)) { ibja24k = per1g; ibja22k = ibja24k*0.916; ibja995 = ibja24k*0.995; ibjaSource = "yahoo-mcx"; }
-          }
-        }
-      } catch(e) { console.log("Yahoo MCX error:", e.message); }
-    }
-
-    // Source 5: Investing.com India gold (requires no auth for basic data)
-    if (!ibja24k) {
-      try {
-        const r = await fetch(
-          "https://api.investing.com/api/financials/historical/1175953?period=P1W",
-          { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0", "X-Requested-With": "XMLHttpRequest", Referer: "https://in.investing.com/" } }
-        );
-        if (r.ok) {
-          const d = await r.json();
-          const p = d?.data?.[0]?.last_close ?? d?.data?.[0]?.close;
-          if (p > 1000 && ibjaCheck(p)) { ibja24k = p; ibja22k = ibja24k*0.916; ibja995 = ibja24k*0.995; ibjaSource = "investing.com"; }
-        }
-      } catch(e) {}
-    }
-
-    // Source 6: Rupeezy / Samco MCX commodity API (free public endpoint)
+    // Source 5: Rupeezy MCX commodity API
     if (!ibja24k) {
       try {
         const r = await fetch(
@@ -168,66 +163,46 @@ export default async function handler(req, res) {
         if (r.ok) {
           const d = await r.json();
           const p = parseFloat(d?.data?.ltp ?? d?.data?.close ?? d?.ltp ?? 0);
-          if (p > 10000) {
+          if (p > 0) {
             const per1g = p / 10;
-            if (ibjaCheck(per1g)) { ibja24k = per1g; ibja22k = ibja24k*0.916; ibja995 = ibja24k*0.995; ibjaSource = "rupeezy-mcx"; }
+            if (ibjaCheck(per1g)) { ibja24k = per1g; ibja22k = ibja24k * 0.916; ibja995 = ibja24k * 0.995; ibjaSource = "rupeezy-mcx"; }
           }
         }
       } catch(e) {}
     }
 
-    // Source 7: Zerodha Kite instruments API (public, no auth for quote)
+    // Source 6: Investing.com India gold
     if (!ibja24k) {
       try {
-        // MCX Gold continuous contract instrument token
         const r = await fetch(
-          "https://api.kite.trade/instruments/MCX",
-          { headers: { Accept: "text/csv", "User-Agent": "Mozilla/5.0" } }
+          "https://api.investing.com/api/financials/historical/1175953?period=P1W",
+          { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0", "X-Requested-With": "XMLHttpRequest", Referer: "https://in.investing.com/" } }
         );
         if (r.ok) {
-          const csv = await r.text();
-          const line = csv.split("\n").find(l => l.includes("GOLD") && l.includes("MCX") && !l.includes("MICRO"));
-          if (line) {
-            const token = line.split(",")[0];
-            if (token) {
-              const qr = await fetch(`https://api.kite.trade/quote?i=MCX:${token}`, {
-                headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" }
-              });
-              if (qr.ok) {
-                const qd = await qr.json();
-                const p = Object.values(qd?.data ?? {})[0]?.last_price;
-                if (p > 10000) {
-                  const per1g = p / 10;
-                  if (ibjaCheck(per1g)) { ibja24k = per1g; ibja22k = ibja24k*0.916; ibja995 = ibja24k*0.995; ibjaSource = "zerodha-mcx"; }
-                }
-              }
-            }
-          }
+          const d = await r.json();
+          const p = d?.data?.[0]?.last_close ?? d?.data?.[0]?.close;
+          if (p > 0 && ibjaCheck(p)) { ibja24k = p; ibja22k = ibja24k * 0.916; ibja995 = ibja24k * 0.995; ibjaSource = "investing.com"; }
         }
       } catch(e) {}
     }
 
-    // Source 8: Calculate from international spot with India MCX premium (~6.5%)
-    // This is a reliable fallback — India MCX gold tracks international spot with a premium
-    // that includes import duty, making charges markup, etc.
-    // We mark this as "calculated" so the frontend shows it appropriately
+    // NO fake fallback — if all IBJA sources fail, return null.
+    // The frontend handles this gracefully: shows "PENDING" and falls back to
+    // international spot (calc24k) for retailer/ETF/Dubai analysis.
     if (!ibja24k) {
-      // India MCX premium over international spot is typically 5-8%
-      // Use 6.5% as the average — this gets us very close to IBJA rate
-      ibja24k = calc24k * 1.065;
-      ibja22k = ibja24k * 0.916;
-      ibja995 = ibja24k * 0.995;
-      ibjaSource = "calculated-mcx-premium";
-      console.log("IBJA: using calculated MCX premium fallback:", ibja24k);
+      console.log("IBJA: all sources failed — returning null (frontend will use calc24k)");
+      ibjaSource = "unavailable";
+    } else {
+      console.log("IBJA source:", ibjaSource, "24K per gram:", ibja24k.toFixed(2));
     }
 
-    console.log("IBJA source:", ibjaSource, "24K:", ibja24k?.toFixed(2));
-
-    // ── STEP 5: ETF config ──
-    const ETF_UNIT_GRAMS = { GOLDBEES: 0.9950, SBIGETS: 0.9950, HDFCMFGETF: 0.9950, AXISGOLD: 0.9950, KOTAKGOLD: 0.9950, ICICIGOLD: 0.9950 };
+    // ── STEP 5: ETF NAV → ₹ per gram ──
+    // Each Indian gold ETF unit holds approximately 0.9950g of 999.9 gold.
+    // The unit trades on NSE/BSE at ~₹70–80/unit (as of 2025).
+    // ₹/gram = unitPrice / gramsPerUnit
+    const GRAMS_PER_UNIT = 0.9950;
     const ALL_ETF_SYMBOLS = ["GOLDBEES", "SBIGETS", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
     const BSE_CODES = { GOLDBEES: "590096", SBIGETS: "590091", HDFCMFGETF: "590094", AXISGOLD: "590102", KOTAKGOLD: "590103", ICICIGOLD: "590100" };
-    const ETF_EXPENSE = { GOLDBEES: 0.0051, SBIGETS: 0.0065, HDFCMFGETF: 0.0059, AXISGOLD: 0.0060, KOTAKGOLD: 0.0055, ICICIGOLD: 0.0050 };
 
     async function withTimeout(promise, ms = 7000) {
       return Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
@@ -235,12 +210,50 @@ export default async function handler(req, res) {
 
     async function fetchETFQuote(sym) {
       const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
-      try { const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`, { headers: { Accept: "application/json", "User-Agent": ua } }); if (r.ok) { const d = await r.json(); const meta = d?.chart?.result?.[0]?.meta; if (meta?.regularMarketPrice > 0) return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true }; } } catch(e) {}
-      try { const r = await fetch(`https://query2.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`, { headers: { Accept: "application/json", "User-Agent": ua } }); if (r.ok) { const d = await r.json(); const meta = d?.chart?.result?.[0]?.meta; if (meta?.regularMarketPrice > 0) return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true }; } } catch(e) {}
+      // Yahoo Finance NSE (primary)
+      for (const host of ["query1", "query2"]) {
+        try {
+          const r = await fetch(`https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`, { headers: { Accept: "application/json", "User-Agent": ua } });
+          if (r.ok) {
+            const d = await r.json();
+            const meta = d?.chart?.result?.[0]?.meta;
+            if (meta?.regularMarketPrice > 0) return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true };
+          }
+        } catch(e) {}
+      }
+      // BSE fallback
       const bseCode = BSE_CODES[sym];
-      if (bseCode) { try { const r = await fetch(`https://api.bseindia.com/BseIndiaAPI/api/getScripHeaderData/w?Debtflag=&scripcode=${bseCode}&seriesid=`, { headers: { Accept: "application/json", Referer: "https://www.bseindia.com/", "User-Agent": ua } }); if (r.ok) { const d = await r.json(); const ltp = parseFloat(d?.CurrRate || d?.Ltp || d?.LastRate || 0); const prev = parseFloat(d?.PrevClose || d?.PrevRate || 0); if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true }; } } catch(e) {} }
-      try { const r = await fetch(`https://www.nseindia.com/api/quote-equity?symbol=${sym}`, { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://www.nseindia.com/", Cookie: "nsit=; nseappid=" } }); if (r.ok) { const d = await r.json(); const ltp = d?.priceInfo?.lastPrice ?? d?.priceInfo?.close; const prev = d?.priceInfo?.previousClose; if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true }; } } catch(e) {}
-      try { const r = await fetch(`https://groww.in/v1/api/stocks_data/v1/tr_live_data/segment/NSECM/exchange_token/${sym}/`, { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://groww.in/" } }); if (r.ok) { const d = await r.json(); const ltp = d?.ltp || d?.price; const prev = d?.close || d?.previousClose; if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true }; } } catch(e) {}
+      if (bseCode) {
+        try {
+          const r = await fetch(`https://api.bseindia.com/BseIndiaAPI/api/getScripHeaderData/w?Debtflag=&scripcode=${bseCode}&seriesid=`, { headers: { Accept: "application/json", Referer: "https://www.bseindia.com/", "User-Agent": ua } });
+          if (r.ok) {
+            const d = await r.json();
+            const ltp  = parseFloat(d?.CurrRate || d?.Ltp || d?.LastRate || 0);
+            const prev = parseFloat(d?.PrevClose || d?.PrevRate || 0);
+            if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
+          }
+        } catch(e) {}
+      }
+      // NSE fallback
+      try {
+        const r = await fetch(`https://www.nseindia.com/api/quote-equity?symbol=${sym}`, { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://www.nseindia.com/", Cookie: "nsit=; nseappid=" } });
+        if (r.ok) {
+          const d = await r.json();
+          const ltp  = d?.priceInfo?.lastPrice ?? d?.priceInfo?.close;
+          const prev = d?.priceInfo?.previousClose;
+          if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
+        }
+      } catch(e) {}
+      // Groww fallback
+      try {
+        const r = await fetch(`https://groww.in/v1/api/stocks_data/v1/tr_live_data/segment/NSECM/exchange_token/${sym}/`, { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://groww.in/" } });
+        if (r.ok) {
+          const d = await r.json();
+          const ltp  = d?.ltp || d?.price;
+          const prev = d?.close || d?.previousClose;
+          if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
+        }
+      } catch(e) {}
       return { nav: null, prevClose: null, live: false };
     }
 
@@ -254,15 +267,19 @@ export default async function handler(req, res) {
       }
     });
 
+    // Convert unit prices (₹/unit) → ₹/gram by dividing by grams per unit
     const etfNavs = {}, etfPrevClose = {};
     ALL_ETF_SYMBOLS.forEach(sym => {
-      const liveUnit = etfNavsRaw[sym];
+      const liveUnit = etfNavsRaw[sym]; // e.g. GOLDBEES ≈ ₹75 per unit
       if (liveUnit > 0) {
-        const gramsPerUnit = liveUnit / calc24k;
-        etfNavs[sym] = calc24k;
-        if (etfPrevCloseRaw[sym]) etfPrevClose[sym] = etfPrevCloseRaw[sym] / gramsPerUnit;
+        etfNavs[sym]     = liveUnit / GRAMS_PER_UNIT;           // ₹ per gram
+        if (etfPrevCloseRaw[sym]) {
+          etfPrevClose[sym] = etfPrevCloseRaw[sym] / GRAMS_PER_UNIT; // prev close ₹/gram
+        }
       }
     });
+
+    console.log("ETF navs (₹/gram):", Object.entries(etfNavs).map(([k,v]) => `${k}:${v.toFixed(0)}`).join(", "));
 
     // ── STEP 6: Historical sparklines (multi-range) ──
     const RANGE_CONFIG = [
@@ -279,8 +296,8 @@ export default async function handler(req, res) {
 
     async function fetchSparklineRange(sym, range, interval) {
       const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
-      const liveUnitNav = etfNavsRaw[sym];
-      const scale = (liveUnitNav > 0) ? (calc24k / liveUnitNav) : (1 / (ETF_UNIT_GRAMS[sym] || 0.9950));
+      // Scale factor: convert unit price → ₹/gram using same GRAMS_PER_UNIT
+      const scale = 1 / GRAMS_PER_UNIT;
       for (const host of ["query1", "query2"]) {
         try {
           const r = await withTimeout(fetch(`https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=${interval}&range=${range}`, { headers: { Accept: "application/json", "User-Agent": ua } }), 9000);
@@ -288,9 +305,11 @@ export default async function handler(req, res) {
           const d = await r.json();
           const result = d?.chart?.result?.[0];
           const timestamps = result?.timestamp;
-          const closes = result?.indicators?.quote?.[0]?.close;
+          const closes     = result?.indicators?.quote?.[0]?.close;
           if (!closes || closes.length < 2) continue;
-          const points = closes.map((c, i) => c != null ? { t: timestamps?.[i] ?? null, v: Math.round((c * scale) * 100) / 100 } : null).filter(Boolean);
+          const points = closes
+            .map((c, i) => c != null ? { t: timestamps?.[i] ?? null, v: Math.round((c * scale) * 100) / 100 } : null)
+            .filter(Boolean);
           if (points.length >= 2) return points;
         } catch(e) {}
       }
@@ -315,15 +334,22 @@ export default async function handler(req, res) {
     });
 
     cache = {
-      price: goldPriceUSD, usdInr, aedInr, silverPrice: silverUSD,
-      ibja24k, ibja22k, ibja995,
-      etfNavs, etfPrevClose, etfSparklines,
+      price:      goldPriceUSD,
+      usdInr,
+      aedInr,
+      silverPrice: silverUSD,
+      ibja24k,   // ₹/gram, 999 purity — null if unavailable
+      ibja22k,   // ₹/gram, 916 purity — null if unavailable
+      ibja995,   // ₹/gram, 995 purity — null if unavailable
+      etfNavs,       // keyed by symbol, value = ₹/gram
+      etfPrevClose,  // keyed by symbol, value = prev close ₹/gram
+      etfSparklines, // keyed by symbol → rangeKey → [{t,v}]
       timestamp: new Date().toISOString(),
       sources: {
-        fx: usdInr === 84.5 ? "fallback" : "live",
+        fx:   usdInr === 84.5 ? "fallback" : "live",
         gold: goldSource,
         ibja: ibjaSource,
-        etf: Object.keys(etfNavs).length > 0 ? "live" : "none",
+        etf:  Object.keys(etfNavs).length > 0 ? "live" : "none",
       }
     };
     cacheTime = Date.now();
