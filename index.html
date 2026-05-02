@@ -89,9 +89,6 @@
     .source-badge.calc-src  { background:rgba(100,116,139,0.1); color:var(--muted);  border-color:rgba(255,255,255,0.08); }
 
     /* ── DUAL RATE BOX ── */
-
-
-    /* ── DUAL RATE BOX ── */
     .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-top:20px; border:1px solid var(--border); border-radius:16px; overflow:hidden; background:var(--surface); }
     .dual-rate-col { padding:20px 24px; }
     .dual-rate-col:first-child { border-right:1px solid var(--border); }
@@ -220,8 +217,6 @@
     .fx-label { font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); }
     .fx-value { font-family:var(--mono); font-size:15px; color:var(--text); font-weight:500; }
 
-
-
     /* ── SILVER CARDS ── */
     .option-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
     .option-card  { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px 26px; transition:border-color 0.2s; position:relative; overflow:hidden; }
@@ -280,7 +275,6 @@
       .hero-hist-body { grid-template-columns:repeat(2,1fr); }
       .dual-rate-box { grid-template-columns:1fr; }
       .dual-rate-col:first-child { border-right:none; border-bottom:1px solid var(--border); }
-
     }
     @media (max-width:480px) {
       .retailer-grid { grid-template-columns:1fr 1fr; }
@@ -388,9 +382,7 @@
           </div>
         </div>
 
-
-
-        <!-- HISTORICAL CHANGE PANEL — tabs: 1D 1W 1M 3M 6M 1Y 3Y 5Y YTD -->
+        <!-- HISTORICAL CHANGE PANEL -->
         <div class="hero-hist-panel" id="heroHistPanel" style="display:none;">
           <div class="hero-hist-tabs">
             <button class="hero-hist-tab active" onclick="showHistTab('1d',this)">1 Day</button>
@@ -551,27 +543,18 @@
 <script>
   let prevGoldPrice = null, prevSilverPrice = null;
   const TROY = 31.1035;
+  const GRAMS_PER_ETF_UNIT = 0.9950; // all Indian gold ETFs hold ~0.995g per unit
   let ibjaCache = { ibja24k: null, ibja22k: null, ibja995: null };
 
-  // ── Sparkline shape helper ──
+  // ── Sparkline helpers ──
   // etfSparklines shape from API: { SYM: { "1d": [{t,v},...], "1y": [...], ... } }
-  // Returns a flat array of ₹/gram numbers for a given rangeKey.
-  // Falls back across preferred symbols until one has data.
+  // Values are already in ₹/gram (converted server-side via / GRAMS_PER_UNIT).
   function getSparkValues(sparklines, rangeKey, sym) {
     const syms = sym ? [sym, "GOLDBEES", "HDFCMFGETF", "KOTAKGOLD"]
                      : ["GOLDBEES", "HDFCMFGETF", "KOTAKGOLD", "SBIGETS", "AXISGOLD", "ICICIGOLD"];
     for (const s of syms) {
       const pts = sparklines?.[s]?.[rangeKey];
       if (pts && pts.length >= 2) return pts.map(p => p.v);
-    }
-    return null;
-  }
-
-  // Returns the first available sparkline object (keyed by rangeKey) for a symbol or any ETF
-  function getSparkObj(sparklines, sym) {
-    const syms = sym ? [sym] : ["GOLDBEES", "HDFCMFGETF", "KOTAKGOLD", "SBIGETS", "AXISGOLD", "ICICIGOLD"];
-    for (const s of syms) {
-      if (sparklines?.[s] && Object.keys(sparklines[s]).length > 0) return { sym: s, data: sparklines[s] };
     }
     return null;
   }
@@ -685,7 +668,7 @@
   function renderHistChart(symbol) {
     const canvas  = document.getElementById("etfHistCanvas");
     const statsEl = document.getElementById("etfHistStats");
-    // Use "1y" range for the 52-week ETF sidebar chart
+    // Sparkline values are already in ₹/gram (server converts unit price / 0.995)
     const data = getSparkValues(_etfSparklines, "1y", symbol);
     if (!canvas || !data || data.length < 4) return;
     const W=canvas.width, H=canvas.height, ctx=canvas.getContext("2d");
@@ -728,26 +711,31 @@
   function renderETFNavs(baseRate, serverNavs, serverPrevClose, sparklines) {
     _etfSparklines = sparklines || {};
     const grid = document.getElementById("etfGrid");
+
+    // serverNavs values are already ₹/gram (divided by GRAMS_PER_UNIT on the server)
     const results = ETF_LIST.map(etf => {
-      const unitNav  = serverNavs?.[etf.symbol];
-      const prevClose = serverPrevClose?.[etf.symbol];
-      const live     = unitNav > 0;
-      const gramRate = live ? unitNav : baseRate*(1+etf.expense);
-      const dayChg   = (live && prevClose) ? ((unitNav-prevClose)/prevClose*100) : null;
-      return {...etf, unitNav, gramRate, live, dayChg};
+      const gramRate  = serverNavs?.[etf.symbol] > 0 ? serverNavs[etf.symbol] : null;
+      const prevClose = serverPrevClose?.[etf.symbol] > 0 ? serverPrevClose[etf.symbol] : null;
+      const live      = !!gramRate;
+      // Fall back to baseRate * (1 + expense ratio) only if no live data
+      const displayRate = gramRate || baseRate * (1 + etf.expense);
+      const dayChg = (live && prevClose) ? ((gramRate - prevClose) / prevClose * 100) : null;
+      return {...etf, gramRate: displayRate, live, dayChg};
     });
+
     const minGram = Math.min(...results.map(e => e.gramRate));
     grid.innerHTML = results.map(e => {
       const isBest = e.gramRate === minGram;
       const vsSpot = e.gramRate - baseRate;
-      const vsPct  = ((vsSpot/baseRate)*100).toFixed(2);
-      const dClr   = Math.abs(vsSpot)<50?"var(--muted)":vsSpot>0?"var(--red)":"var(--green)";
-      const dTxt   = Math.abs(vsSpot)<50?"≈ Near spot":vsSpot>0?`▲ ${fmt(vsSpot)} over spot (${vsPct}%)`:`▼ ${fmt(Math.abs(vsSpot))} under spot`;
-      const dcHtml = e.dayChg!=null?`<div style="font-size:10px;font-family:var(--mono);color:${e.dayChg>=0?"var(--green)":"var(--red)"};text-align:center;margin-top:1px">${e.dayChg>=0?"▲":"▼"} ${Math.abs(e.dayChg).toFixed(2)}% today</div>`:"";
+      const vsPct  = ((vsSpot / baseRate) * 100).toFixed(2);
+      const dClr   = Math.abs(vsSpot) < 50 ? "var(--muted)" : vsSpot > 0 ? "var(--red)" : "var(--green)";
+      const dTxt   = Math.abs(vsSpot) < 50 ? "≈ Near spot" : vsSpot > 0 ? `▲ ${fmt(vsSpot)} over spot (${vsPct}%)` : `▼ ${fmt(Math.abs(vsSpot))} under spot`;
+      const dcHtml = e.dayChg != null ? `<div style="font-size:10px;font-family:var(--mono);color:${e.dayChg>=0?"var(--green)":"var(--red)"};text-align:center;margin-top:1px">${e.dayChg>=0?"▲":"▼"} ${Math.abs(e.dayChg).toFixed(2)}% today</div>` : "";
       const hasSp  = _etfSparklines[e.symbol] && Object.keys(_etfSparklines[e.symbol]).length > 0;
       return `<div class="retailer-card ${isBest?'best-buy':''}" style="cursor:${hasSp?'pointer':'default'}" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:''}">${isBest?'<div class="retailer-best-badge">Best Value</div>':''}<div class="retailer-logo">${e.emoji}</div><div class="retailer-name">${e.name}</div><div class="retailer-type">${e.fund}</div><div class="purity-pill">995 · ~1g/unit · NSE/BSE</div><div class="retailer-price">${fmt(e.gramRate)}</div><div class="retailer-sub" style="font-size:10px;color:var(--muted);text-align:center;font-family:var(--mono)">${e.symbol} · ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div><div style="font-size:10px;font-family:var(--mono);color:${dClr};text-align:center;margin-top:2px">${dTxt}</div>${dcHtml}<div style="margin-top:4px">${e.live?'<span class="etf-live-badge">● NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em">tap for chart →</div>':''}</div>`;
     }).join("");
-    // Show ETF history panel if 1y data exists for any ETF
+
+    // Show ETF history panel if 1y sparkline data exists
     const firstWith1y = ETF_LIST.find(e => getSparkValues(_etfSparklines, "1y", e.symbol));
     if (firstWith1y) {
       const panel = document.getElementById("etfHistPanel");
@@ -755,6 +743,8 @@
       document.getElementById("etfHistSelect").value = firstWith1y.symbol;
       renderHistChart(firstWith1y.symbol);
     }
+
+    // Return a map of symbol → gramRate for use in traffic light
     const navs = {};
     results.forEach(e => navs[e.symbol] = e.gramRate);
     return navs;
@@ -762,20 +752,20 @@
 
   /* ── Traffic Light ── */
   function buildTrafficLight(india24, etfNavs) {
-    const bestEtf  = Math.min(...Object.values(etfNavs).filter(v=>v>0));
-    const etfEntry = bestEtf * 1.001;
+    const bestEtf  = Math.min(...Object.values(etfNavs).filter(v => v > 0));
+    const etfEntry = bestEtf * 1.001; // ~0.1% brokerage
     const digi     = india24 * 1.01;
-    const phys     = india24 * 1.07 * 1.03 * 1.03;
+    const phys     = india24 * 1.07 * 1.03 * 1.03; // best-case 7% making + 3% GST
     const now = new Date();
-    const mktOpen = now.getHours()>=9 && now.getHours()<16;
+    const mktOpen = now.getHours() >= 9 && now.getHours() < 16;
     const opts = [
       {name:"Gold ETF (999.9 · 24K)",    detail:"GOLDBEES / SBIGETS / HDFCMFGETF", price:etfEntry, color:"green",  rank:"#1 Best Entry",   desc:`Zero GST on purchase · 0.1% brokerage only · 99.5%+ purity guaranteed · LTCG tax (12.5%) after 2 years · Demat account needed${mktOpen?" · Markets OPEN now":" · Markets closed — buy at open tomorrow"}`},
       {name:"Digital Gold (999.9 · 24K)",detail:"MMTC-PAMP · Augmont · SafeGold",   price:digi,     color:"orange", rank:"#2 Moderate",     desc:"No GST on buy · ~1–2% platform spread · Annual storage fee ~0.5% · Easy ₹1 minimum · Convert to physical later · Not SEBI regulated"},
       {name:"Physical Gold (916 · 22K)", detail:"Jewellers & online retailers",       price:phys,     color:"red",    rank:"#3 Highest Cost", desc:"3% GST on purchase · Making charges 7–14% · Storage & insurance needed · Best for jewellery / gifting · Same LTCG tax after 2 years"},
-    ].sort((a,b)=>a.price-b.price);
-    const sav = phys - etfEntry;
-    const savPct = ((sav/phys)*100).toFixed(1);
-    document.getElementById("tlBody").innerHTML = opts.map((opt,i)=>`
+    ].sort((a, b) => a.price - b.price);
+    const sav    = phys - etfEntry;
+    const savPct = ((sav / phys) * 100).toFixed(1);
+    document.getElementById("tlBody").innerHTML = opts.map((opt, i) => `
       <div class="tl-row tl-${opt.color}">
         <div class="tl-dot ${opt.color}">${i===0?"✓":i===1?"~":"✗"}</div>
         <div class="tl-content">
@@ -802,14 +792,14 @@
   /* ── Silver highlight ── */
   function highlightBest(prices, prefix) {
     const keys = Object.keys(prices);
-    const min  = Math.min(...keys.map(k=>prices[k]));
+    const min  = Math.min(...keys.map(k => prices[k]));
     keys.forEach(k => {
-      const card  = document.getElementById(prefix+"card-"+k);
+      const card  = document.getElementById(prefix + "card-" + k);
       if (!card) return;
       const badge = card.querySelector(".best-badge");
-      if (prices[k]===min) {
+      if (prices[k] === min) {
         card.classList.add("best-buy");
-        if (!badge){const b=document.createElement("div");b.className="best-badge";b.textContent="Best Buy";card.appendChild(b);}
+        if (!badge) { const b = document.createElement("div"); b.className = "best-badge"; b.textContent = "Best Buy"; card.appendChild(b); }
       } else {
         card.classList.remove("best-buy");
         if (badge) badge.remove();
@@ -818,13 +808,12 @@
   }
 
   /* ── Hero Historical Panel ── */
-  let _heroHistSparklines = null;
+  let _heroHistSparklines   = null;
   let _heroHistCurrentPrice = null;
-  let _heroHistPrevClose = null; // ₹/gram prev close for 1D tab
+  let _heroHistPrevClose    = null; // ₹/gram prev close for 1D tab
 
-  // Tab config: maps button key → { rangeKey for API, fallback rangeKey, label }
   const HIST_TAB_CONFIG = {
-    "1d":  { rangeKey: "1d",  fallback: "1w",  label: "vs yesterday",   use1DPrevClose: true },
+    "1d":  { rangeKey: "1d",  fallback: "1w",  label: "vs yesterday",      use1DPrevClose: true },
     "1w":  { rangeKey: "1w",  fallback: "1m",  label: "vs 1 week ago" },
     "1m":  { rangeKey: "1m",  fallback: "3m",  label: "vs 1 month ago" },
     "3m":  { rangeKey: "3m",  fallback: "6m",  label: "vs 3 months ago" },
@@ -836,9 +825,9 @@
   };
 
   function buildHeroHistPanel(india24, sparklines, etfPrevClose) {
-    _heroHistSparklines = sparklines;
+    _heroHistSparklines   = sparklines;
     _heroHistCurrentPrice = india24;
-    // Best prev-close ₹/gram from server — pick first available ETF
+    // etfPrevClose values are ₹/gram (already converted server-side)
     const prevCloseSym = ["GOLDBEES","HDFCMFGETF","KOTAKGOLD","SBIGETS","AXISGOLD","ICICIGOLD"]
       .find(s => etfPrevClose?.[s] > 0);
     _heroHistPrevClose = prevCloseSym ? etfPrevClose[prevCloseSym] : null;
@@ -854,20 +843,22 @@
     if (btn) btn.classList.add("active");
     if (!_heroHistCurrentPrice) return;
 
-    const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
+    const cfg     = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
     const current = _heroHistCurrentPrice;
-    let past = null;
+    let past      = null;
 
     if (cfg.use1DPrevClose) {
-      // For 1D: use the actual ETF prev-close ₹/gram from the server — this is exact
+      // For 1D: use actual ETF prev-close ₹/gram — already correct unit from server
       past = _heroHistPrevClose || null;
     }
 
-    // For all other tabs (or 1D fallback): use sparkline first value, scaled to current price
+    // For all other tabs (or 1D fallback): derive from sparkline first value
     if (!past) {
       let vals = getSparkValues(_heroHistSparklines, cfg.rangeKey);
       if (!vals || vals.length < 2) vals = getSparkValues(_heroHistSparklines, cfg.fallback);
       if (vals && vals.length >= 2) {
+        // Sparkline values are ₹/gram. Scale so last point matches current price
+        // (handles any small drift between ETF nav and IBJA rate used as india24)
         const lastRaw = vals[vals.length - 1];
         const scale   = lastRaw > 0 ? current / lastRaw : 1;
         past = vals[0] * scale;
@@ -892,10 +883,10 @@
                         `Price ${cfg.label.replace("vs ", "")}`;
 
     const cells = [
-      { label: "Current Price",                              val: fmt(current),                             chg: null },
-      { label: `Change (${cfg.label})`,                     val: sign + fmt(Math.abs(chg)),                chg: dir,  chgTxt: sign + Math.abs(pct).toFixed(2) + "%" },
-      { label: periodLabel,                                  val: fmt(past),                                chg: null },
-      { label: tabKey.toUpperCase() + " Performance",       val: sign + Math.abs(pct).toFixed(2) + "%",   chg: dir,  chgTxt: dir === "up" ? "▲ Gain" : "▼ Loss" },
+      { label: "Current Price",                          val: fmt(current),                           chg: null },
+      { label: `Change (${cfg.label})`,                 val: sign + fmt(Math.abs(chg)),              chg: dir,  chgTxt: sign + Math.abs(pct).toFixed(2) + "%" },
+      { label: periodLabel,                              val: fmt(past),                              chg: null },
+      { label: tabKey.toUpperCase() + " Performance",   val: sign + Math.abs(pct).toFixed(2) + "%", chg: dir,  chgTxt: dir === "up" ? "▲ Gain" : "▼ Loss" },
     ];
 
     document.getElementById("heroHistBody").innerHTML = cells.map(c => `
@@ -906,7 +897,9 @@
       </div>`).join("");
   }
 
-  /* ── MAIN LOAD ── */
+  /* ══════════════════════════════════════════════════
+     MAIN LOAD
+     ══════════════════════════════════════════════════ */
   async function loadPrice() {
     try {
       const res = await fetch("/api/price");
@@ -916,9 +909,10 @@
       const usdInr  = data.usdInr  || 84.5;
       const aedInr  = data.aedInr  || (usdInr / 3.6725);
       const gramUSD = data.price / TROY;
-      const calc24k = gramUSD * usdInr;
+      const calc24k = gramUSD * usdInr; // pure international spot ₹/gram
 
-      // IBJA stale-fallback logic
+      // ── IBJA stale-fallback logic ──
+      // data.ibja24k is ₹/gram from server (null if unavailable — no fake fallback)
       if (data.ibja24k && data.ibja24k > 0) {
         ibjaCache.ibja24k = data.ibja24k;
         ibjaCache.ibja22k = data.ibja22k || data.ibja24k * 0.916;
@@ -927,39 +921,46 @@
       const hasLive  = !!(data.ibja24k && data.ibja24k > 0);
       const hasStale = !!ibjaCache.ibja24k;
 
-      const ibja24  = hasLive  ? data.ibja24k  : hasStale ? ibjaCache.ibja24k  : null;
-      const ibja22  = hasLive  ? (data.ibja22k || data.ibja24k*0.916) : hasStale ? ibjaCache.ibja22k : null;
-      const ibja995 = hasLive  ? (data.ibja995 || data.ibja24k*0.995) : hasStale ? ibjaCache.ibja995 : null;
+      const ibja24  = hasLive ? data.ibja24k  : hasStale ? ibjaCache.ibja24k  : null;
+      const ibja22  = hasLive ? (data.ibja22k || data.ibja24k * 0.916) : hasStale ? ibjaCache.ibja22k : null;
+      const ibja995 = hasLive ? (data.ibja995 || data.ibja24k * 0.995) : hasStale ? ibjaCache.ibja995 : null;
 
+      // india24 is the best available India price in ₹/gram (999 purity, 24K)
+      // Prefer IBJA official; fall back to international spot calc
       const india24 = ibja24 || calc24k;
       const india22 = ibja22 || india24 * 0.916;
 
+      // ── Silver ──
       const silverUSD  = data.silverPrice || (data.price / 85);
       const silverGram = (silverUSD / TROY) * usdInr;
       const physSilver = silverGram * 1.03 * 1.03;
       const digiSilver = silverGram * 1.015;
       const etfSilver  = silverGram * 1.005;
 
+      // ── Dubai ──
+      // Dubai spot = international XAU/USD with a tiny local premium (~0.3%)
+      // Prices are then in AED (USD * 3.6725) then converted to INR at live rate
       const dubai24Usd = gramUSD * 1.003;
       const dubai24Aed = dubai24Usd * 3.6725;
       const dubai22Aed = dubai24Aed * 0.916;
       const dubai18Aed = dubai24Aed * 0.75;
       const dubai24Inr = dubai24Aed * aedInr;
       const dubai22Inr = dubai22Aed * aedInr;
-      const spread     = india24 - dubai24Inr;
-      const spreadPct  = ((spread / india24) * 100).toFixed(2);
 
-      // Flash price on silver change
+      // Spread: India 24K (IBJA or calc) vs Dubai 24K in INR
+      // Positive = India is more expensive (expected — India has 15% import duty + local margins)
+      const spread    = india24 - dubai24Inr;
+      const spreadPct = ((spread / india24) * 100).toFixed(2);
+
+      // ── Silver price flash ──
       const silverEl = document.getElementById("silverPrice");
       if (prevSilverPrice !== null) {
-        const cls = silverGram>prevSilverPrice?"flash-up":silverGram<prevSilverPrice?"flash-dn":"";
-        if (cls){silverEl.classList.add(cls);setTimeout(()=>silverEl.classList.remove(cls),600);}
+        const cls = silverGram > prevSilverPrice ? "flash-up" : silverGram < prevSilverPrice ? "flash-dn" : "";
+        if (cls) { silverEl.classList.add(cls); setTimeout(() => silverEl.classList.remove(cls), 600); }
       }
       prevSilverPrice = silverGram;
 
-
-
-      // Dual Rate Box — Col 1: Int Spot
+      // ── Dual Rate Box — Col 1: International Spot ──
       document.getElementById("intl-xau").textContent    = fmtUSD(data.price);
       document.getElementById("intl-inr").textContent    = "₹" + usdInr.toFixed(2);
       document.getElementById("intl-result").textContent = fmt(calc24k);
@@ -967,7 +968,7 @@
       document.getElementById("intl-22k").textContent    = fmt(calc24k * 0.916);
       document.getElementById("intl-18k").textContent    = fmt(calc24k * 0.75);
 
-      // Dual Rate Box — Col 2: IBJA
+      // ── Dual Rate Box — Col 2: IBJA ──
       const badge    = document.getElementById("ibjaLiveBadge");
       const staleMsg = document.getElementById("ibjaStaleMsg");
       const unavMsg  = document.getElementById("ibjaUnavailMsg");
@@ -990,21 +991,23 @@
         staleMsg.style.display = "none"; unavMsg.style.display = "block";
       }
 
-      // Retailer + platform cards
+      // ── Retailer + platform cards (use india24 which may be IBJA or calc) ──
       buildPhysicalRetailers(india24);
       buildDigitalPlatforms(india24);
 
-      // ETFs + traffic light
+      // ── ETFs + traffic light ──
+      // serverNavs values are ₹/gram (correctly converted on server: unitPrice / 0.995)
       const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfPrevClose, data.etfSparklines);
       buildTrafficLight(india24, etfNavsForTL);
 
-      // Hero historical tab panel — pass etfPrevClose for accurate 1D calculation
+      // ── Hero historical tab panel ──
+      // etfPrevClose values are ₹/gram (server-converted) — used for accurate 1D calc
       buildHeroHistPanel(india24, data.etfSparklines, data.etfPrevClose);
 
-      // Dubai
-      document.getElementById("dxb-usd-inr").textContent       = "₹ " + usdInr.toFixed(2);
-      document.getElementById("dxb-aed-inr-strip").textContent  = "₹ " + aedInr.toFixed(4);
-      document.getElementById("dxb-xau-usd").textContent        = fmtUSD(data.price);
+      // ── Dubai section ──
+      document.getElementById("dxb-usd-inr").textContent      = "₹ " + usdInr.toFixed(2);
+      document.getElementById("dxb-aed-inr-strip").textContent = "₹ " + aedInr.toFixed(4);
+      document.getElementById("dxb-xau-usd").textContent       = fmtUSD(data.price);
       document.getElementById("dxb-24k-aed").textContent = fmtAED(dubai24Aed);
       document.getElementById("dxb-24k-inr").textContent = fmt(dubai24Inr);
       document.getElementById("dxb-22k-aed").textContent = fmtAED(dubai22Aed);
@@ -1015,36 +1018,36 @@
       document.getElementById("ds-india").textContent = fmt(india24);
       document.getElementById("ds-dubai").textContent = fmt(dubai24Inr);
       const spreadEl = document.getElementById("ds-spread");
-      spreadEl.textContent = (spread>=0?"+":"−") + fmt(Math.abs(spread));
-      spreadEl.className   = "dxb-spread-val " + (spread>=0?"pos":"neg");
-      document.getElementById("ds-spreadpct").textContent = Math.abs(spreadPct) + "% " + (spread>=0?"India pricier":"Dubai pricier");
+      spreadEl.textContent = (spread >= 0 ? "+" : "−") + fmt(Math.abs(spread));
+      spreadEl.className   = "dxb-spread-val " + (spread >= 0 ? "pos" : "neg");
+      document.getElementById("ds-spreadpct").textContent = Math.abs(spreadPct) + "% " + (spread >= 0 ? "India pricier" : "Dubai pricier");
 
-      // FX bar
+      // ── FX bar ──
       document.getElementById("fxGold").textContent   = fmtUSD(data.price);
       document.getElementById("fxSilver").textContent = fmtUSD(silverUSD);
       document.getElementById("fxInr").textContent    = "₹ " + usdInr.toFixed(2);
       document.getElementById("fxAed").textContent    = "₹ " + aedInr.toFixed(4);
 
-      // Silver section
+      // ── Silver section ──
       silverEl.textContent = fmt(silverGram);
       document.getElementById("silverUpdated").textContent = "updated " + timeStr(data.timestamp);
       document.getElementById("silverKg").textContent      = fmt(silverGram * 1000);
-      document.getElementById("gsRatioSilver").textContent = (data.price/silverUSD).toFixed(1) + "x";
+      document.getElementById("gsRatioSilver").textContent = (data.price / silverUSD).toFixed(1) + "x";
       document.getElementById("sopt-physical").textContent = fmt(physSilver);
       document.getElementById("sopt-digital").textContent  = fmt(digiSilver);
       document.getElementById("sopt-etf").textContent      = fmt(etfSilver);
       document.getElementById("sopt-intl").textContent     = fmtUSD(silverUSD);
-      highlightBest({physical:physSilver, digital:digiSilver, etf:etfSilver}, "s");
+      highlightBest({physical: physSilver, digital: digiSilver, etf: etfSilver}, "s");
       const ratio = data.price / silverUSD;
       const sSignal = document.getElementById("silverSignal");
-      if      (ratio>85){sSignal.textContent="▲ BUY · Silver undervalued";sSignal.style.background="rgba(34,197,94,0.12)";sSignal.style.color="var(--green)";sSignal.style.border="1px solid rgba(34,197,94,0.25)";}
-      else if (ratio<70){sSignal.textContent="◆ WAIT · Silver expensive";}
-      else               {sSignal.textContent="◆ NEUTRAL · Fair value";}
+      if      (ratio > 85) { sSignal.textContent = "▲ BUY · Silver undervalued"; sSignal.style.background = "rgba(34,197,94,0.12)"; sSignal.style.color = "var(--green)"; sSignal.style.border = "1px solid rgba(34,197,94,0.25)"; }
+      else if (ratio < 70) { sSignal.textContent = "◆ WAIT · Silver expensive"; }
+      else                  { sSignal.textContent = "◆ NEUTRAL · Fair value"; }
 
-      // Ticker
-      buildTicker({price:data.price, india24, india22, dubai24:dubai24Inr, dubai22:dubai22Inr, silverUSD, silverGram, usdInr, aedInr});
+      // ── Ticker ──
+      buildTicker({price: data.price, india24, india22, dubai24: dubai24Inr, dubai22: dubai22Inr, silverUSD, silverGram, usdInr, aedInr});
 
-      // Status
+      // ── Status ──
       document.getElementById("statusDot").className    = "dot";
       document.getElementById("statusText").textContent = "live";
       document.getElementById("footerNote").textContent = "Auto-refreshes every 60 min · last: " + timeStr(data.timestamp);
@@ -1061,7 +1064,7 @@
   function manualRefresh() {
     const btn = document.getElementById("refreshBtn");
     btn.classList.add("refreshing"); btn.textContent = "↻ refreshing…";
-    loadPrice().finally(()=>{btn.classList.remove("refreshing");btn.textContent="↻ refresh now";});
+    loadPrice().finally(() => { btn.classList.remove("refreshing"); btn.textContent = "↻ refresh now"; });
   }
 
   loadPrice();
