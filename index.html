@@ -89,6 +89,9 @@
     .source-badge.calc-src  { background:rgba(100,116,139,0.1); color:var(--muted);  border-color:rgba(255,255,255,0.08); }
 
     /* ── DUAL RATE BOX ── */
+
+
+    /* ── DUAL RATE BOX ── */
     .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-top:20px; border:1px solid var(--border); border-radius:16px; overflow:hidden; background:var(--surface); }
     .dual-rate-col { padding:20px 24px; }
     .dual-rate-col:first-child { border-right:1px solid var(--border); }
@@ -277,6 +280,7 @@
       .hero-hist-body { grid-template-columns:repeat(2,1fr); }
       .dual-rate-box { grid-template-columns:1fr; }
       .dual-rate-col:first-child { border-right:none; border-bottom:1px solid var(--border); }
+
     }
     @media (max-width:480px) {
       .retailer-grid { grid-template-columns:1fr 1fr; }
@@ -332,11 +336,6 @@
 
       <!-- HERO -->
       <div class="hero">
-        <div class="hero-label">24K Gold · India · ₹ per gram</div>
-        <div class="hero-price" id="mainPrice">—</div>
-        <div class="hero-meta">
-          <div class="hero-sub" id="lastUpdated">fetching live rate…</div>
-        </div>
 
         <!-- 2-COLUMN RATE BOX -->
         <div class="dual-rate-box">
@@ -388,6 +387,8 @@
             </div>
           </div>
         </div>
+
+
 
         <!-- HISTORICAL CHANGE PANEL — tabs: 1D 1W 1M 3M 6M 1Y 3Y 5Y YTD -->
         <div class="hero-hist-panel" id="heroHistPanel" style="display:none;">
@@ -948,13 +949,7 @@
       const spread     = india24 - dubai24Inr;
       const spreadPct  = ((spread / india24) * 100).toFixed(2);
 
-      // Flash price on change
-      const priceEl = document.getElementById("mainPrice");
-      if (prevGoldPrice !== null) {
-        const cls = india24>prevGoldPrice?"flash-up":india24<prevGoldPrice?"flash-dn":"";
-        if (cls){priceEl.classList.add(cls);setTimeout(()=>priceEl.classList.remove(cls),600);}
-      }
-      prevGoldPrice = india24;
+      // Flash price on silver change
       const silverEl = document.getElementById("silverPrice");
       if (prevSilverPrice !== null) {
         const cls = silverGram>prevSilverPrice?"flash-up":silverGram<prevSilverPrice?"flash-dn":"";
@@ -962,9 +957,7 @@
       }
       prevSilverPrice = silverGram;
 
-      // Hero
-      priceEl.textContent = fmt(india24);
-      document.getElementById("lastUpdated").textContent = "updated " + timeStr(data.timestamp);
+
 
       // Dual Rate Box — Col 1: Int Spot
       document.getElementById("intl-xau").textContent    = fmtUSD(data.price);
@@ -1057,7 +1050,6 @@
       document.getElementById("footerNote").textContent = "Auto-refreshes every 60 min · last: " + timeStr(data.timestamp);
 
     } catch(e) {
-      document.getElementById("mainPrice").textContent   = "—";
       document.getElementById("silverPrice").textContent = "—";
       document.getElementById("statusDot").className     = "dot error";
       document.getElementById("statusText").textContent  = "error";
