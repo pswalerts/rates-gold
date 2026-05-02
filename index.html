@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -182,7 +181,6 @@
     .dxb-price-val   { font-family:var(--mono); font-size:19px; font-weight:600; }
     .dxb-price-val.aed { color:#f97316; }
     .dxb-price-val.inr { color:var(--gold); }
-    /* Arabic label beneath AED price */
     .dxb-arabic { font-size:11px; color:#f97316; opacity:0.7; direction:rtl; font-family:var(--sans); margin-top:1px; }
     .dxb-price-sub { font-size:10px; color:var(--muted); }
     .dxb-spread-item { display:flex; flex-direction:column; gap:3px; }
@@ -211,40 +209,23 @@
     .hero-hist-cchg.dn   { color:var(--red); }
     .hero-hist-cchg.flat { color:var(--muted); }
 
-    /* ── FX BAR — single horizontal line, no dividers, scrollable ── */
-    .fx-bar {
-      display:flex; align-items:stretch;
-      margin-top:32px; background:var(--surface); border:1px solid var(--border); border-radius:12px;
-      overflow-x:auto; scrollbar-width:none; white-space:nowrap;
-    }
+    /* ── FX BAR ── */
+    .fx-bar { display:flex; align-items:stretch; margin-top:32px; background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow-x:auto; scrollbar-width:none; white-space:nowrap; }
     .fx-bar::-webkit-scrollbar { display:none; }
-    .fx-item {
-      display:inline-flex; align-items:baseline; gap:7px;
-      padding:13px 18px; border-right:1px solid var(--border); flex-shrink:0;
-    }
+    .fx-item { display:inline-flex; align-items:baseline; gap:7px; padding:13px 18px; border-right:1px solid var(--border); flex-shrink:0; }
     .fx-item:last-child { border-right:none; }
     .fx-label { font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); }
     .fx-value { font-family:var(--mono); font-size:15px; color:var(--text); font-weight:500; }
 
-    /* ── HISTORICAL TABLE — dual Int Spot + IBJA columns ── */
+    /* ── HISTORICAL TABLE ── */
     .intl-spot-panel { display:none; margin-top:18px; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
     .hist-table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-    table.hist-dual {
-      width:100%; border-collapse:collapse;
-      font-family:var(--mono); font-size:12px;
-    }
-    table.hist-dual th {
-      padding:10px 12px; text-align:left; white-space:nowrap;
-      font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
-      color:var(--muted); font-weight:500; border-bottom:1px solid var(--border);
-    }
+    table.hist-dual { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; }
+    table.hist-dual th { padding:10px 12px; text-align:left; white-space:nowrap; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-weight:500; border-bottom:1px solid var(--border); }
     table.hist-dual th.num { text-align:right; }
     table.hist-dual th.ibja-col { color:rgba(212,168,83,0.75); }
     table.hist-dual th.sep { border-left:1px solid rgba(255,255,255,0.1); }
-    table.hist-dual td {
-      padding:10px 12px; white-space:nowrap;
-      color:var(--text); border-bottom:1px solid rgba(255,255,255,0.04);
-    }
+    table.hist-dual td { padding:10px 12px; white-space:nowrap; color:var(--text); border-bottom:1px solid rgba(255,255,255,0.04); }
     table.hist-dual td.num { text-align:right; }
     table.hist-dual td.sep { border-left:1px solid rgba(255,255,255,0.06); }
     table.hist-dual tr:last-child td { border-bottom:none; }
@@ -252,7 +233,6 @@
     .sig.up   { background:rgba(34,197,94,0.12);  color:#22c55e; }
     .sig.dn   { background:rgba(239,68,68,0.12);  color:#ef4444; }
     .sig.flat { background:rgba(100,116,139,0.12); color:#64748b; }
-    /* hide on tiny screens */
     @media(max-width:480px){ .hist-xs-hide { display:none; } }
 
     /* ── SILVER CARDS ── */
@@ -295,10 +275,7 @@
     body.silver-mode .silver-section { display:block; }
 
     /* ── RESPONSIVE ── */
-    @media (max-width:900px) {
-      .etf-section-wrap { grid-template-columns:1fr; }
-      #etfHistPanel { display:none !important; }
-    }
+    @media (max-width:900px) { .etf-section-wrap { grid-template-columns:1fr; } #etfHistPanel { display:none !important; } }
     @media (max-width:768px) {
       .side-col { display:none; }
       .retailer-grid { grid-template-columns:repeat(2,1fr); }
@@ -323,10 +300,7 @@
       .dxb-fx-strip { grid-template-columns:1fr; }
       .hero-hist-body { grid-template-columns:1fr 1fr; }
     }
-    @media (max-width:380px) {
-      #statusText { display:none; }
-      #etfGrid { grid-template-columns:1fr !important; }
-    }
+    @media (max-width:380px) { #statusText { display:none; } #etfGrid { grid-template-columns:1fr !important; } }
   </style>
 </head>
 <body>
@@ -380,10 +354,8 @@
           <div class="hero-sub" id="lastUpdated">fetching live rate…</div>
         </div>
 
-        <!-- ══ 2-COLUMN RATE BOX ══ -->
+        <!-- 2-COLUMN RATE BOX -->
         <div class="dual-rate-box">
-
-          <!-- Col 1: International Spot -->
           <div class="dual-rate-col">
             <div class="dual-rate-col-header">
               <div class="dual-rate-col-title">🌐 International Spot → INR</div>
@@ -407,8 +379,6 @@
               &nbsp;= <span id="intl-result" style="color:var(--gold)">—</span>/g
             </div>
           </div>
-
-          <!-- Col 2: IBJA Official Rate -->
           <div class="dual-rate-col">
             <div class="dual-rate-col-header">
               <div class="dual-rate-col-title">🇮🇳 IBJA Official Rate</div>
@@ -426,19 +396,16 @@
                 <div class="dual-rate-sub-val" id="ibja22k">—</div>
               </div>
             </div>
-            <!-- stale = cached from earlier today / previous session -->
             <div class="dual-rate-stale" id="ibjaStaleMsg" style="display:none;">
               ⚠ Showing last known IBJA rate. Fresh data publishes at ~10:00 AM IST.
             </div>
-            <!-- never received any IBJA yet -->
             <div class="dual-rate-unavail" id="ibjaUnavailMsg">
               IBJA publishes rates at market open (~10:00 AM IST). Will update automatically.
             </div>
           </div>
+        </div>
 
-        </div><!-- /dual-rate-box -->
-
-        <!-- ── HISTORICAL TABLE: Int Spot + IBJA dual columns ── -->
+        <!-- HISTORICAL TABLE: Int Spot + IBJA dual columns -->
         <div class="intl-spot-panel" id="intlSpotPanel">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;">
             <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">Historical · INR/gram · Intl Spot &amp; IBJA</div>
@@ -469,33 +436,35 @@
           </div>
         </div>
 
-        <!-- ── HISTORICAL CHANGE PANEL ── -->
+        <!-- HISTORICAL CHANGE PANEL — tabs: 1D 1W 1M 3M 6M 1Y 3Y 5Y YTD -->
         <div class="hero-hist-panel" id="heroHistPanel" style="display:none;">
           <div class="hero-hist-tabs">
-            <button class="hero-hist-tab active" onclick="showHistTab('1D',this)">1 Day</button>
-            <button class="hero-hist-tab" onclick="showHistTab('1W',this)">1 Week</button>
-            <button class="hero-hist-tab" onclick="showHistTab('1M',this)">1 Month</button>
-            <button class="hero-hist-tab" onclick="showHistTab('3M',this)">3 Months</button>
-            <button class="hero-hist-tab" onclick="showHistTab('6M',this)">6 Months</button>
-            <button class="hero-hist-tab" onclick="showHistTab('1Y',this)">1 Year</button>
-            <button class="hero-hist-tab" onclick="showHistTab('YTD',this)">YTD</button>
+            <button class="hero-hist-tab active" onclick="showHistTab('1d',this)">1 Day</button>
+            <button class="hero-hist-tab" onclick="showHistTab('1w',this)">1 Week</button>
+            <button class="hero-hist-tab" onclick="showHistTab('1m',this)">1 Month</button>
+            <button class="hero-hist-tab" onclick="showHistTab('3m',this)">3 Months</button>
+            <button class="hero-hist-tab" onclick="showHistTab('6m',this)">6 Months</button>
+            <button class="hero-hist-tab" onclick="showHistTab('1y',this)">1 Year</button>
+            <button class="hero-hist-tab" onclick="showHistTab('3y',this)">3 Years</button>
+            <button class="hero-hist-tab" onclick="showHistTab('5y',this)">5 Years</button>
+            <button class="hero-hist-tab" onclick="showHistTab('ytd',this)">YTD</button>
           </div>
           <div class="hero-hist-body" id="heroHistBody"></div>
         </div>
 
       </div><!-- /hero -->
 
-      <!-- ── PHYSICAL GOLD ── -->
+      <!-- PHYSICAL GOLD -->
       <div class="section-title">Physical Gold — Live Retailer Rates</div>
       <div class="retailer-grid" id="physicalRetailers"></div>
 
-      <!-- ── DIGITAL GOLD ── -->
+      <!-- DIGITAL GOLD -->
       <div class="section-title" style="margin-top:40px">Digital Gold — Platform Rates</div>
       <div class="retailer-grid" id="digitalPlatforms" style="grid-template-columns:repeat(2,1fr);"></div>
 
       <div class="ad-inline" style="margin-top:32px;margin-bottom:0">Advertisement · 728×50</div>
 
-      <!-- ── ETFs ── -->
+      <!-- ETFs -->
       <div class="section-title" style="margin-top:32px">Gold ETFs — Live NAV & ₹/gram Equivalent</div>
       <div class="etf-section-wrap">
         <div id="etfGrid">
@@ -521,7 +490,7 @@
         </div>
       </div>
 
-      <!-- ── TRAFFIC LIGHT — title IS inside the panel header, no separate section-title ── -->
+      <!-- TRAFFIC LIGHT -->
       <div class="tl-panel" style="margin-top:44px;">
         <div class="tl-header">
           <div class="tl-header-title">Best Way to Buy Gold — Live Comparison</div>
@@ -532,7 +501,7 @@
         </div>
       </div>
 
-      <!-- ── DUBAI ── -->
+      <!-- DUBAI -->
       <div class="section-title" style="margin-top:44px">Dubai Gold Rates</div>
       <div class="dubai-card">
         <div class="dubai-header">
@@ -542,99 +511,36 @@
           </div>
           <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">—</div>
         </div>
-
-        <!-- FX strip -->
         <div class="dxb-fx-strip">
-          <div class="dxb-fx-item">
-            <div class="dxb-fx-label">USD / INR</div>
-            <div class="dxb-fx-val" id="dxb-usd-inr">—</div>
-            <div class="dxb-fx-sub">live rate</div>
-          </div>
-          <div class="dxb-fx-item">
-            <div class="dxb-fx-label">AED / INR</div>
-            <div class="dxb-fx-val" id="dxb-aed-inr-strip">—</div>
-            <div class="dxb-fx-sub">USD peg 3.6725</div>
-          </div>
-          <div class="dxb-fx-item">
-            <div class="dxb-fx-label">XAU / USD</div>
-            <div class="dxb-fx-val" id="dxb-xau-usd">—</div>
-            <div class="dxb-fx-sub">international spot</div>
-          </div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">USD / INR</div><div class="dxb-fx-val" id="dxb-usd-inr">—</div><div class="dxb-fx-sub">live rate</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">AED / INR</div><div class="dxb-fx-val" id="dxb-aed-inr-strip">—</div><div class="dxb-fx-sub">USD peg 3.6725</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">XAU / USD</div><div class="dxb-fx-val" id="dxb-xau-usd">—</div><div class="dxb-fx-sub">international spot</div></div>
         </div>
-
-        <!-- 3-column price grid -->
         <div class="dxb-3col">
-
-          <!-- AED column — orange + Arabic labels -->
           <div class="dxb-col">
             <div class="dxb-col-head aed-head">🇦🇪 Dubai Rates (AED) &nbsp;<span style="font-family:var(--sans);direction:rtl;font-size:11px;opacity:0.8;">بالدرهم</span></div>
-            <div class="dxb-price-item">
-              <div class="dxb-price-label">24K · per gram</div>
-              <div class="dxb-price-val aed" id="dxb-24k-aed">—</div>
-              <div class="dxb-arabic">ذهب ٢٤ قيراط · للجرام</div>
-              <div class="dxb-price-sub">local price</div>
-            </div>
-            <div class="dxb-price-item">
-              <div class="dxb-price-label">22K · per gram</div>
-              <div class="dxb-price-val aed" id="dxb-22k-aed">—</div>
-              <div class="dxb-arabic">ذهب ٢٢ قيراط · للجرام</div>
-              <div class="dxb-price-sub">local price</div>
-            </div>
-            <div class="dxb-price-item">
-              <div class="dxb-price-label">18K · per gram</div>
-              <div class="dxb-price-val aed" id="dxb-18k-aed">—</div>
-              <div class="dxb-arabic">ذهب ١٨ قيراط · للجرام</div>
-              <div class="dxb-price-sub">local price</div>
-            </div>
+            <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val aed" id="dxb-24k-aed">—</div><div class="dxb-arabic">ذهب ٢٤ قيراط · للجرام</div><div class="dxb-price-sub">local price</div></div>
+            <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val aed" id="dxb-22k-aed">—</div><div class="dxb-arabic">ذهب ٢٢ قيراط · للجرام</div><div class="dxb-price-sub">local price</div></div>
+            <div class="dxb-price-item"><div class="dxb-price-label">18K · per gram</div><div class="dxb-price-val aed" id="dxb-18k-aed">—</div><div class="dxb-arabic">ذهب ١٨ قيراط · للجرام</div><div class="dxb-price-sub">local price</div></div>
           </div>
-
-          <!-- INR equivalent -->
           <div class="dxb-col">
             <div class="dxb-col-head">🇮🇳 INR Equivalent</div>
-            <div class="dxb-price-item">
-              <div class="dxb-price-label">24K · per gram</div>
-              <div class="dxb-price-val inr" id="dxb-24k-inr">—</div>
-              <div class="dxb-price-sub">at live AED/INR</div>
-            </div>
-            <div class="dxb-price-item">
-              <div class="dxb-price-label">22K · per gram</div>
-              <div class="dxb-price-val inr" id="dxb-22k-inr">—</div>
-              <div class="dxb-price-sub">at live AED/INR</div>
-            </div>
-            <div class="dxb-price-item">
-              <div class="dxb-price-label">AED / INR rate</div>
-              <div class="dxb-price-val inr" style="font-size:15px;" id="dxb-aed-inr">—</div>
-              <div class="dxb-price-sub">live exchange rate</div>
-            </div>
+            <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val inr" id="dxb-24k-inr">—</div><div class="dxb-price-sub">at live AED/INR</div></div>
+            <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val inr" id="dxb-22k-inr">—</div><div class="dxb-price-sub">at live AED/INR</div></div>
+            <div class="dxb-price-item"><div class="dxb-price-label">AED / INR rate</div><div class="dxb-price-val inr" style="font-size:15px;" id="dxb-aed-inr">—</div><div class="dxb-price-sub">live exchange rate</div></div>
           </div>
-
-          <!-- India vs Dubai -->
           <div class="dxb-col">
             <div class="dxb-col-head">📊 India vs Dubai</div>
-            <div class="dxb-spread-item">
-              <div class="dxb-spread-label">India 24K</div>
-              <div class="dxb-spread-val dim" id="ds-india">—</div>
-              <div class="dxb-price-sub">IBJA / calculated</div>
-            </div>
-            <div class="dxb-spread-item">
-              <div class="dxb-spread-label">Dubai 24K (INR)</div>
-              <div class="dxb-spread-val dim" id="ds-dubai">—</div>
-              <div class="dxb-price-sub">converted at live rate</div>
-            </div>
-            <div class="dxb-spread-item">
-              <div class="dxb-spread-label">Spread</div>
-              <div class="dxb-spread-val" id="ds-spread">—</div>
-              <div class="dxb-price-sub" id="ds-spreadpct">—</div>
-            </div>
+            <div class="dxb-spread-item"><div class="dxb-spread-label">India 24K</div><div class="dxb-spread-val dim" id="ds-india">—</div><div class="dxb-price-sub">IBJA / calculated</div></div>
+            <div class="dxb-spread-item"><div class="dxb-spread-label">Dubai 24K (INR)</div><div class="dxb-spread-val dim" id="ds-dubai">—</div><div class="dxb-price-sub">converted at live rate</div></div>
+            <div class="dxb-spread-item"><div class="dxb-spread-label">Spread</div><div class="dxb-spread-val" id="ds-spread">—</div><div class="dxb-price-sub" id="ds-spreadpct">—</div></div>
           </div>
-
-        </div><!-- /dxb-3col -->
-
+        </div>
         <div class="dubai-note">
           Dubai gold has no import duty locally. India levies ~15% import duty on international spot.
           Buying in Dubai only makes financial sense within personal allowance limits (20g duty-free for women, 10g for men on valid passport).
         </div>
-      </div><!-- /dubai-card -->
+      </div>
 
       <div class="ad-inline">Advertisement · 728×50</div>
 
@@ -653,46 +559,20 @@
       </div>
       <div class="section-title">Buy Options — Silver · lowest price flashes green</div>
       <div class="option-cards">
-        <div class="option-card" id="scard-physical">
-          <div class="option-label">Physical Buy</div>
-          <div class="option-value" id="sopt-physical">—</div>
-          <div class="option-sub">3% making + 3% GST</div>
-        </div>
-        <div class="option-card" id="scard-digital">
-          <div class="option-label">Digital Silver</div>
-          <div class="option-value" id="sopt-digital">—</div>
-          <div class="option-sub">~1.5% platform fee</div>
-          <div class="source-tag">Source: <span>MMTC-PAMP · Augmont</span></div>
-        </div>
-        <div class="option-card" id="scard-etf">
-          <div class="option-label">Silver ETF</div>
-          <div class="option-value" id="sopt-etf">—</div>
-          <div class="option-sub">~0.5% expense ratio</div>
-          <div class="source-tag">Source: <span>NSE · BSE</span></div>
-        </div>
-        <div class="option-card" id="scard-intl">
-          <div class="option-label">XAG/USD (Intl)</div>
-          <div class="option-value" id="sopt-intl">—</div>
-          <div class="option-sub">per troy oz · USD</div>
-        </div>
+        <div class="option-card" id="scard-physical"><div class="option-label">Physical Buy</div><div class="option-value" id="sopt-physical">—</div><div class="option-sub">3% making + 3% GST</div></div>
+        <div class="option-card" id="scard-digital"><div class="option-label">Digital Silver</div><div class="option-value" id="sopt-digital">—</div><div class="option-sub">~1.5% platform fee</div><div class="source-tag">Source: <span>MMTC-PAMP · Augmont</span></div></div>
+        <div class="option-card" id="scard-etf"><div class="option-label">Silver ETF</div><div class="option-value" id="sopt-etf">—</div><div class="option-sub">~0.5% expense ratio</div><div class="source-tag">Source: <span>NSE · BSE</span></div></div>
+        <div class="option-card" id="scard-intl"><div class="option-label">XAG/USD (Intl)</div><div class="option-value" id="sopt-intl">—</div><div class="option-sub">per troy oz · USD</div></div>
       </div>
       <div class="ad-inline">Advertisement · 728×50</div>
       <div class="section-title" style="margin-top:0">Market Data</div>
       <div class="cards">
-        <div class="card">
-          <div class="card-label">Silver per kg</div>
-          <div class="card-value" id="silverKg">—</div>
-          <div class="card-sub">India rate</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Gold/Silver Ratio</div>
-          <div class="card-value" id="gsRatioSilver">—</div>
-          <div class="card-sub">oz of silver per oz of gold</div>
-        </div>
+        <div class="card"><div class="card-label">Silver per kg</div><div class="card-value" id="silverKg">—</div><div class="card-sub">India rate</div></div>
+        <div class="card"><div class="card-label">Gold/Silver Ratio</div><div class="card-value" id="gsRatioSilver">—</div><div class="card-sub">oz of silver per oz of gold</div></div>
       </div>
     </div><!-- /silver-section -->
 
-    <!-- ══ FX BAR — single compact line ══ -->
+    <!-- FX BAR -->
     <div class="fx-bar">
       <div class="fx-item"><span class="fx-label">XAU/USD</span><span class="fx-value" id="fxGold">—</span></div>
       <div class="fx-item"><span class="fx-label">XAG/USD</span><span class="fx-value" id="fxSilver">—</span></div>
@@ -717,15 +597,30 @@
 <script>
   let prevGoldPrice = null, prevSilverPrice = null;
   const TROY = 31.1035;
-
-  // In-session IBJA cache: keeps last known values so we can show stale data
-  // instead of "—" when IBJA hasn't published yet today
   let ibjaCache = { ibja24k: null, ibja22k: null, ibja995: null };
 
-  const ETF_UNIT_GRAMS = {
-    GOLDBEES:0.9950, SBIGETS:0.9950, HDFCMFGETF:0.9950,
-    AXISGOLD:0.9950, KOTAKGOLD:0.9950, ICICIGOLD:0.9950,
-  };
+  // ── Sparkline shape helper ──
+  // etfSparklines shape from API: { SYM: { "1d": [{t,v},...], "1y": [...], ... } }
+  // Returns a flat array of ₹/gram numbers for a given rangeKey.
+  // Falls back across preferred symbols until one has data.
+  function getSparkValues(sparklines, rangeKey, sym) {
+    const syms = sym ? [sym, "GOLDBEES", "HDFCMFGETF", "KOTAKGOLD"]
+                     : ["GOLDBEES", "HDFCMFGETF", "KOTAKGOLD", "SBIGETS", "AXISGOLD", "ICICIGOLD"];
+    for (const s of syms) {
+      const pts = sparklines?.[s]?.[rangeKey];
+      if (pts && pts.length >= 2) return pts.map(p => p.v);
+    }
+    return null;
+  }
+
+  // Returns the first available sparkline object (keyed by rangeKey) for a symbol or any ETF
+  function getSparkObj(sparklines, sym) {
+    const syms = sym ? [sym] : ["GOLDBEES", "HDFCMFGETF", "KOTAKGOLD", "SBIGETS", "AXISGOLD", "ICICIGOLD"];
+    for (const s of syms) {
+      if (sparklines?.[s] && Object.keys(sparklines[s]).length > 0) return { sym: s, data: sparklines[s] };
+    }
+    return null;
+  }
 
   function fmt(n)    { return "₹\u202f" + Number(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2}); }
   function fmtAED(n) { return "د.إ\u202f" + Number(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -831,12 +726,13 @@
     {symbol:"KOTAKGOLD",  name:"Kotak Gold ETF",  fund:"Kotak AMC",        expense:0.0055, aum:"₹3,500Cr+", emoji:"🟠"},
     {symbol:"ICICIGOLD",  name:"ICICI Pru Gold",  fund:"ICICI Prudential", expense:0.0050, aum:"₹4,100Cr+", emoji:"🟤"},
   ];
-  let etfSparklineData = {};
+  let _etfSparklines = {};
 
   function renderHistChart(symbol) {
     const canvas  = document.getElementById("etfHistCanvas");
     const statsEl = document.getElementById("etfHistStats");
-    const data    = etfSparklineData[symbol];
+    // Use "1y" range for the 52-week ETF sidebar chart
+    const data = getSparkValues(_etfSparklines, "1y", symbol);
     if (!canvas || !data || data.length < 4) return;
     const W=canvas.width, H=canvas.height, ctx=canvas.getContext("2d");
     ctx.clearRect(0,0,W,H);
@@ -876,14 +772,14 @@
   }
 
   function renderETFNavs(baseRate, serverNavs, serverPrevClose, sparklines) {
-    etfSparklineData = sparklines || {};
+    _etfSparklines = sparklines || {};
     const grid = document.getElementById("etfGrid");
     const results = ETF_LIST.map(etf => {
-      const unitNav = serverNavs?.[etf.symbol];
+      const unitNav  = serverNavs?.[etf.symbol];
       const prevClose = serverPrevClose?.[etf.symbol];
-      const live = unitNav > 0;
+      const live     = unitNav > 0;
       const gramRate = live ? unitNav : baseRate*(1+etf.expense);
-      const dayChg = (live && prevClose) ? ((unitNav-prevClose)/prevClose*100) : null;
+      const dayChg   = (live && prevClose) ? ((unitNav-prevClose)/prevClose*100) : null;
       return {...etf, unitNav, gramRate, live, dayChg};
     });
     const minGram = Math.min(...results.map(e => e.gramRate));
@@ -894,15 +790,16 @@
       const dClr   = Math.abs(vsSpot)<50?"var(--muted)":vsSpot>0?"var(--red)":"var(--green)";
       const dTxt   = Math.abs(vsSpot)<50?"≈ Near spot":vsSpot>0?`▲ ${fmt(vsSpot)} over spot (${vsPct}%)`:`▼ ${fmt(Math.abs(vsSpot))} under spot`;
       const dcHtml = e.dayChg!=null?`<div style="font-size:10px;font-family:var(--mono);color:${e.dayChg>=0?"var(--green)":"var(--red)"};text-align:center;margin-top:1px">${e.dayChg>=0?"▲":"▼"} ${Math.abs(e.dayChg).toFixed(2)}% today</div>`:"";
-      const hasSp  = etfSparklineData[e.symbol]?.length > 4;
+      const hasSp  = _etfSparklines[e.symbol] && Object.keys(_etfSparklines[e.symbol]).length > 0;
       return `<div class="retailer-card ${isBest?'best-buy':''}" style="cursor:${hasSp?'pointer':'default'}" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:''}">${isBest?'<div class="retailer-best-badge">Best Value</div>':''}<div class="retailer-logo">${e.emoji}</div><div class="retailer-name">${e.name}</div><div class="retailer-type">${e.fund}</div><div class="purity-pill">995 · ~1g/unit · NSE/BSE</div><div class="retailer-price">${fmt(e.gramRate)}</div><div class="retailer-sub" style="font-size:10px;color:var(--muted);text-align:center;font-family:var(--mono)">${e.symbol} · ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div><div style="font-size:10px;font-family:var(--mono);color:${dClr};text-align:center;margin-top:2px">${dTxt}</div>${dcHtml}<div style="margin-top:4px">${e.live?'<span class="etf-live-badge">● NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em">tap for chart →</div>':''}</div>`;
     }).join("");
-    const first = ETF_LIST.find(e => etfSparklineData[e.symbol]?.length > 4);
-    if (first) {
+    // Show ETF history panel if 1y data exists for any ETF
+    const firstWith1y = ETF_LIST.find(e => getSparkValues(_etfSparklines, "1y", e.symbol));
+    if (firstWith1y) {
       const panel = document.getElementById("etfHistPanel");
       panel.style.display = "block";
-      document.getElementById("etfHistSelect").value = first.symbol;
-      renderHistChart(first.symbol);
+      document.getElementById("etfHistSelect").value = firstWith1y.symbol;
+      renderHistChart(firstWith1y.symbol);
     }
     const navs = {};
     results.forEach(e => navs[e.symbol] = e.gramRate);
@@ -967,39 +864,81 @@
   }
 
   /* ── Hero Historical Panel ── */
-  let _heroHistData = null;
+  let _heroHistSparklines = null;
+  let _heroHistCurrentPrice = null;
+
+  // Tab config: maps button key → { rangeKey for API, fallback rangeKey, label }
+  const HIST_TAB_CONFIG = {
+    "1d":  { rangeKey: "1d",  fallback: "1w",  label: "vs yesterday",     isIntraday: true },
+    "1w":  { rangeKey: "1w",  fallback: "1m",  label: "vs 1 week ago" },
+    "1m":  { rangeKey: "1m",  fallback: "3m",  label: "vs 1 month ago" },
+    "3m":  { rangeKey: "3m",  fallback: "6m",  label: "vs 3 months ago" },
+    "6m":  { rangeKey: "6m",  fallback: "1y",  label: "vs 6 months ago" },
+    "1y":  { rangeKey: "1y",  fallback: "ytd", label: "vs 1 year ago" },
+    "3y":  { rangeKey: "3y",  fallback: "1y",  label: "vs 3 years ago" },
+    "5y":  { rangeKey: "5y",  fallback: "3y",  label: "vs 5 years ago" },
+    "ytd": { rangeKey: "ytd", fallback: "1y",  label: "year-to-date" },
+  };
+
   function buildHeroHistPanel(india24, sparklines) {
-    const spark = sparklines?.GOLDBEES || sparklines?.HDFCMFGETF || sparklines?.KOTAKGOLD;
-    if (!spark || spark.length < 4) return;
-    _heroHistData = {spark, current: india24};
+    _heroHistSparklines = sparklines;
+    _heroHistCurrentPrice = india24;
+    // Show panel only if we have at least some sparkline data
+    const hasAny = Object.values(sparklines || {}).some(s => s && Object.keys(s).length > 0);
+    if (!hasAny) return;
     document.getElementById("heroHistPanel").style.display = "block";
-    showHistTab("1D", document.querySelector(".hero-hist-tab.active") || document.querySelector(".hero-hist-tab"));
+    showHistTab("1d", document.querySelector(".hero-hist-tab.active"));
   }
 
-  function showHistTab(period, btn) {
-    document.querySelectorAll(".hero-hist-tab").forEach(b=>b.classList.remove("active"));
+  function showHistTab(tabKey, btn) {
+    document.querySelectorAll(".hero-hist-tab").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
-    if (!_heroHistData) return;
-    const {spark, current} = _heroHistData, n=spark.length;
-    const now = new Date();
-    const ytdW = Math.ceil((now - new Date(now.getFullYear(),0,1))/(7*86400000));
-    const pm = {"1D":{weeks:0,label:"vs yesterday",approx:true},"1W":{weeks:1,label:"vs 1 week ago"},"1M":{weeks:4,label:"vs 1 month ago"},"3M":{weeks:13,label:"vs 3 months ago"},"6M":{weeks:26,label:"vs 6 months ago"},"1Y":{weeks:52,label:"vs 1 year ago"},"YTD":{weeks:ytdW,label:"year-to-date"}};
-    const p = pm[period]||pm["1Y"];
+    if (!_heroHistSparklines || !_heroHistCurrentPrice) return;
+
+    const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
+    const current = _heroHistCurrentPrice;
+
+    // Try the direct rangeKey first, then fallback
+    let vals = getSparkValues(_heroHistSparklines, cfg.rangeKey);
+    if (!vals || vals.length < 2) vals = getSparkValues(_heroHistSparklines, cfg.fallback);
+    if (!vals || vals.length < 2) {
+      document.getElementById("heroHistBody").innerHTML = `
+        <div class="hero-hist-cell" style="grid-column:1/-1">
+          <div class="hero-hist-clabel">No data available for this period</div>
+        </div>`;
+      return;
+    }
+
+    const n = vals.length;
     let past;
-    if (period==="1D"){const wChg=spark[n-1]-(spark[n-2]||spark[n-1]);past=current-(wChg/7);}
-    else {const wb=Math.min(p.weeks,n-1);past=wb>0?spark[n-1-wb]:spark[0];}
-    const chg=current-past, pct=(chg/past)*100, dir=chg>=0?"up":"dn", sign=chg>=0?"+":"−";
-    const cells=[
-      {label:"Current Price",                                       val:fmt(current),chg:null},
-      {label:`Change (${p.label})`,                                 val:sign+fmt(Math.abs(chg)),chg:dir,chgTxt:sign+Math.abs(pct).toFixed(2)+"%"},
-      {label:period==="1D"?"Est. Yesterday":`Price ${p.label.replace("vs ","")}`, val:fmt(past),chg:null},
-      {label:period+" Performance",                                 val:sign+Math.abs(pct).toFixed(2)+"%",chg:dir,chgTxt:dir==="up"?"▲ Gain":"▼ Loss"},
+    if (cfg.isIntraday) {
+      // For 1D: compare first point of the range to current
+      past = vals[0];
+    } else {
+      past = vals[0];
+    }
+
+    const chg = current - past;
+    const pct = past > 0 ? (chg / past) * 100 : 0;
+    const dir = chg >= 0 ? "up" : "dn";
+    const sign = chg >= 0 ? "+" : "−";
+
+    const periodLabel = tabKey === "1d" ? "Est. Yesterday" :
+                        tabKey === "ytd" ? "Price Jan 1" :
+                        `Price ${cfg.label.replace("vs ", "")}`;
+
+    const cells = [
+      { label: "Current Price",        val: fmt(current),                        chg: null },
+      { label: `Change (${cfg.label})`,val: sign + fmt(Math.abs(chg)),           chg: dir, chgTxt: sign + Math.abs(pct).toFixed(2) + "%" },
+      { label: periodLabel,            val: fmt(past),                           chg: null },
+      { label: tabKey.toUpperCase() + " Performance", val: sign + Math.abs(pct).toFixed(2) + "%", chg: dir, chgTxt: dir === "up" ? "▲ Gain" : "▼ Loss" },
     ];
-    document.getElementById("heroHistBody").innerHTML = cells.map(c=>`
+
+    document.getElementById("heroHistBody").innerHTML = cells.map(c => `
       <div class="hero-hist-cell">
         <div class="hero-hist-clabel">${c.label}</div>
-        <div class="hero-hist-cval ${c.chg?("hero-hist-cchg "+c.chg):""}" style="font-size:${c.chg?"18px":"15px"}">${c.val}</div>
-        ${c.chg?`<div class="hero-hist-cchg ${c.chg}">${c.chgTxt}</div>`:""}
+        <div class="hero-hist-cval ${c.chg ? ("hero-hist-cchg " + c.chg) : ""}" style="font-size:${c.chg ? "18px" : "15px"}">${c.val}</div>
+        ${c.chg ? `<div class="hero-hist-cchg ${c.chg}">${c.chgTxt}</div>` : ""}
       </div>`).join("");
   }
 
@@ -1010,57 +949,58 @@
     document.getElementById("isp-xau").textContent = fmtUSD(xauUsd);
     document.getElementById("isp-inr").textContent = "₹" + usdInr.toFixed(2);
 
-    const spark = sparklines?.GOLDBEES || sparklines?.HDFCMFGETF || sparklines?.KOTAKGOLD;
     const tbody = document.getElementById("ispHistBody");
-    if (!spark || spark.length < 4) {
-      tbody.innerHTML = `<tr><td colspan="8" style="padding:18px 14px;color:var(--muted);text-align:center;font-family:var(--mono);font-size:12px">Historical data unavailable</td></tr>`;
-      return;
-    }
-    const n = spark.length;
-    const intlScale = calc24k / spark[n-1];
-    // If we have an IBJA price, compute ratio so we can extrapolate IBJA history
-    const ibjaRatio = (ibja24kVal && ibja24kVal > 0) ? (ibja24kVal / calc24k) : null;
 
     const now = new Date();
-    const ytdW = Math.max(1, Math.ceil((now - new Date(now.getFullYear(),0,1))/(7*86400000)));
+    const ytdDays = Math.ceil((now - new Date(now.getFullYear(), 0, 1)) / 86400000);
+    const ibjaRatio = (ibja24kVal && ibja24kVal > 0) ? (ibja24kVal / calc24k) : null;
+
+    // Each period: which rangeKey to use from sparklines, fallback key
     const periods = [
-      {label:"1 Day",    weeks:0,  approxDaily:true},
-      {label:"1 Week",   weeks:1},
-      {label:"1 Month",  weeks:4},
-      {label:"3 Months", weeks:13},
-      {label:"6 Months", weeks:26},
-      {label:"1 Year",   weeks:52},
-      {label:"YTD",      weeks:ytdW},
+      { label: "1 Day",    rangeKey: "1d",  fallback: "1w",  isFirst: true },
+      { label: "1 Week",   rangeKey: "1w",  fallback: "1m" },
+      { label: "1 Month",  rangeKey: "1m",  fallback: "3m" },
+      { label: "3 Months", rangeKey: "3m",  fallback: "6m" },
+      { label: "6 Months", rangeKey: "6m",  fallback: "1y" },
+      { label: "1 Year",   rangeKey: "1y",  fallback: "ytd" },
+      { label: "YTD",      rangeKey: "ytd", fallback: "1y" },
     ];
 
     tbody.innerHTML = periods.map(p => {
-      let pastRaw;
-      if (p.approxDaily) {
-        const wChg = spark[n-1]-(spark[n-2]||spark[n-1]);
-        pastRaw = spark[n-1] - wChg/7;
-      } else {
-        const idx = Math.max(0, n-1-Math.min(p.weeks, n-1));
-        pastRaw = spark[idx];
+      // Get flat value array for this period
+      let vals = getSparkValues(sparklines, p.rangeKey);
+      if (!vals || vals.length < 2) vals = getSparkValues(sparklines, p.fallback);
+
+      if (!vals || vals.length < 2) {
+        return `<tr>
+          <td style="color:var(--text);font-weight:500">${p.label}</td>
+          <td class="num" colspan="3" style="color:var(--muted)">—</td>
+          <td class="num sep" colspan="3" style="color:var(--muted)">—</td>
+          <td class="num"><span class="sig flat">→ —</span></td>
+        </tr>`;
       }
 
-      // Int Spot historical
-      const intlPast = pastRaw * intlScale;
-      const intlChg  = calc24k - intlPast;
-      const intlPct  = (intlChg / intlPast) * 100;
-      const intlUp   = intlChg >= 0;
-      const intlClr  = intlUp ? "#22c55e" : "#ef4444";
+      // Past price = first value of the range; current = last value scaled to current calc24k
+      const pastRaw  = vals[0];
+      const lastRaw  = vals[vals.length - 1];
+      // Scale: lastRaw should equal calc24k, so intlPast = pastRaw * (calc24k / lastRaw)
+      const scale    = lastRaw > 0 ? calc24k / lastRaw : 1;
+      const intlPast = pastRaw * scale;
+
+      const intlChg = calc24k - intlPast;
+      const intlPct = intlPast > 0 ? (intlChg / intlPast) * 100 : 0;
+      const intlUp  = intlChg >= 0;
+      const intlClr = intlUp ? "#22c55e" : "#ef4444";
       const intlSign = intlUp ? "+" : "−";
 
-      // Signal driven by Int Spot trend
       const sigKey = Math.abs(intlPct) < 0.3 ? "flat" : intlUp ? "up" : "dn";
-      const sigTxt = sigKey==="flat" ? "→ Flat" : sigKey==="up" ? "▲ Up" : "▼ Down";
+      const sigTxt = sigKey === "flat" ? "→ Flat" : sigKey === "up" ? "▲ Up" : "▼ Down";
 
-      // IBJA historical (estimated via current ratio applied to past intl)
       let ibjaHtml;
       if (ibjaRatio) {
         const ibjaPast = intlPast * ibjaRatio;
         const ibjaChg  = ibja24kVal - ibjaPast;
-        const ibjaPct  = (ibjaChg / ibjaPast) * 100;
+        const ibjaPct  = ibjaPast > 0 ? (ibjaChg / ibjaPast) * 100 : 0;
         const ibjaUp   = ibjaChg >= 0;
         const ibjaClr  = ibjaUp ? "#22c55e" : "#ef4444";
         const ibjaSign = ibjaUp ? "+" : "−";
@@ -1095,8 +1035,7 @@
       const gramUSD = data.price / TROY;
       const calc24k = gramUSD * usdInr;
 
-      // ── IBJA stale-fallback logic ──
-      // Always update cache when fresh data arrives
+      // IBJA stale-fallback logic
       if (data.ibja24k && data.ibja24k > 0) {
         ibjaCache.ibja24k = data.ibja24k;
         ibjaCache.ibja22k = data.ibja22k || data.ibja24k * 0.916;
@@ -1105,13 +1044,9 @@
       const hasLive  = !!(data.ibja24k && data.ibja24k > 0);
       const hasStale = !!ibjaCache.ibja24k;
 
-      // Use live → stale → null, in that order
-      const ibja24 = hasLive  ? data.ibja24k :
-                     hasStale ? ibjaCache.ibja24k : null;
-      const ibja22 = hasLive  ? (data.ibja22k || data.ibja24k*0.916) :
-                     hasStale ? ibjaCache.ibja22k : null;
-      const ibja995 = hasLive ? (data.ibja995 || data.ibja24k*0.995) :
-                      hasStale ? ibjaCache.ibja995 : null;
+      const ibja24  = hasLive  ? data.ibja24k  : hasStale ? ibjaCache.ibja24k  : null;
+      const ibja22  = hasLive  ? (data.ibja22k || data.ibja24k*0.916) : hasStale ? ibjaCache.ibja22k : null;
+      const ibja995 = hasLive  ? (data.ibja995 || data.ibja24k*0.995) : hasStale ? ibjaCache.ibja995 : null;
 
       const india24 = ibja24 || calc24k;
       const india22 = ibja22 || india24 * 0.916;
@@ -1131,7 +1066,7 @@
       const spread     = india24 - dubai24Inr;
       const spreadPct  = ((spread / india24) * 100).toFixed(2);
 
-      /* Flash price on change */
+      // Flash price on change
       const priceEl = document.getElementById("mainPrice");
       if (prevGoldPrice !== null) {
         const cls = india24>prevGoldPrice?"flash-up":india24<prevGoldPrice?"flash-dn":"";
@@ -1145,11 +1080,11 @@
       }
       prevSilverPrice = silverGram;
 
-      /* Hero */
+      // Hero
       priceEl.textContent = fmt(india24);
       document.getElementById("lastUpdated").textContent = "updated " + timeStr(data.timestamp);
 
-      /* Dual Rate Box — Col 1: Int Spot */
+      // Dual Rate Box — Col 1: Int Spot
       document.getElementById("intl-xau").textContent    = fmtUSD(data.price);
       document.getElementById("intl-inr").textContent    = "₹" + usdInr.toFixed(2);
       document.getElementById("intl-result").textContent = fmt(calc24k);
@@ -1157,7 +1092,7 @@
       document.getElementById("intl-22k").textContent    = fmt(calc24k * 0.916);
       document.getElementById("intl-18k").textContent    = fmt(calc24k * 0.75);
 
-      /* Dual Rate Box — Col 2: IBJA (live / stale / pending) */
+      // Dual Rate Box — Col 2: IBJA
       const badge    = document.getElementById("ibjaLiveBadge");
       const staleMsg = document.getElementById("ibjaStaleMsg");
       const unavMsg  = document.getElementById("ibjaUnavailMsg");
@@ -1180,24 +1115,24 @@
         staleMsg.style.display = "none"; unavMsg.style.display = "block";
       }
 
-      /* Dual historical table */
+      // Historical table
       buildIntlSpotPanel(data.price, usdInr, calc24k, data.etfSparklines, ibja24);
 
-      /* Retailer + platform cards */
+      // Retailer + platform cards
       buildPhysicalRetailers(india24);
       buildDigitalPlatforms(india24);
 
-      /* ETFs + traffic light */
+      // ETFs + traffic light
       const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfPrevClose, data.etfSparklines);
       buildTrafficLight(india24, etfNavsForTL);
 
-      /* Hero historical tab panel */
+      // Hero historical tab panel — now reads new sparkline shape
       buildHeroHistPanel(india24, data.etfSparklines);
 
-      /* Dubai */
-      document.getElementById("dxb-usd-inr").textContent      = "₹ " + usdInr.toFixed(2);
-      document.getElementById("dxb-aed-inr-strip").textContent = "₹ " + aedInr.toFixed(4);
-      document.getElementById("dxb-xau-usd").textContent       = fmtUSD(data.price);
+      // Dubai
+      document.getElementById("dxb-usd-inr").textContent       = "₹ " + usdInr.toFixed(2);
+      document.getElementById("dxb-aed-inr-strip").textContent  = "₹ " + aedInr.toFixed(4);
+      document.getElementById("dxb-xau-usd").textContent        = fmtUSD(data.price);
       document.getElementById("dxb-24k-aed").textContent = fmtAED(dubai24Aed);
       document.getElementById("dxb-24k-inr").textContent = fmt(dubai24Inr);
       document.getElementById("dxb-22k-aed").textContent = fmtAED(dubai22Aed);
@@ -1212,13 +1147,13 @@
       spreadEl.className   = "dxb-spread-val " + (spread>=0?"pos":"neg");
       document.getElementById("ds-spreadpct").textContent = Math.abs(spreadPct) + "% " + (spread>=0?"India pricier":"Dubai pricier");
 
-      /* FX bar */
+      // FX bar
       document.getElementById("fxGold").textContent   = fmtUSD(data.price);
       document.getElementById("fxSilver").textContent = fmtUSD(silverUSD);
       document.getElementById("fxInr").textContent    = "₹ " + usdInr.toFixed(2);
       document.getElementById("fxAed").textContent    = "₹ " + aedInr.toFixed(4);
 
-      /* Silver section */
+      // Silver section
       silverEl.textContent = fmt(silverGram);
       document.getElementById("silverUpdated").textContent = "updated " + timeStr(data.timestamp);
       document.getElementById("silverKg").textContent      = fmt(silverGram * 1000);
@@ -1234,10 +1169,10 @@
       else if (ratio<70){sSignal.textContent="◆ WAIT · Silver expensive";}
       else               {sSignal.textContent="◆ NEUTRAL · Fair value";}
 
-      /* Ticker */
+      // Ticker
       buildTicker({price:data.price, india24, india22, dubai24:dubai24Inr, dubai22:dubai22Inr, silverUSD, silverGram, usdInr, aedInr});
 
-      /* Status */
+      // Status
       document.getElementById("statusDot").className    = "dot";
       document.getElementById("statusText").textContent = "live";
       document.getElementById("footerNote").textContent = "Auto-refreshes every 60 min · last: " + timeStr(data.timestamp);
