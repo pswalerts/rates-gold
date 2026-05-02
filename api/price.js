@@ -181,11 +181,24 @@ export default async function handler(req, res) {
       }
     });
 
+    // Convert unit prices to INR/gram using the live gold price as anchor.
+    // ETF_UNIT_GRAMS (0.995) was correct at launch but unit NAVs have drifted far:
+    // GOLDBEES trades ~120-130/unit while gold is ~14,000/gram => ~0.0087g/unit today.
+    // Dynamic formula:
+    //   gramsPerUnit = liveUnitNav / calc24k
+    //   etfNavs[sym] = liveUnitNav / gramsPerUnit = calc24k  (tracks gold exactly)
+    //   etfPrevClose[sym] = prevCloseUnit / gramsPerUnit  (correct % change for 1D)
+    const calc24k = (goldPriceUSD / 31.1035) * usdInr;
     const etfNavs = {}, etfPrevClose = {};
     ALL_ETF_SYMBOLS.forEach(sym => {
-      const unitGrams = ETF_UNIT_GRAMS[sym] || 0.9950;
-      if (etfNavsRaw[sym])      etfNavs[sym]      = etfNavsRaw[sym]      / unitGrams;
-      if (etfPrevCloseRaw[sym]) etfPrevClose[sym] = etfPrevCloseRaw[sym] / unitGrams;
+      const liveUnit = etfNavsRaw[sym];
+      if (liveUnit > 0) {
+        const gramsPerUnit = liveUnit / calc24k;
+        etfNavs[sym] = calc24k;
+        if (etfPrevCloseRaw[sym]) {
+          etfPrevClose[sym] = etfPrevCloseRaw[sym] / gramsPerUnit;
+        }
+      }
     });
 
     // ── STEP 6: Historical sparklines (multi-range) ──
@@ -211,7 +224,12 @@ export default async function handler(req, res) {
 
     async function fetchSparklineRange(sym, range, interval) {
       const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
-      const unitGrams = ETF_UNIT_GRAMS[sym] || 0.9950;
+      // Scale factor: converts unit price history to INR/gram history.
+      // We use the live unit NAV as anchor: scale = calc24k / liveUnitNav
+      // so that the most recent point equals calc24k (current gold INR/gram).
+      // This gives correct relative % changes across all time ranges.
+      const liveUnitNav = etfNavsRaw[sym];
+      const scale = (liveUnitNav > 0) ? (calc24k / liveUnitNav) : (1 / (ETF_UNIT_GRAMS[sym] || 0.9950));
       for (const host of ["query1", "query2"]) {
         try {
           const r = await withTimeout(
@@ -226,7 +244,7 @@ export default async function handler(req, res) {
           const closes     = result?.indicators?.quote?.[0]?.close;
           if (!closes || closes.length < 2) continue;
           const points = closes
-            .map((c, i) => c != null ? { t: timestamps?.[i] ?? null, v: Math.round((c / unitGrams) * 100) / 100 } : null)
+            .map((c, i) => c != null ? { t: timestamps?.[i] ?? null, v: Math.round((c * scale) * 100) / 100 } : null)
             .filter(Boolean);
           if (points.length >= 2) return points;
         } catch(e) {}
