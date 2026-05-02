@@ -103,8 +103,6 @@ export default async function handler(req, res) {
     }
 
     // ── STEP 5: ETF config ──
-    // Grams of 995 gold per 1 ETF unit on NSE/BSE
-    // All major Indian gold ETFs track approximately 0.995g per unit
     const ETF_UNIT_GRAMS = {
       GOLDBEES:   0.9950,
       SBIGETS:    0.9950,
@@ -125,7 +123,6 @@ export default async function handler(req, res) {
 
     const ALL_ETF_SYMBOLS = ["GOLDBEES", "SBIGETS", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
 
-    // BSE scrip codes for gold ETFs (BSE API fallback)
     const BSE_CODES = {
       GOLDBEES:   "590096",
       SBIGETS:    "590091",
@@ -142,89 +139,39 @@ export default async function handler(req, res) {
     async function fetchETFQuote(sym) {
       const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-      // Attempt 1: Yahoo Finance query1
       try {
-        const r = await fetch(
-          `https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`,
-          { headers: { Accept: "application/json", "User-Agent": ua } }
-        );
-        if (r.ok) {
-          const d = await r.json();
-          const meta = d?.chart?.result?.[0]?.meta;
-          if (meta?.regularMarketPrice > 0) {
-            return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true };
-          }
-        }
+        const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`, { headers: { Accept: "application/json", "User-Agent": ua } });
+        if (r.ok) { const d = await r.json(); const meta = d?.chart?.result?.[0]?.meta; if (meta?.regularMarketPrice > 0) return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true }; }
       } catch(e) {}
 
-      // Attempt 2: Yahoo Finance query2
       try {
-        const r = await fetch(
-          `https://query2.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`,
-          { headers: { Accept: "application/json", "User-Agent": ua } }
-        );
-        if (r.ok) {
-          const d = await r.json();
-          const meta = d?.chart?.result?.[0]?.meta;
-          if (meta?.regularMarketPrice > 0) {
-            return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true };
-          }
-        }
+        const r = await fetch(`https://query2.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`, { headers: { Accept: "application/json", "User-Agent": ua } });
+        if (r.ok) { const d = await r.json(); const meta = d?.chart?.result?.[0]?.meta; if (meta?.regularMarketPrice > 0) return { nav: meta.regularMarketPrice, prevClose: meta.chartPreviousClose || meta.previousClose || null, live: true }; }
       } catch(e) {}
 
-      // Attempt 3: BSE India API
       const bseCode = BSE_CODES[sym];
       if (bseCode) {
         try {
-          const r = await fetch(
-            `https://api.bseindia.com/BseIndiaAPI/api/getScripHeaderData/w?Debtflag=&scripcode=${bseCode}&seriesid=`,
-            { headers: { Accept: "application/json", Referer: "https://www.bseindia.com/", "User-Agent": ua } }
-          );
-          if (r.ok) {
-            const d = await r.json();
-            const ltp  = parseFloat(d?.CurrRate || d?.Ltp || d?.LastRate || 0);
-            const prev = parseFloat(d?.PrevClose || d?.PrevRate || 0);
-            if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
-          }
+          const r = await fetch(`https://api.bseindia.com/BseIndiaAPI/api/getScripHeaderData/w?Debtflag=&scripcode=${bseCode}&seriesid=`, { headers: { Accept: "application/json", Referer: "https://www.bseindia.com/", "User-Agent": ua } });
+          if (r.ok) { const d = await r.json(); const ltp = parseFloat(d?.CurrRate || d?.Ltp || d?.LastRate || 0); const prev = parseFloat(d?.PrevClose || d?.PrevRate || 0); if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true }; }
         } catch(e) {}
       }
 
-      // Attempt 4: NSE India
       try {
-        const r = await fetch(
-          `https://www.nseindia.com/api/quote-equity?symbol=${sym}`,
-          { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://www.nseindia.com/", Cookie: "nsit=; nseappid=" } }
-        );
-        if (r.ok) {
-          const d = await r.json();
-          const ltp  = d?.priceInfo?.lastPrice ?? d?.priceInfo?.close;
-          const prev = d?.priceInfo?.previousClose;
-          if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
-        }
+        const r = await fetch(`https://www.nseindia.com/api/quote-equity?symbol=${sym}`, { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://www.nseindia.com/", Cookie: "nsit=; nseappid=" } });
+        if (r.ok) { const d = await r.json(); const ltp = d?.priceInfo?.lastPrice ?? d?.priceInfo?.close; const prev = d?.priceInfo?.previousClose; if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true }; }
       } catch(e) {}
 
-      // Attempt 5: Groww public API
       try {
-        const r = await fetch(
-          `https://groww.in/v1/api/stocks_data/v1/tr_live_data/segment/NSECM/exchange_token/${sym}/`,
-          { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://groww.in/" } }
-        );
-        if (r.ok) {
-          const d = await r.json();
-          const ltp  = d?.ltp || d?.price;
-          const prev = d?.close || d?.previousClose;
-          if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true };
-        }
+        const r = await fetch(`https://groww.in/v1/api/stocks_data/v1/tr_live_data/segment/NSECM/exchange_token/${sym}/`, { headers: { Accept: "application/json", "User-Agent": ua, Referer: "https://groww.in/" } });
+        if (r.ok) { const d = await r.json(); const ltp = d?.ltp || d?.price; const prev = d?.close || d?.previousClose; if (ltp > 0) return { nav: ltp, prevClose: prev || null, live: true }; }
       } catch(e) {}
 
       return { nav: null, prevClose: null, live: false };
     }
 
-    const etfResults = await Promise.allSettled(
-      ALL_ETF_SYMBOLS.map(sym => withTimeout(fetchETFQuote(sym)))
-    );
+    const etfResults = await Promise.allSettled(ALL_ETF_SYMBOLS.map(sym => withTimeout(fetchETFQuote(sym))));
 
-    // Raw unit prices (₹/unit from NSE/BSE)
     const etfNavsRaw = {}, etfPrevCloseRaw = {};
     etfResults.forEach((result, i) => {
       const sym = ALL_ETF_SYMBOLS[i];
@@ -234,32 +181,21 @@ export default async function handler(req, res) {
       }
     });
 
-    // Convert unit prices → ₹ per gram of gold
-    // e.g. GOLDBEES at ₹72.50/unit ÷ 0.995g/unit = ₹72.86/gram
-    const etfNavs = {};
-    const etfPrevClose = {};
+    const etfNavs = {}, etfPrevClose = {};
     ALL_ETF_SYMBOLS.forEach(sym => {
       const unitGrams = ETF_UNIT_GRAMS[sym] || 0.9950;
-      if (etfNavsRaw[sym]) {
-        etfNavs[sym] = etfNavsRaw[sym] / unitGrams;
-      }
-      if (etfPrevCloseRaw[sym]) {
-        etfPrevClose[sym] = etfPrevCloseRaw[sym] / unitGrams;
-      }
+      if (etfNavsRaw[sym])      etfNavs[sym]      = etfNavsRaw[sym]      / unitGrams;
+      if (etfPrevCloseRaw[sym]) etfPrevClose[sym] = etfPrevCloseRaw[sym] / unitGrams;
     });
 
     // ── STEP 6: Historical sparklines (multi-range) ──
     //
-    // Each range key maps to the Yahoo Finance range + interval that best fits it.
-    // Data points include a Unix timestamp (t) and ₹/gram value (v).
+    // Shape returned: etfSparklines[sym][rangeKey] = [{t: unixSeconds, v: ₹/gram}, ...]
     //
-    // Frontend usage:
-    //   const points = etfSparklines[sym]?.[activeRange] ?? [];
-    //   const prices = points.map(p => p.v);
-    //   const labels = points.map(p => p.t ? new Date(p.t * 1000).toLocaleDateString() : "");
+    // Range keys: "1d" "1w" "1m" "3m" "6m" "1y" "3y" "5y" "ytd"
     //
-    // For "1d": Yahoo returns the last 5 trading days at 5-min intervals.
-    // Filter to today's date on the frontend using the `t` timestamp.
+    // "1d" uses range=5d interval=5m — filter to today on the frontend via point.t timestamp.
+    // "3y" and "5y" use monthly candles (Yahoo does not provide daily for those ranges).
 
     const RANGE_CONFIG = [
       { key: "1d",  range: "5d",  interval: "5m"  },
@@ -279,23 +215,18 @@ export default async function handler(req, res) {
       for (const host of ["query1", "query2"]) {
         try {
           const r = await withTimeout(
-            fetch(
-              `https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=${interval}&range=${range}`,
-              { headers: { Accept: "application/json", "User-Agent": ua } }
-            ),
+            fetch(`https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=${interval}&range=${range}`,
+              { headers: { Accept: "application/json", "User-Agent": ua } }),
             9000
           );
           if (!r.ok) continue;
           const d = await r.json();
-          const result = d?.chart?.result?.[0];
+          const result     = d?.chart?.result?.[0];
           const timestamps = result?.timestamp;
-          const closes = result?.indicators?.quote?.[0]?.close;
+          const closes     = result?.indicators?.quote?.[0]?.close;
           if (!closes || closes.length < 2) continue;
           const points = closes
-            .map((c, i) => c != null ? {
-              t: timestamps?.[i] ?? null,
-              v: Math.round((c / unitGrams) * 100) / 100,
-            } : null)
+            .map((c, i) => c != null ? { t: timestamps?.[i] ?? null, v: Math.round((c / unitGrams) * 100) / 100 } : null)
             .filter(Boolean);
           if (points.length >= 2) return points;
         } catch(e) {}
@@ -303,8 +234,8 @@ export default async function handler(req, res) {
       return null;
     }
 
-    // Fetch all ranges for all ETFs in parallel
-    const sparklineJobs = [];
+    // Fetch all ranges × all ETFs in parallel
+    const sparklineJobs  = [];
     const sparklineIndex = [];
     for (const sym of ALL_ETF_SYMBOLS) {
       for (const { key, range, interval } of RANGE_CONFIG) {
@@ -324,17 +255,17 @@ export default async function handler(req, res) {
 
     // Build and cache response
     cache = {
-      price:       goldPriceUSD,
+      price:        goldPriceUSD,
       usdInr,
       aedInr,
-      silverPrice: silverUSD,
+      silverPrice:  silverUSD,
       ibja24k,
       ibja22k,
       ibja995,
-      etfNavs,        // ₹ per gram (already converted)
-      etfPrevClose,   // ₹ per gram (already converted)
-      etfSparklines,  // keyed by sym → range → [{t, v}]
-      timestamp:   new Date().toISOString(),
+      etfNavs,        // ₹ per gram
+      etfPrevClose,   // ₹ per gram
+      etfSparklines,  // { SYM: { "1d": [{t,v},...], "1w": [...], ..., "5y": [...] } }
+      timestamp:    new Date().toISOString(),
       sources: {
         fx:   usdInr === 84.5 ? "fallback" : "live",
         gold: goldSource,
