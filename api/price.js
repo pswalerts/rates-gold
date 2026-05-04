@@ -1,6 +1,11 @@
 let cache = null;
 let cacheTime = 0;
-const CACHE_DURATION = 60 * 60 * 1000; // 60 minutes
+
+// ── CACHE DURATION ──
+// Set to 0 to force a fresh fetch on every request (use temporarily to bust stale cache).
+// Change back to 60 * 60 * 1000 (60 min) once prices are confirmed correct.
+const CACHE_DURATION = 0; // TODO: change back to 60 * 60 * 1000 after confirming prices are correct
+
 const TROY = 31.1035;
 const GRAMS_PER_UNIT = 0.9950;
 
@@ -12,8 +17,9 @@ export default async function handler(req, res) {
       return res.status(200).json({ ...cache, cached: true });
     }
 
-    const GOLD_API_KEY        = process.env.GOLD_API_KEY;
-    const METAL_PRICE_API_KEY = process.env.METAL_PRICE_API_KEY;
+    const GOLD_API_KEY        = process.env.GOLD_API_KEY;        // goldapi.io key (optional)
+    const METAL_PRICE_API_KEY = process.env.METAL_PRICE_API_KEY; // metalpriceapi.com key (optional)
+    const GOLDPRICEZ_API_KEY  = process.env.GOLDPRICEZ_API_KEY;  // goldpricez.com key (optional, free tier)
 
     async function withTimeout(promise, ms = 8000) {
       return Promise.race([
@@ -24,120 +30,159 @@ export default async function handler(req, res) {
 
     // ══════════════════════════════════════════════════════════════
     // STEP 1: USD/INR
-    // Current rate as of May 2026 is ~95.00.
-    // Hardcoded fallback updated to 95.0 — critical for correct gold prices.
-    // Multiple sources tried in order; first valid response wins.
-    // Valid range: 75–120 (covers any realistic INR move over next few years)
+    // Current rate May 2026 ≈ 94.90–95.10
+    // Hardcoded fallback = 95.0 (was wrongly 84.5 — caused all prices to be ~10% low)
     // ══════════════════════════════════════════════════════════════
     let usdInr = null;
-    const fxSources = [
-      // Source 1: fawazahmed0 currency API (free, no key, updates daily)
+
+    const fxAttempts = [
+      // 1a. fawazahmed0 primary CDN
       async () => {
-        const r = await withTimeout(fetch(
-          "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json",
-          { headers: { Accept: "application/json" } }
-        ), 5000);
+        const r = await withTimeout(fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json", { headers: { Accept: "application/json" } }), 5000);
         if (!r.ok) return null;
         const d = await r.json();
         return d?.usd?.inr ?? null;
       },
-      // Source 2: fawazahmed0 fallback URL (same data, different CDN)
+      // 1b. fawazahmed0 pages.dev fallback
       async () => {
-        const r = await withTimeout(fetch(
-          "https://latest.currency-api.pages.dev/v1/currencies/usd.json",
-          { headers: { Accept: "application/json" } }
-        ), 5000);
+        const r = await withTimeout(fetch("https://latest.currency-api.pages.dev/v1/currencies/usd.json", { headers: { Accept: "application/json" } }), 5000);
         if (!r.ok) return null;
         const d = await r.json();
         return d?.usd?.inr ?? null;
       },
-      // Source 3: Frankfurter (ECB data, free, reliable)
+      // 1c. Frankfurter (ECB data, very reliable)
       async () => {
         const r = await withTimeout(fetch("https://api.frankfurter.app/latest?from=USD&to=INR"), 5000);
         if (!r.ok) return null;
         const d = await r.json();
         return d?.rates?.INR ?? null;
       },
-      // Source 4: Open Exchange Rates (free tier, no key needed for latest)
+      // 1d. Open Exchange Rates
       async () => {
         const r = await withTimeout(fetch("https://open.er-api.com/v6/latest/USD"), 5000);
         if (!r.ok) return null;
         const d = await r.json();
         return d?.rates?.INR ?? null;
       },
-      // Source 5: Yahoo Finance USD/INR
+      // 1e. Yahoo Finance USDINR=X (query1)
       async () => {
-        const r = await withTimeout(fetch(
-          "https://query1.finance.yahoo.com/v8/finance/chart/USDINR%3DX?interval=1d&range=1d",
-          { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } }
-        ), 6000);
+        const r = await withTimeout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/USDINR%3DX?interval=1d&range=1d", { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } }), 6000);
         if (!r.ok) return null;
         const d = await r.json();
         return d?.chart?.result?.[0]?.meta?.regularMarketPrice ?? null;
       },
-      // Source 6: Yahoo Finance query2
+      // 1f. Yahoo Finance USDINR=X (query2)
       async () => {
-        const r = await withTimeout(fetch(
-          "https://query2.finance.yahoo.com/v8/finance/chart/USDINR%3DX?interval=1d&range=1d",
-          { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } }
-        ), 6000);
+        const r = await withTimeout(fetch("https://query2.finance.yahoo.com/v8/finance/chart/USDINR%3DX?interval=1d&range=1d", { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } }), 6000);
         if (!r.ok) return null;
         const d = await r.json();
         return d?.chart?.result?.[0]?.meta?.regularMarketPrice ?? null;
       },
     ];
 
-    for (const src of fxSources) {
+    for (const attempt of fxAttempts) {
       try {
-        const rate = await src();
+        const rate = await attempt();
         if (rate && rate > 75 && rate < 120) {
           usdInr = rate;
-          console.log(`USD/INR: ${usdInr.toFixed(4)} (live)`);
+          console.log(`USD/INR live: ${usdInr.toFixed(4)}`);
           break;
         }
       } catch(e) {}
     }
 
-    // IMPORTANT: fallback updated to 95.0 (actual May 2026 rate, was wrongly 84.5)
     if (!usdInr) {
-      usdInr = 95.0;
-      console.log("USD/INR: using hardcoded fallback 95.0");
+      usdInr = 95.0; // Updated May 2026 — was incorrectly 84.5
+      console.log("USD/INR: all sources failed, using fallback 95.0");
     }
 
     const aedInr = usdInr / 3.6725;
     console.log(`USD/INR: ${usdInr.toFixed(4)} | AED/INR: ${aedInr.toFixed(4)}`);
 
     // ══════════════════════════════════════════════════════════════
-    // STEP 2: Gold spot XAU/USD
+    // STEP 2: XAU/USD — international gold spot price
     // ══════════════════════════════════════════════════════════════
     let goldPriceUSD = null, goldSource = "unknown";
-    try { const r = await withTimeout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Accept: "application/json", Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } })); if (r.ok) { const d = await r.json(); const xau = d?.items?.[0]?.xauPrice; if (xau > 1000) { goldPriceUSD = xau; goldSource = "goldprice.org"; } } } catch(e) {}
-    if (!goldPriceUSD) { try { const r = await withTimeout(fetch("https://metals.live/api/spot", { headers: { Accept: "application/json" } })); if (r.ok) { const d = await r.json(); const item = Array.isArray(d) ? d[0] : d; const xau = item?.gold ?? item?.XAU; if (xau > 1000) { goldPriceUSD = xau; goldSource = "metals.live"; } } } catch(e) {} }
-    if (!goldPriceUSD) { try { const r = await withTimeout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d", { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } })); if (r.ok) { const d = await r.json(); const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (p > 1000) { goldPriceUSD = p; goldSource = "yahoo-gc"; } } } catch(e) {} }
-    if (!goldPriceUSD) { try { const r = await withTimeout(fetch("https://query2.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d", { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } })); if (r.ok) { const d = await r.json(); const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (p > 1000) { goldPriceUSD = p; goldSource = "yahoo-gc-q2"; } } } catch(e) {} }
-    if (!goldPriceUSD && GOLD_API_KEY) { try { const r = await withTimeout(fetch("https://www.goldapi.io/api/XAU/USD", { headers: { "x-access-token": GOLD_API_KEY } })); if (r.ok) { const d = await r.json(); if (d?.price > 1000) { goldPriceUSD = d.price; goldSource = "goldapi.io"; } } } catch(e) {} }
-    if (!goldPriceUSD && METAL_PRICE_API_KEY) { try { const r = await withTimeout(fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${METAL_PRICE_API_KEY}&base=XAU&currencies=USD`)); if (r.ok) { const d = await r.json(); if (d?.rates?.USD > 0) { goldPriceUSD = d.rates.USD; goldSource = "metalpriceapi.com"; } } } catch(e) {} }
-    if (!goldPriceUSD) throw new Error("All gold price sources failed");
+
+    // 2a. goldprice.org (very reliable, no key)
+    try {
+      const r = await withTimeout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Accept: "application/json", Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } }));
+      if (r.ok) { const d = await r.json(); const x = d?.items?.[0]?.xauPrice; if (x > 1000) { goldPriceUSD = x; goldSource = "goldprice.org"; } }
+    } catch(e) {}
+
+    // 2b. gold-api.com (free, no key, no rate limit)
+    if (!goldPriceUSD) {
+      try {
+        const r = await withTimeout(fetch("https://gold-api.com/price/XAU", { headers: { Accept: "application/json" } }));
+        if (r.ok) { const d = await r.json(); if (d?.price > 1000) { goldPriceUSD = d.price; goldSource = "gold-api.com"; } }
+      } catch(e) {}
+    }
+
+    // 2c. metals.live
+    if (!goldPriceUSD) {
+      try {
+        const r = await withTimeout(fetch("https://metals.live/api/spot", { headers: { Accept: "application/json" } }));
+        if (r.ok) { const d = await r.json(); const item = Array.isArray(d) ? d[0] : d; const x = item?.gold ?? item?.XAU; if (x > 1000) { goldPriceUSD = x; goldSource = "metals.live"; } }
+      } catch(e) {}
+    }
+
+    // 2d. Yahoo Finance GC=F (query1)
+    if (!goldPriceUSD) {
+      try {
+        const r = await withTimeout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d", { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } }));
+        if (r.ok) { const d = await r.json(); const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (p > 1000) { goldPriceUSD = p; goldSource = "yahoo-gc-q1"; } }
+      } catch(e) {}
+    }
+
+    // 2e. Yahoo Finance GC=F (query2)
+    if (!goldPriceUSD) {
+      try {
+        const r = await withTimeout(fetch("https://query2.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d", { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } }));
+        if (r.ok) { const d = await r.json(); const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (p > 1000) { goldPriceUSD = p; goldSource = "yahoo-gc-q2"; } }
+      } catch(e) {}
+    }
+
+    // 2f. goldapi.io (requires key)
+    if (!goldPriceUSD && GOLD_API_KEY) {
+      try {
+        const r = await withTimeout(fetch("https://www.goldapi.io/api/XAU/USD", { headers: { "x-access-token": GOLD_API_KEY } }));
+        if (r.ok) { const d = await r.json(); if (d?.price > 1000) { goldPriceUSD = d.price; goldSource = "goldapi.io"; } }
+      } catch(e) {}
+    }
+
+    // 2g. metalpriceapi.com (requires key)
+    if (!goldPriceUSD && METAL_PRICE_API_KEY) {
+      try {
+        const r = await withTimeout(fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${METAL_PRICE_API_KEY}&base=XAU&currencies=USD`));
+        if (r.ok) { const d = await r.json(); if (d?.rates?.USD > 0) { goldPriceUSD = d.rates.USD; goldSource = "metalpriceapi.com"; } }
+      } catch(e) {}
+    }
+
+    if (!goldPriceUSD) throw new Error("All gold spot price sources failed");
 
     const calc24k = (goldPriceUSD / TROY) * usdInr;
     console.log(`XAU/USD: $${goldPriceUSD.toFixed(2)} [${goldSource}] | calc24k: Rs.${calc24k.toFixed(2)}/g`);
 
     // ══════════════════════════════════════════════════════════════
-    // STEP 3: Silver XAG/USD
+    // STEP 3: XAG/USD — silver spot price
     // ══════════════════════════════════════════════════════════════
     let silverUSD = null;
-    try { const r = await withTimeout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Accept: "application/json", Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } })); if (r.ok) { const d = await r.json(); const xag = d?.items?.[0]?.xagPrice; if (xag > 0) silverUSD = xag; } } catch(e) {}
-    if (!silverUSD) { try { const r = await withTimeout(fetch("https://metals.live/api/spot", { headers: { Accept: "application/json" } })); if (r.ok) { const d = await r.json(); const item = Array.isArray(d) ? d[0] : d; const xag = item?.silver ?? item?.XAG; if (xag > 0) silverUSD = xag; } } catch(e) {} }
+    try { const r = await withTimeout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Accept: "application/json", Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } })); if (r.ok) { const d = await r.json(); const x = d?.items?.[0]?.xagPrice; if (x > 0) silverUSD = x; } } catch(e) {}
+    if (!silverUSD) { try { const r = await withTimeout(fetch("https://gold-api.com/price/XAG", { headers: { Accept: "application/json" } })); if (r.ok) { const d = await r.json(); if (d?.price > 0) silverUSD = d.price; } } catch(e) {} }
+    if (!silverUSD) { try { const r = await withTimeout(fetch("https://metals.live/api/spot", { headers: { Accept: "application/json" } })); if (r.ok) { const d = await r.json(); const item = Array.isArray(d) ? d[0] : d; const x = item?.silver ?? item?.XAG; if (x > 0) silverUSD = x; } } catch(e) {} }
     if (!silverUSD) { try { const r = await withTimeout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/SI%3DF?interval=1d&range=1d", { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } })); if (r.ok) { const d = await r.json(); const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (p > 0) silverUSD = p; } } catch(e) {} }
     if (!silverUSD) silverUSD = goldPriceUSD / 85;
 
     // ══════════════════════════════════════════════════════════════
-    // STEP 4: IBJA India gold rate — 8-source chain
+    // STEP 4: IBJA India gold rate — 9-source chain
     //
-    // ibjaCheck: wide absolute range Rs.5,000–30,000/gram
-    // Avoids false rejections when gold surges (old % range was wrong)
+    // Target: Rs./gram for 999 purity (24K) as published by IBJA daily ~10am IST
     //
-    // toPerGram: handles per-100g, per-10g, and per-gram values
+    // ibjaCheck: absolute range Rs.5,000–30,000/gram
+    // Covers gold from $1,500/oz to $5,000/oz at any USD/INR between 75–120
+    // Old percentage-based check was rejecting valid values when gold surged
+    //
+    // toPerGram: handles per-100g (>50000), per-10g (>10000), per-gram as-is
     // ══════════════════════════════════════════════════════════════
     let ibja24k = null, ibja22k = null, ibja995 = null, ibjaSource = "none";
 
@@ -149,12 +194,46 @@ export default async function handler(req, res) {
     const toPerGram = (v) => {
       const n = parseFloat(v);
       if (!n || n <= 0) return null;
-      if (n > 50000) return n / 100; // per 100g
-      if (n > 10000) return n / 10;  // per 10g
-      return n;                       // already per gram
+      if (n > 50000) return n / 100; // per 100g (e.g. Rs.1500000)
+      if (n > 10000) return n / 10;  // per 10g  (e.g. Rs.150000)
+      return n;                       // per gram (e.g. Rs.15000)
     };
 
-    // ── Source 1: ibjarates.com API ──
+    // ── IBJA Source 1: goldpricez.com INR/gram API (direct India rate, most reliable) ──
+    // Returns India gold price per gram in INR directly — no conversion needed
+    // Free tier available at goldpricez.com/key/registration
+    // Add GOLDPRICEZ_API_KEY to your Vercel environment variables
+    if (!ibja24k && GOLDPRICEZ_API_KEY) {
+      try {
+        const r = await withTimeout(fetch(
+          "https://goldpricez.com/api/rates/currency/inr/measure/gram",
+          { headers: { Accept: "application/json", "X-API-KEY": GOLDPRICEZ_API_KEY } }
+        ), 7000);
+        if (r.ok) {
+          const d = await r.json();
+          console.log("goldpricez.com INR/gram RAW:", JSON.stringify(d).slice(0, 300));
+          // Response shape: { "gold_price_per_gram_24k": 15093.xx, ... }
+          const raw =
+            d?.gold_price_per_gram_24k ?? d?.price_gram_24k ??
+            d?.gram_24k ?? d?.["24k"] ??
+            d?.rates?.gram_24k ?? d?.data?.gram_24k;
+          if (raw) {
+            const per1g = parseFloat(raw);
+            console.log("goldpricez INR/gram 24k:", per1g);
+            if (ibjaCheck(per1g)) {
+              ibja24k = per1g;
+              ibja22k = ibja24k * 0.916;
+              ibja995 = ibja24k * 0.995;
+              ibjaSource = "goldpricez.com";
+              console.log("IBJA from goldpricez: Rs." + ibja24k.toFixed(2) + "/g");
+            }
+          }
+        } else { console.log("goldpricez.com HTTP", r.status); }
+      } catch(e) { console.log("goldpricez.com error:", e.message); }
+    }
+
+    // ── IBJA Source 2: ibjarates.com official API ──
+    // Logs full raw response — check Vercel logs to see exact JSON keys
     if (!ibja24k) {
       try {
         const r = await withTimeout(fetch("https://ibjarates.com/api/goldrates", {
@@ -182,20 +261,21 @@ export default async function handler(req, res) {
             (Array.isArray(d?.data) ? d.data.find(x => x?.purity === "995")?.rate : null);
           if (raw999) {
             const per1g = toPerGram(raw999);
-            console.log("ibjarates.com raw999:", raw999, "-> per1g:", per1g);
+            console.log("ibjarates raw999:", raw999, "-> per1g:", per1g);
             if (per1g && ibjaCheck(per1g)) {
               ibja24k = per1g;
               ibja22k = raw916 ? (toPerGram(raw916) ?? ibja24k * 0.916) : ibja24k * 0.916;
               ibja995 = raw995 ? (toPerGram(raw995) ?? ibja24k * 0.995) : ibja24k * 0.995;
               ibjaSource = "ibjarates.com";
-              console.log("IBJA from ibjarates.com: Rs." + ibja24k.toFixed(2) + "/g");
+              console.log("IBJA from ibjarates.com: Rs." + ibja24k.toFixed(2));
             }
           }
         } else { console.log("ibjarates.com HTTP", r.status); }
       } catch(e) { console.log("ibjarates.com error:", e.message); }
     }
 
-    // ── Source 2: Yahoo Finance MCX Gold — query1 ──
+    // ── IBJA Source 3: Yahoo Finance MCX Gold query1 ──
+    // GOLD.MCX / GOLDM.MCX price is Rs. per 10g — divide by 10
     if (!ibja24k) {
       for (const sym of ["GOLD.MCX", "GOLDM.MCX"]) {
         if (ibja24k) break;
@@ -207,10 +287,10 @@ export default async function handler(req, res) {
           if (r.ok) {
             const d = await r.json();
             const price = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
-            console.log(`Yahoo q1 MCX ${sym}: raw =`, price);
+            console.log(`Yahoo q1 MCX ${sym}: raw=${price}`);
             if (price > 0) {
               const per1g = toPerGram(price);
-              console.log(`Yahoo q1 MCX ${sym}: per1g =`, per1g);
+              console.log(`Yahoo q1 MCX ${sym}: per1g=${per1g}`);
               if (per1g && ibjaCheck(per1g)) {
                 ibja24k = per1g; ibja22k = ibja24k * 0.916; ibja995 = ibja24k * 0.995;
                 ibjaSource = `yahoo-q1-${sym}`;
@@ -222,7 +302,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // ── Source 3: Yahoo Finance MCX Gold — query2 ──
+    // ── IBJA Source 4: Yahoo Finance MCX Gold query2 ──
     if (!ibja24k) {
       for (const sym of ["GOLD.MCX", "GOLDM.MCX"]) {
         if (ibja24k) break;
@@ -234,7 +314,7 @@ export default async function handler(req, res) {
           if (r.ok) {
             const d = await r.json();
             const price = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
-            console.log(`Yahoo q2 MCX ${sym}: raw =`, price);
+            console.log(`Yahoo q2 MCX ${sym}: raw=${price}`);
             if (price > 0) {
               const per1g = toPerGram(price);
               if (per1g && ibjaCheck(per1g)) {
@@ -248,7 +328,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // ── Source 4: Moneycontrol MCX Gold ──
+    // ── IBJA Source 5: Moneycontrol MCX Gold feed ──
     if (!ibja24k) {
       try {
         const r = await withTimeout(fetch(
@@ -258,7 +338,7 @@ export default async function handler(req, res) {
         if (r.ok) {
           const d = await r.json();
           const raw = parseFloat(d?.data?.pricecurrent ?? d?.data?.price ?? 0);
-          console.log("Moneycontrol MCX Gold raw:", raw);
+          console.log("Moneycontrol MCX raw:", raw);
           if (raw > 0) {
             const per1g = toPerGram(raw);
             if (per1g && ibjaCheck(per1g)) {
@@ -271,8 +351,7 @@ export default async function handler(req, res) {
       } catch(e) { console.log("moneycontrol error:", e.message); }
     }
 
-    // ── Source 5: Stooq XAU/INR ──
-    // Returns 1 troy oz price in INR — divide by TROY for per gram
+    // ── IBJA Source 6: Stooq XAU/INR — troy oz price in INR ÷ TROY ──
     if (!ibja24k) {
       try {
         const r = await withTimeout(fetch(
@@ -300,7 +379,7 @@ export default async function handler(req, res) {
       } catch(e) { console.log("stooq error:", e.message); }
     }
 
-    // ── Source 6: GoodReturns HTML scrape ──
+    // ── IBJA Source 7: GoodReturns HTML scrape ──
     if (!ibja24k) {
       try {
         const r = await withTimeout(fetch("https://www.goodreturns.in/gold-rates/", {
@@ -312,10 +391,12 @@ export default async function handler(req, res) {
         }), 8000);
         if (r.ok) {
           const html = await r.text();
+          // Match 5-6 digit numbers (Rs.10000–29999) near 24K/999/per gram
           const patterns = [
-            /(?:24\s*[Kk]|999)[^\d]{0,60}?(1[0-9],\d{3}|\d{4,6})/,
-            /gold_rate_24k['":\s]+(1[0-9],\d{3}|\d{5,6})/i,
-            /(?:per gram|1 gram)[^\d]{0,30}?(1[0-9],\d{3}|\d{5,6})/i,
+            /(?:24\s*[Kk]|999)[^\d]{0,80}(1[0-9],\d{3}|[1-2]\d{4})/,
+            /gold_rate_24k['":\s]+(1[0-9],\d{3}|[1-2]\d{4,5})/i,
+            /(?:per\s*gram|1\s*gram)[^\d]{0,50}(1[0-9],\d{3}|[1-2]\d{4})/i,
+            /"price"\s*:\s*"(1[0-9]\d{3,4})"/,
           ];
           for (const pat of patterns) {
             const m = html.match(pat);
@@ -334,49 +415,60 @@ export default async function handler(req, res) {
       } catch(e) { console.log("goodreturns error:", e.message); }
     }
 
-    // ── Source 7: indiagoldratesapi.com ──
+    // ── IBJA Source 8: goldpricez.com public page (no key — scrape) ──
     if (!ibja24k) {
       try {
-        const r = await withTimeout(fetch("https://indiagoldratesapi.com/api/rates", {
-          headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0 (compatible; rateof.gold/1.0)" }
-        }), 6000);
+        const r = await withTimeout(fetch("https://goldpricez.com/in/gram", {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            Accept: "text/html",
+          }
+        }), 8000);
         if (r.ok) {
-          const d = await r.json();
-          console.log("indiagoldratesapi RAW:", JSON.stringify(d).slice(0, 400));
-          const raw =
-            d?.gold24k ?? d?.gold_24k ?? d?.Gold24K ?? d?.["24k"] ?? d?.["24K"] ??
-            d?.data?.gold24k ?? d?.data?.["24k"] ?? d?.data?.["24K"] ??
-            d?.rates?.gold24k ?? d?.rates?.["24k"];
-          if (raw) {
-            const per1g = toPerGram(raw);
-            if (per1g && ibjaCheck(per1g)) {
-              ibja24k = per1g; ibja22k = ibja24k * 0.916; ibja995 = ibja24k * 0.995;
-              ibjaSource = "indiagoldratesapi.com";
-              console.log("IBJA from indiagoldratesapi: Rs." + ibja24k.toFixed(2));
+          const html = await r.text();
+          // Goldpricez embeds price in JSON-LD or data attributes — look for INR 24K per gram
+          const patterns = [
+            /"price"\s*:\s*"?(1[0-9]\d{3,4})"?/,
+            /24[Kk][^\d]{0,40}(1[0-9],\d{3}|[1-2]\d{4})/,
+            /INR[^\d]{0,30}(1[0-9],\d{3}|[1-2]\d{4})/,
+          ];
+          for (const pat of patterns) {
+            const m = html.match(pat);
+            if (m) {
+              const val = parseFloat(m[1].replace(/,/g, ""));
+              console.log("goldpricez.com page match:", m[1], "->", val);
+              if (ibjaCheck(val)) {
+                ibja24k = val; ibja22k = ibja24k * 0.916; ibja995 = ibja24k * 0.995;
+                ibjaSource = "goldpricez-page";
+                console.log("IBJA from goldpricez page: Rs." + ibja24k.toFixed(2));
+                break;
+              }
             }
           }
         }
-      } catch(e) { console.log("indiagoldratesapi error:", e.message); }
+      } catch(e) { console.log("goldpricez page error:", e.message); }
     }
 
-    // ── Source 8: Calculated fallback ──
-    // India price = spot × (1 + 6% customs) × (1 + 2.5% IGST) = spot × 1.0865
-    // Only reached if ALL live sources fail. Badge shown as "CALC" on frontend.
+    // ── IBJA Source 9: Calculated fallback ──
+    // India landed cost = international spot × (1 + 6% customs) × (1 + 2.5% IGST)
+    //                   = calc24k × 1.0865
+    // Post July 2024 Union Budget: customs duty reduced from 15% to 6%
+    // Badge shown as "CALC" on frontend — honest labelling
     if (!ibja24k) {
-      const DUTY_MULTIPLIER = 1.0865; // post July 2024 Union Budget: 6% customs + 2.5% IGST
-      ibja24k = calc24k * DUTY_MULTIPLIER;
+      const DUTY = 1.0865;
+      ibja24k = calc24k * DUTY;
       ibja22k = ibja24k * 0.916;
       ibja995 = ibja24k * 0.995;
       ibjaSource = "calculated";
-      console.log(`IBJA: all sources failed. calc24k=Rs.${calc24k.toFixed(2)} x ${DUTY_MULTIPLIER} = Rs.${ibja24k.toFixed(2)}/g`);
+      console.log(`IBJA: all live sources failed. calc24k=Rs.${calc24k.toFixed(2)} x ${DUTY} = Rs.${ibja24k.toFixed(2)}/g`);
     }
 
     console.log(`=== IBJA FINAL: Rs.${ibja24k.toFixed(2)}/g [${ibjaSource}] ===`);
 
     // ══════════════════════════════════════════════════════════════
-    // STEP 5: ETF NAV → Rs. per gram
-    // Each Indian gold ETF unit ≈ 0.9950g of 999.9 gold
-    // Unit price on NSE ÷ 0.995 = Rs./gram
+    // STEP 5: ETF NAV → Rs./gram
+    // Each Indian gold ETF unit ≈ 0.9950g gold
+    // NAV (Rs./unit) ÷ 0.9950 = Rs./gram
     // ══════════════════════════════════════════════════════════════
     const ALL_ETF_SYMBOLS = ["GOLDBEES", "SBIGETS", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
     const BSE_CODES = { GOLDBEES: "590096", SBIGETS: "590091", HDFCMFGETF: "590094", AXISGOLD: "590102", KOTAKGOLD: "590103", ICICIGOLD: "590100" };
@@ -429,16 +521,16 @@ export default async function handler(req, res) {
 
     const etfNavs = {}, etfPrevClose = {};
     ALL_ETF_SYMBOLS.forEach(sym => {
-      const liveUnit = etfNavsRaw[sym];
-      if (liveUnit > 0) {
-        etfNavs[sym] = liveUnit / GRAMS_PER_UNIT;
+      const u = etfNavsRaw[sym];
+      if (u > 0) {
+        etfNavs[sym] = u / GRAMS_PER_UNIT;
         if (etfPrevCloseRaw[sym]) etfPrevClose[sym] = etfPrevCloseRaw[sym] / GRAMS_PER_UNIT;
       }
     });
     console.log("ETF navs (Rs./g):", Object.entries(etfNavs).map(([k, v]) => `${k}:${v.toFixed(0)}`).join(", ") || "none");
 
     // ══════════════════════════════════════════════════════════════
-    // STEP 6: Historical sparklines (ETF price history)
+    // STEP 6: Historical sparklines
     // ══════════════════════════════════════════════════════════════
     const RANGE_CONFIG = [
       { key: "1d",  range: "5d",  interval: "5m"  },
@@ -495,10 +587,10 @@ export default async function handler(req, res) {
 
     cache = {
       price:        goldPriceUSD,   // XAU/USD spot
-      usdInr,                       // live USD/INR (fallback 95.0)
+      usdInr,                       // live rate (fallback 95.0)
       aedInr,                       // usdInr / 3.6725
       silverPrice:  silverUSD,      // XAG/USD spot
-      ibja24k,      // Rs./gram 999 purity — always a number, never null
+      ibja24k,      // Rs./gram 999 purity — always a number
       ibja22k,      // Rs./gram 916 purity
       ibja995,      // Rs./gram 995 purity
       etfNavs,      // { SYM: Rs./gram }
@@ -506,7 +598,7 @@ export default async function handler(req, res) {
       etfSparklines,
       timestamp: new Date().toISOString(),
       sources: {
-        fx:   usdInr === 95.0 ? "fallback-95" : "live",
+        fx:   (usdInr === 95.0) ? "fallback-95" : "live",
         gold: goldSource,
         ibja: ibjaSource,
         etf:  Object.keys(etfNavs).length > 0 ? "live" : "none",
