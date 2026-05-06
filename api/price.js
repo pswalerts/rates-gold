@@ -1,22 +1,26 @@
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-//  rateof.gold â€” /api/price
+// -----------------------------------------------------------------
+//  rateof.gold -- /api/price
 //
-//  IBJA rate strategy (scrape-first, no API keys needed):
+//  IBJA scraping strategy (confirmed against live ibjarates.com HTML):
 //
-//  S1: ibjarates.com HTML scrape  â€” THE official source, scraped directly
-//  S2: goodreturns.in scrape      â€” mirrors IBJA, very reliable
-//  S3: bankbazaar.com JSON API    â€” has undocumented public endpoint
-//  S4: Yahoo Finance MCX          â€” GOLD.MCX futures (per 10g â†’ Ã·10)
-//  S5: Calculated fallback        â€” spot Ã— 1.0865 (last resort)
+//  The page has TWO sets of numbers:
+//  (1) Hero cards  -- <h3>14810 (1 Gram)</h3>  -> already per gram
+//  (2) History table -- 148100 per 10g          -> divide by 10
 //
-//  KEY BUG FIX: ibjarates.com shows rates per 10 GRAMS in their HTML
-//  table (e.g. 148100), and per GRAM in the hero cards (e.g. 14810).
-//  We scrape the hero card values (per gram) to avoid Ã·10 errors.
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  S1: ibjarates.com hero cards  <- primary
+//  S2: ibjarates.com history table (date-matched row)
+//  S3: goodreturns.in HTML scrape
+//  S4: Yahoo MCX GOLDM.MCX / GOLD.MCX
+//  S5: Calculated fallback (NO duty multiplier, labelled CALC)
+//
+//  CRITICAL: ibja24k/22k/995 are returned as-is to the frontend.
+//  Do NOT multiply by any duty/GST factor here. IBJA already
+//  reflects India landed cost. Only calc24k is raw spot * FX.
+// -----------------------------------------------------------------
 
 let cache = null;
 let cacheTime = 0;
-const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+const CACHE_DURATION = 60 * 60 * 1000;
 
 const TROY           = 31.1035;
 const GRAMS_PER_UNIT = 0.9950;
@@ -31,17 +35,15 @@ export default async function handler(req, res) {
 
     const GOLD_API_KEY        = process.env.GOLD_API_KEY;
     const METAL_PRICE_API_KEY = process.env.METAL_PRICE_API_KEY;
-
-    // Randomise UA slightly to avoid trivial bot detection
     const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 
     function tout(p, ms = 8000) {
       return Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error("timeout")), ms))]);
     }
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // STEP 1: USD / INR
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // =========================================================
+    // STEP 1: USD / INR  (fallback = 85.0)
+    // =========================================================
     let usdInr = null;
     const fxSources = [
       () => tout(fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"))
@@ -59,13 +61,13 @@ export default async function handler(req, res) {
       try { const v = await fn(); if (v && v > 75 && v < 120) { usdInr = v; break; } } catch (_) {}
     }
     if (!usdInr) { usdInr = 85.0; console.log("USD/INR: fallback 85.0"); }
-    else          { console.log(`USD/INR: ${usdInr.toFixed(4)} (live)`); }
+    else { console.log(`USD/INR: ${usdInr.toFixed(4)} (live)`); }
 
     const aedInr = usdInr / 3.6725;
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // =========================================================
     // STEP 2: XAU / USD
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // =========================================================
     let goldUSD = null, goldSrc = "?";
     const goldSources = [
       ["goldprice.org", async () => {
@@ -100,295 +102,186 @@ export default async function handler(req, res) {
     }
     if (!goldUSD) throw new Error("All XAU/USD sources failed");
 
+    // calc24k = pure international spot in INR/gram, NO duty added.
+    // Used ONLY for the "International Spot -> INR" display column.
     const calc24k = (goldUSD / TROY) * usdInr;
-    console.log(`XAU/USD $${goldUSD.toFixed(2)} [${goldSrc}] | USD/INR ${usdInr.toFixed(2)} | calc24k â‚¹${calc24k.toFixed(2)}/g`);
+    console.log(`XAU/USD $${goldUSD.toFixed(2)} [${goldSrc}] | USD/INR ${usdInr.toFixed(2)} | calc24k Rs.${calc24k.toFixed(2)}/g`);
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // =========================================================
     // STEP 3: XAG / USD
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // =========================================================
     let silverUSD = null;
     try { const r = await tout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } })); if (r.ok) { const d = await r.json(); const v = d?.items?.[0]?.xagPrice; if (v > 0) silverUSD = v; } } catch (_) {}
     try { if (!silverUSD) { const r = await tout(fetch("https://gold-api.com/price/XAG")); if (r.ok) { const d = await r.json(); if (d?.price > 0) silverUSD = d.price; } } } catch (_) {}
     try { if (!silverUSD) { const r = await tout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/SI%3DF?interval=1d&range=1d", { headers: { "User-Agent": UA } })); if (r.ok) { const d = await r.json(); const v = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (v > 0) silverUSD = v; } } } catch (_) {}
     if (!silverUSD) silverUSD = goldUSD / 85;
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // STEP 4: IBJA India gold rate (â‚¹/gram, 999 purity)
+    // =========================================================
+    // STEP 4: IBJA India gold rate (Rs./gram, 999 purity)
     //
-    //  IMPORTANT: ibjarates.com shows two sets of numbers:
-    //  - Hero cards at top of page: â‚¹/gram (e.g. 14810) â† we want these
-    //  - Historical table:          â‚¹/10g  (e.g. 148100) â† divide by 10
-    //
-    //  ibjaOk: sanity check â€” â‚¹7,000â€“â‚¹25,000/gram covers all realistic
-    //  gold prices for the foreseeable future.
-    //
-    //  Sources:
-    //  S1: ibjarates.com     â€” direct HTML scrape of official source
-    //  S2: goodreturns.in    â€” reliable IBJA mirror with JSON endpoint
-    //  S3: bankbazaar.com    â€” has undocumented public JSON for gold rates
-    //  S4: Yahoo MCX GOLD.MCX â€” futures price per 10g, divide by 10
-    //  S5: Calculated        â€” spot Ã— 1.0865 (last resort, labelled CALC)
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  ibjaOk: valid per-gram range Rs.7,000-Rs.25,000
+    //  One fetch to ibjarates.com, four parse strategies on the same HTML.
+    // =========================================================
     let ibja24k = null, ibja22k = null, ibja995 = null, ibjaSrc = "?";
 
-    const ibjaOk = v => { const n = parseFloat(v); return n > 7000 && n < 25000; };
+    const ibjaOk = v => typeof v === "number" && isFinite(v) && v > 7000 && v < 25000;
 
     const setIBJA = (v24, src, v22 = null, v995 = null) => {
-      ibja24k = parseFloat(v24);
-      ibja22k = v22  ? parseFloat(v22)  : ibja24k * 0.916;
-      ibja995 = v995 ? parseFloat(v995) : ibja24k * 0.995;
+      ibja24k = v24;
+      ibja22k = (v22  && ibjaOk(v22))  ? v22  : v24 * 0.916;
+      ibja995 = (v995 && ibjaOk(v995)) ? v995 : v24 * 0.995;
       ibjaSrc = src;
-      console.log(`IBJA [${src}]: 999=â‚¹${ibja24k.toFixed(2)}, 916=â‚¹${ibja22k.toFixed(2)}, 995=â‚¹${ibja995.toFixed(2)}`);
+      console.log(`IBJA [${src}]: 999=Rs.${ibja24k.toFixed(2)}, 916=Rs.${ibja22k.toFixed(2)}, 995=Rs.${ibja995.toFixed(2)}`);
     };
 
-    // â”€â”€ S1: ibjarates.com direct HTML scrape â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    //
-    //  The page shows gold rates in CARDS at the top in this format:
-    //  <h3>14810 (1 Gram)</h3>  â† for 999 purity
-    //
-    //  We parse these h3 tags. The order on the page is always:
-    //  999, 995, 916, 750, 585
-    //
-    //  We also try the historical table as a fallback (per 10g â†’ Ã·10)
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // -- S1 + S2: ibjarates.com (one fetch, four parse strategies) --
     if (!ibja24k) {
       try {
-        const r = await tout(fetch("https://ibjarates.com", {
+        const r = await tout(fetch("https://ibjarates.com/", {
           headers: {
             "User-Agent": UA,
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "en-IN,en;q=0.9",
-            "Referer": "https://www.google.com/",
+            "Cache-Control": "no-cache",
+            "Referer": "https://www.google.com/search?q=ibja+gold+rate+today",
           }
-        }), 10000);
+        }), 12000);
 
         if (r.ok) {
           const html = await r.text();
-          console.log("ibjarates.com HTML length:", html.length);
+          console.log(`ibjarates.com: HTTP ${r.status}, HTML ${html.length} bytes`);
 
-          // Strategy A: parse hero card <h3>NNNNN (1 Gram)</h3>
-          // The page has one h3 per purity in order: 999, 995, 916, 750, 585
-          const h3Matches = [...html.matchAll(/<h3[^>]*>\s*([\d,]+)\s*\(1\s*Gram\)\s*<\/h3>/gi)];
-          console.log("ibjarates h3 matches:", h3Matches.map(m => m[1]));
-
-          if (h3Matches.length >= 3) {
-            const v999 = parseFloat(h3Matches[0][1].replace(/,/g, ""));
-            const v995 = parseFloat(h3Matches[1][1].replace(/,/g, ""));
-            const v916 = parseFloat(h3Matches[2][1].replace(/,/g, ""));
-            console.log(`ibjarates hero cards: 999=${v999}, 995=${v995}, 916=${v916}`);
-            if (ibjaOk(v999)) {
-              setIBJA(v999, "ibjarates.com-hero", v916, v995);
-            }
+          // Strategy A: <h3>NNNNN (1 Gram)</h3> hero cards
+          // Order on page: 999, 995, 916, 750, 585
+          const h3Re = /<h3[^>]*>\s*([\d,]+)\s*\(1\s*[Gg]ram\)\s*<\/h3>/g;
+          const h3Vals = [];
+          let m;
+          while ((m = h3Re.exec(html)) !== null) {
+            h3Vals.push(parseFloat(m[1].replace(/,/g, "")));
+          }
+          console.log("ibjarates A (h3):", h3Vals);
+          if (h3Vals.length >= 3 && ibjaOk(h3Vals[0])) {
+            setIBJA(h3Vals[0], "ibjarates.com-hero", h3Vals[2], h3Vals[1]);
           }
 
-          // Strategy B: parse historical table (per 10g, divide by 10)
-          // Rows look like: <td>04/05/2026</td><td>148100</td><td>147507</td>...
+          // Strategy B: date-matched history table row (per 10g -> /10)
           if (!ibja24k) {
-            const tableMatch = html.match(/<td>\s*(\d{2}\/\d{2}\/\d{4})\s*<\/td>\s*<td>\s*([\d]+)\s*<\/td>\s*<td>\s*([\d]+)\s*<\/td>\s*<td>\s*([\d]+)\s*<\/td>/);
-            if (tableMatch) {
-              const v999 = parseFloat(tableMatch[2]) / 10;
-              const v995 = parseFloat(tableMatch[3]) / 10;
-              const v916 = parseFloat(tableMatch[4]) / 10;
-              console.log(`ibjarates table (Ã·10): 999=${v999}, 995=${v995}, 916=${v916}`);
-              if (ibjaOk(v999)) {
-                setIBJA(v999, "ibjarates.com-table", v916, v995);
+            const today = new Date();
+            for (let d = 0; d <= 3; d++) {
+              const dt = new Date(today); dt.setDate(dt.getDate() - d);
+              const ds = `${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}/${dt.getFullYear()}`;
+              const datePatterns = [
+                new RegExp(`(?:<strong>|<b>)\\s*${ds.replace(/\//g,"\\/")}\\s*(?:</strong>|</b>)\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>`, "i"),
+                new RegExp(`${ds.replace(/\//g,"\\/")}[^<]{0,30}</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>`, "i"),
+              ];
+              let matched = false;
+              for (const pat of datePatterns) {
+                const tm = html.match(pat);
+                if (tm) {
+                  const v999 = parseFloat(tm[1]) / 10;
+                  const v995 = parseFloat(tm[2]) / 10;
+                  const v916 = parseFloat(tm[3]) / 10;
+                  console.log(`ibjarates B (table ${ds} /10): 999=${v999}, 995=${v995}, 916=${v916}`);
+                  if (ibjaOk(v999)) { setIBJA(v999, `ibjarates.com-table-${ds}`, v916, v995); matched = true; break; }
+                }
               }
+              if (matched || ibja24k) break;
             }
           }
 
-          // Strategy C: any 5-digit number followed by common per-gram context
+          // Strategy C: any three consecutive 6-digit <td> cells
           if (!ibja24k) {
-            const anyMatch = html.match(/(\d{4,6})\s*\(1\s*Gram\)/i);
-            if (anyMatch) {
-              const raw = parseFloat(anyMatch[1]);
-              // Could be per gram (14810) or per 10g (148100)
-              const v = raw > 50000 ? raw / 10 : raw;
-              console.log(`ibjarates fallback context match: raw=${raw} -> ${v}/g`);
+            const sm = html.match(/<td>\s*(1[34567]\d{4})\s*<\/td>\s*<td>\s*(1[34567]\d{4})\s*<\/td>\s*<td>\s*(1[0-3]\d{4})\s*<\/td>/);
+            if (sm) {
+              const v999 = parseFloat(sm[1]) / 10;
+              const v995 = parseFloat(sm[2]) / 10;
+              const v916 = parseFloat(sm[3]) / 10;
+              console.log(`ibjarates C (3-cell /10): 999=${v999}, 995=${v995}, 916=${v916}`);
+              if (ibjaOk(v999)) setIBJA(v999, "ibjarates.com-3cell", v916, v995);
+            }
+          }
+
+          // Strategy D: any "NNNNN (1 Gram)" pattern anywhere on page
+          if (!ibja24k) {
+            const dm = html.match(/(1[34567]\d{3})\s*\(1\s*[Gg]ram\)/);
+            if (dm) {
+              const v = parseFloat(dm[1]);
+              console.log(`ibjarates D (any 1-gram): ${v}`);
               if (ibjaOk(v)) setIBJA(v, "ibjarates.com-ctx");
             }
           }
         } else {
-          console.log("ibjarates.com HTTP", r.status);
+          console.log(`ibjarates.com HTTP ${r.status}`);
         }
-      } catch (e) { console.log("ibjarates.com error:", e.message); }
+      } catch (e) {
+        console.log("ibjarates.com error:", e.message);
+      }
     }
 
-    // â”€â”€ S2: goodreturns.in â€” IBJA mirror, very reliable â”€â”€â”€â”€â”€â”€
-    //
-    //  goodreturns publishes the IBJA AM rate daily. Their page
-    //  has gold rate in structured data / meta tags AND inline text.
-    //
-    //  Endpoint: https://www.goodreturns.in/gold-rates/
-    //  Also try their commodity JSON:
-    //  https://www.goodreturns.in/gold-rates/gold-rate-today.json  (if exists)
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // -- S3: goodreturns.in --
     if (!ibja24k) {
       try {
         const r = await tout(fetch("https://www.goodreturns.in/gold-rates/", {
-          headers: {
-            "User-Agent": UA,
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Referer": "https://www.google.com/",
-          }
+          headers: { "User-Agent": UA, "Referer": "https://www.google.com/" }
         }), 10000);
         if (r.ok) {
           const html = await r.text();
-          console.log("goodreturns.in HTML length:", html.length);
-
-          // Look for JSON-LD structured data with gold price
-          const jsonLdMatch = html.match(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi);
-          if (jsonLdMatch) {
-            for (const block of jsonLdMatch) {
-              try {
-                const obj = JSON.parse(block.replace(/<[^>]+>/g, "").trim());
-                const price = obj?.offers?.price || obj?.price;
-                if (price && ibjaOk(price)) {
-                  setIBJA(price, "goodreturns-jsonld");
-                  break;
-                }
-              } catch (_) {}
+          const patterns = [
+            /(1[34567]\d{3})\s*(?:per gram|\/gram|per gm)/i,
+            /(?:24\s*[Kk]|999)[\s\S]{1,200}?(1[34567]\d{3})/i,
+          ];
+          for (const pat of patterns) {
+            const pm = html.match(pat);
+            if (pm) {
+              const v = parseFloat(pm[1].replace(/,/g, ""));
+              if (ibjaOk(v)) { setIBJA(v, "goodreturns"); break; }
             }
           }
-
-          // Look for "24 Karat" / "999" price in the HTML
-          // goodreturns shows: â‚¹7,405 per gram or â‚¹14,810 per gram
-          if (!ibja24k) {
-            // Match patterns like: 14,810 or 14810 near "24 Karat" or "999"
-            const patterns = [
-              /24\s*[Kk]arat[\s\S]{0,200}?(?:â‚¹|Rs\.?)\s*([\d,]+)/,
-              /999\s*purity[\s\S]{0,200}?(?:â‚¹|Rs\.?)\s*([\d,]+)/,
-              /(?:â‚¹|Rs\.?)\s*([\d,]+)\s*(?:per gram|\/gram)/i,
-              // goodreturns specific: their rate table format
-              /gold-rate-today[\s\S]{0,50}?([\d,]{5,7})/,
-            ];
-            for (const pat of patterns) {
-              const m = html.match(pat);
-              if (m) {
-                const raw = parseFloat(m[1].replace(/,/g, ""));
-                const v = raw > 50000 ? raw / 10 : raw;
-                console.log(`goodreturns pattern match: raw=${m[1]} -> ${v}/g`);
-                if (ibjaOk(v)) { setIBJA(v, "goodreturns-html"); break; }
-              }
-            }
-          }
-        } else {
-          console.log("goodreturns.in HTTP", r.status);
         }
       } catch (e) { console.log("goodreturns.in error:", e.message); }
     }
 
-    // â”€â”€ S3: bankbazaar.com undocumented endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    //
-    //  BankBazaar has a public (no-auth) endpoint that returns
-    //  today's gold price in JSON. They publish IBJA-sourced rates.
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    if (!ibja24k) {
-      const bbEndpoints = [
-        "https://www.bankbazaar.com/gold-rate.html",
-        "https://www.bankbazaar.com/api/gold-rate-today",
-      ];
-      for (const url of bbEndpoints) {
-        if (ibja24k) break;
-        try {
-          const r = await tout(fetch(url, {
-            headers: { "User-Agent": UA, "Referer": "https://www.bankbazaar.com/" }
-          }), 8000);
-          if (r.ok) {
-            const text = await r.text();
-            // Try JSON parse first
-            try {
-              const d = JSON.parse(text);
-              const price = d?.goldRate24k || d?.rate24k || d?.gold?.["24k"] || d?.price;
-              if (price && ibjaOk(parseFloat(price))) {
-                setIBJA(parseFloat(price), "bankbazaar-json"); continue;
-              }
-            } catch (_) {}
-            // HTML parse
-            const patterns = [
-              /24\s*[Kk][\s\S]{0,100}?([\d,]{5,6})/,
-              /(?:â‚¹|Rs\.?)\s*([\d,]{5,6})\s*(?:per gram|\/g)/i,
-            ];
-            for (const pat of patterns) {
-              const m = text.match(pat);
-              if (m) {
-                const raw = parseFloat(m[1].replace(/,/g, ""));
-                const v = raw > 50000 ? raw / 10 : raw;
-                if (ibjaOk(v)) { setIBJA(v, "bankbazaar-html"); break; }
-              }
-            }
-          }
-        } catch (e) { console.log("bankbazaar error:", e.message); }
-      }
-    }
-
-    // â”€â”€ S4: Yahoo Finance MCX Spot Gold â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    //
-    //  GC=F  is USD-denominated COMEX â€” NOT what we want
-    //  GOLD.MCX is MCX India gold futures, quoted in â‚¹ per 10g
-    //  So: price Ã· 10 = â‚¹/gram
-    //
-    //  Why this often fails in production:
-    //  - Yahoo blocks serverless IPs for .MCX symbols intermittently
-    //  - We try both query1 and query2, and GOLDM.MCX as backup
-    //
-    //  GOLD.MCX  = 100g contract (â‚¹/10g)
-    //  GOLDM.MCX = 10g contract  (â‚¹/1g) â€” use directly, no division!
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // -- S4: Yahoo MCX --
+    // GOLDM.MCX = mini contract, Rs./gram directly (no division)
+    // GOLD.MCX  = main contract, Rs./10g -> divide by 10
     if (!ibja24k) {
       const mcxSymbols = [
-        { sym: "GOLDM.MCX", divisor: 1  },   // Mini: quoted per gram
-        { sym: "GOLD.MCX",  divisor: 10 },   // Main: quoted per 10g
+        { sym: "GOLDM.MCX", div: 1  },
+        { sym: "GOLD.MCX",  div: 10 },
       ];
       outer:
-      for (const { sym, divisor } of mcxSymbols) {
+      for (const { sym, div } of mcxSymbols) {
         for (const host of ["query1", "query2"]) {
           try {
             const r = await tout(fetch(
               `https://${host}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=1d`,
-              { headers: { "User-Agent": UA, "Accept": "application/json" } }
+              { headers: { "User-Agent": UA } }
             ), 8000);
             if (r.ok) {
               const d = await r.json();
               const price = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
-              console.log(`Yahoo ${host} ${sym}: raw price=${price}, Ã·${divisor}=${price/divisor}`);
               if (price > 0) {
-                const v = price / divisor;
-                if (ibjaOk(v)) {
-                  setIBJA(v, `yahoo-mcx-${sym}`);
-                  break outer;
-                }
+                const v = price / div;
+                console.log(`Yahoo ${host} ${sym}: raw=${price} /${div}=${v}/g`);
+                if (ibjaOk(v)) { setIBJA(v, `yahoo-${sym}`); break outer; }
               }
-            } else {
-              console.log(`Yahoo ${host} ${sym}: HTTP ${r.status}`);
             }
           } catch (e) { console.log(`Yahoo ${host} ${sym}:`, e.message); }
         }
       }
     }
 
-    // â”€â”€ S5: Calculated fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    //
-    //  India import duty structure (post July 2024 Union Budget):
-    //  - Basic Customs Duty: 6%
-    //  - Agriculture Cess: 0% (was removed)
-    //  - IGST: 3%
-    //  - Total effective multiplier: Ã—1.09 (approx)
-    //
-    //  Note: IBJA rate reflects the actual market price discovered
-    //  through spot polling â€” it's not a mechanical formula.
-    //  The calculated rate is typically within 0.5â€“1% of IBJA.
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // -- S5: Fallback -- calc24k as-is, NO duty multiplier, labelled CALC --
     if (!ibja24k) {
-      const v = calc24k * 1.09;
-      setIBJA(v, "calculated");
-      console.log(`IBJA fallback: â‚¹${calc24k.toFixed(2)} Ã— 1.09 = â‚¹${v.toFixed(2)}/g`);
+      setIBJA(calc24k, "calculated");
+      console.log(`IBJA fallback = calc24k Rs.${calc24k.toFixed(2)}/g -- no duty added, labelled CALC`);
     }
 
-    console.log(`=== IBJA FINAL: 999=â‚¹${ibja24k.toFixed(2)}, 916=â‚¹${ibja22k.toFixed(2)}, 995=â‚¹${ibja995.toFixed(2)} [${ibjaSrc}] ===`);
+    console.log(`=== IBJA FINAL: 999=Rs.${ibja24k?.toFixed(2)}, 916=Rs.${ibja22k?.toFixed(2)}, 995=Rs.${ibja995?.toFixed(2)} [${ibjaSrc}] ===`);
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // STEP 5: ETF NAV â†’ â‚¹ per gram
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // =========================================================
+    // STEP 5: ETF NAV -> Rs. per gram
+    // =========================================================
     const ETF_SYMS = ["GOLDBEES", "SBIGETS", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
     const BSE_CODES = {
       GOLDBEES: "590096", SBIGETS: "590091", HDFCMFGETF: "590094",
@@ -436,15 +329,15 @@ export default async function handler(req, res) {
     const etfNavs = {}, etfPrevClose = {};
     ETF_SYMS.forEach(s => {
       if (etfRaw[s] > 0) {
-        etfNavs[s]    = etfRaw[s]     / GRAMS_PER_UNIT;
+        etfNavs[s] = etfRaw[s] / GRAMS_PER_UNIT;
         if (etfPrevRaw[s]) etfPrevClose[s] = etfPrevRaw[s] / GRAMS_PER_UNIT;
       }
     });
-    console.log("ETF â‚¹/g:", Object.entries(etfNavs).map(([k, v]) => `${k}:${v.toFixed(0)}`).join(", ") || "none");
+    console.log("ETF Rs./g:", Object.entries(etfNavs).map(([k, v]) => `${k}:${v.toFixed(0)}`).join(", ") || "none");
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // STEP 6: ETF Sparklines
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // =========================================================
+    // STEP 6: Sparklines (ETF price history -> Rs./gram)
+    // =========================================================
     const RANGES = [
       { key: "1d",  range: "5d",  iv: "5m"  },
       { key: "1w",  range: "5d",  iv: "1h"  },
@@ -469,9 +362,7 @@ export default async function handler(req, res) {
           const d = await r.json(), res = d?.chart?.result?.[0];
           const ts = res?.timestamp, cls = res?.indicators?.quote?.[0]?.close;
           if (!cls || cls.length < 2) continue;
-          const pts = cls
-            .map((c, i) => c != null ? { t: ts?.[i] ?? null, v: Math.round(c * scale * 100) / 100 } : null)
-            .filter(Boolean);
+          const pts = cls.map((c, i) => c != null ? { t: ts?.[i] ?? null, v: Math.round(c * scale * 100) / 100 } : null).filter(Boolean);
           if (pts.length >= 2) return pts;
         } catch (_) {}
       }
@@ -479,12 +370,7 @@ export default async function handler(req, res) {
     }
 
     const spJobs = [], spIdx = [];
-    for (const s of ETF_SYMS) {
-      for (const { key, range, iv } of RANGES) {
-        spJobs.push(fetchSpark(s, range, iv));
-        spIdx.push({ s, key });
-      }
-    }
+    for (const s of ETF_SYMS) for (const { key, range, iv } of RANGES) { spJobs.push(fetchSpark(s, range, iv)); spIdx.push({ s, key }); }
     const spResults = await Promise.allSettled(spJobs);
     const etfSparklines = {};
     spResults.forEach((r, i) => {
@@ -495,14 +381,11 @@ export default async function handler(req, res) {
       }
     });
 
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // Build response
-    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     cache = {
-      price:        goldUSD,
+      price:       goldUSD,
       usdInr,
       aedInr,
-      silverPrice:  silverUSD,
+      silverPrice: silverUSD,
       ibja24k,
       ibja22k,
       ibja995,
