@@ -1,17 +1,23 @@
 // -----------------------------------------------------------------
 //  rateof.gold -- /api/price
 //
-//  IBJA scraping strategy (confirmed against live ibjarates.com HTML):
+//  IBJA scraping strategy:
 //
-//  The page has TWO sets of numbers:
-//  (1) Hero cards  -- <h3>14810 (1 Gram)</h3>  -> already per gram
-//  (2) History table -- 148100 per 10g          -> divide by 10
-//
-//  S1: ibjarates.com hero cards  <- primary
-//  S2: ibjarates.com history table (date-matched row)
+//  S0: ibja.co official website          <- NEW primary source
+//  S1: ibjarates.com hero cards          <- secondary (may be CF-blocked)
+//  S2: ibjarates.com history table       <- secondary fallback
 //  S3: goodreturns.in HTML scrape
-//  S4: Yahoo MCX GOLDM.MCX / GOLD.MCX
+//  S4: Yahoo MCX GOLDM.MCX / GOLD.MCX   <- both use div:10 (Rs./10g)
 //  S5: Calculated fallback (NO duty multiplier, labelled CALC)
+//
+//  FIXES APPLIED:
+//  - FIX 1: ibja.co (official IBJA site) added as S0 primary source
+//  - FIX 2: Cloudflare challenge detection on ibjarates.com
+//  - FIX 3: Strategy C & D regexes made flexible (removed hardcoded
+//            price-range digits 1[34567] that silently missed on
+//            prices outside the narrow band)
+//  - FIX 4: GOLDM.MCX div changed from 1 -> 10 (MCX quotes both
+//            GOLD and GOLDM in Rs./10g, not Rs./gram)
 //
 //  CRITICAL: ibja24k/22k/995 are returned as-is to the frontend.
 //  Do NOT multiply by any duty/GST factor here. IBJA already
@@ -102,8 +108,6 @@ export default async function handler(req, res) {
     }
     if (!goldUSD) throw new Error("All XAU/USD sources failed");
 
-    // calc24k = pure international spot in INR/gram, NO duty added.
-    // Used ONLY for the "International Spot -> INR" display column.
     const calc24k = (goldUSD / TROY) * usdInr;
     console.log(`XAU/USD $${goldUSD.toFixed(2)} [${goldSrc}] | USD/INR ${usdInr.toFixed(2)} | calc24k Rs.${calc24k.toFixed(2)}/g`);
 
@@ -119,12 +123,13 @@ export default async function handler(req, res) {
     // =========================================================
     // STEP 4: IBJA India gold rate (Rs./gram, 999 purity)
     //
-    //  ibjaOk: valid per-gram range Rs.7,000-Rs.25,000
-    //  One fetch to ibjarates.com, four parse strategies on the same HTML.
+    //  ibjaOk: valid per-gram range Rs.7,000–Rs.25,000
+    //  per10gOk: valid per-10g range Rs.70,000–Rs.250,000
     // =========================================================
     let ibja24k = null, ibja22k = null, ibja995 = null, ibjaSrc = "?";
 
-    const ibjaOk = v => typeof v === "number" && isFinite(v) && v > 7000 && v < 25000;
+    const ibjaOk   = v => typeof v === "number" && isFinite(v) && v > 7000  && v < 25000;
+    const per10gOk = v => typeof v === "number" && isFinite(v) && v > 70000 && v < 250000;
 
     const setIBJA = (v24, src, v22 = null, v995 = null) => {
       ibja24k = v24;
@@ -134,7 +139,87 @@ export default async function handler(req, res) {
       console.log(`IBJA [${src}]: 999=Rs.${ibja24k.toFixed(2)}, 916=Rs.${ibja22k.toFixed(2)}, 995=Rs.${ibja995.toFixed(2)}`);
     };
 
+    // -- S0: ibja.co OFFICIAL WEBSITE (FIX 1: new primary source) --
+    // ibja.co publishes the authoritative IBJA rate table.
+    // Rates appear in a table as Rs. per 10 grams.
+    if (!ibja24k) {
+      for (const url of ["https://ibja.co/IBJARates", "https://www.ibja.co/IBJARates"]) {
+        try {
+          const r = await tout(fetch(url, {
+            headers: {
+              "User-Agent": UA,
+              "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+              "Accept-Language": "en-IN,en;q=0.9",
+              "Referer": "https://www.google.com/search?q=ibja+gold+rate+today",
+            }
+          }), 12000);
+
+          if (!r.ok) { console.log(`ibja.co ${url}: HTTP ${r.status}`); continue; }
+          const html = await r.text();
+          console.log(`ibja.co: HTTP ${r.status}, HTML ${html.length} bytes`);
+
+          // Strategy ibja.co-A: look for Fine Gold 999 in table
+          // Typical table: Fine Gold (999.0) | <buy> | <sell>
+          // Values are per 10 grams (5–6 digits)
+          const fineGoldMatch = html.match(/Fine\s*Gold[^<]{0,80}?(\d[\d,]{4,6})/i);
+          if (fineGoldMatch) {
+            const raw = parseFloat(fineGoldMatch[1].replace(/,/g, ""));
+            if (per10gOk(raw)) {
+              // Also try to grab 995 and 916 from nearby text
+              const v999 = raw / 10;
+              const m995 = html.match(/995[^<]{0,80}?(\d[\d,]{4,6})/i);
+              const m916 = html.match(/916[^<]{0,80}?(\d[\d,]{4,6})/i);
+              const v995r = m995 ? parseFloat(m995[1].replace(/,/g, "")) / 10 : null;
+              const v916r = m916 ? parseFloat(m916[1].replace(/,/g, "")) / 10 : null;
+              console.log(`ibja.co A (FineGold /10): 999=${v999}, 995=${v995r}, 916=${v916r}`);
+              setIBJA(v999, "ibja.co", v916r, v995r);
+              break;
+            } else if (ibjaOk(raw)) {
+              // Already per gram
+              console.log(`ibja.co A (FineGold gram): 999=${raw}`);
+              setIBJA(raw, "ibja.co");
+              break;
+            }
+          }
+
+          // Strategy ibja.co-B: any 5-6 digit number near "999"
+          if (!ibja24k) {
+            const m999 = html.match(/999[^<]{0,60}?(\d[\d,]{4,6})/i);
+            if (m999) {
+              const raw = parseFloat(m999[1].replace(/,/g, ""));
+              if (per10gOk(raw)) {
+                const v999 = raw / 10;
+                console.log(`ibja.co B (999 /10): ${v999}`);
+                if (ibjaOk(v999)) { setIBJA(v999, "ibja.co-B"); break; }
+              } else if (ibjaOk(raw)) {
+                console.log(`ibja.co B (999 gram): ${raw}`);
+                setIBJA(raw, "ibja.co-B"); break;
+              }
+            }
+          }
+
+          // Strategy ibja.co-C: grab all 5-6 digit values, first valid one is 999
+          if (!ibja24k) {
+            const allNums = [...html.matchAll(/(\d[\d,]{4,6})/g)]
+              .map(m => parseFloat(m[1].replace(/,/g, "")))
+              .filter(v => per10gOk(v));
+            if (allNums.length >= 1) {
+              const v999 = allNums[0] / 10;
+              const v995 = allNums[1] ? allNums[1] / 10 : null;
+              const v916 = allNums[2] ? allNums[2] / 10 : null;
+              console.log(`ibja.co C (allNums /10): 999=${v999}, 995=${v995}, 916=${v916}`);
+              if (ibjaOk(v999)) { setIBJA(v999, "ibja.co-C", v916, v995); break; }
+            }
+          }
+        } catch (e) {
+          console.log(`ibja.co error (${url}):`, e.message);
+        }
+        if (ibja24k) break;
+      }
+    }
+
     // -- S1 + S2: ibjarates.com (one fetch, four parse strategies) --
+    // FIX 2: detect Cloudflare challenge page before trying to parse
     if (!ibja24k) {
       try {
         const r = await tout(fetch("https://ibjarates.com/", {
@@ -151,63 +236,89 @@ export default async function handler(req, res) {
           const html = await r.text();
           console.log(`ibjarates.com: HTTP ${r.status}, HTML ${html.length} bytes`);
 
-          // Strategy A: <h3>NNNNN (1 Gram)</h3> hero cards
-          // Order on page: 999, 995, 916, 750, 585
-          const h3Re = /<h3[^>]*>\s*([\d,]+)\s*\(1\s*[Gg]ram\)\s*<\/h3>/g;
-          const h3Vals = [];
-          let m;
-          while ((m = h3Re.exec(html)) !== null) {
-            h3Vals.push(parseFloat(m[1].replace(/,/g, "")));
-          }
-          console.log("ibjarates A (h3):", h3Vals);
-          if (h3Vals.length >= 3 && ibjaOk(h3Vals[0])) {
-            setIBJA(h3Vals[0], "ibjarates.com-hero", h3Vals[2], h3Vals[1]);
-          }
+          // FIX 2: detect Cloudflare challenge — if blocked, skip all strategies
+          const isCfChallenge = /checking your browser|just a moment|cf-browser-verification|cloudflare ray id/i.test(html);
+          if (isCfChallenge) {
+            console.log("ibjarates.com: Cloudflare challenge detected, skipping");
+          } else {
 
-          // Strategy B: date-matched history table row (per 10g -> /10)
-          if (!ibja24k) {
-            const today = new Date();
-            for (let d = 0; d <= 3; d++) {
-              const dt = new Date(today); dt.setDate(dt.getDate() - d);
-              const ds = `${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}/${dt.getFullYear()}`;
-              const datePatterns = [
-                new RegExp(`(?:<strong>|<b>)\\s*${ds.replace(/\//g,"\\/")}\\s*(?:</strong>|</b>)\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>`, "i"),
-                new RegExp(`${ds.replace(/\//g,"\\/")}[^<]{0,30}</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>`, "i"),
-              ];
-              let matched = false;
-              for (const pat of datePatterns) {
-                const tm = html.match(pat);
-                if (tm) {
-                  const v999 = parseFloat(tm[1]) / 10;
-                  const v995 = parseFloat(tm[2]) / 10;
-                  const v916 = parseFloat(tm[3]) / 10;
-                  console.log(`ibjarates B (table ${ds} /10): 999=${v999}, 995=${v995}, 916=${v916}`);
-                  if (ibjaOk(v999)) { setIBJA(v999, `ibjarates.com-table-${ds}`, v916, v995); matched = true; break; }
-                }
+            // Strategy A: <h3>NNNNN (1 Gram)</h3> hero cards
+            // Order on page: 999, 995, 916, 750, 585
+            const h3Re = /<h3[^>]*>\s*([\d,]+)\s*\(1\s*[Gg]ram\)\s*<\/h3>/g;
+            const h3Vals = [];
+            let m;
+            while ((m = h3Re.exec(html)) !== null) {
+              h3Vals.push(parseFloat(m[1].replace(/,/g, "")));
+            }
+            console.log("ibjarates A (h3):", h3Vals);
+            if (h3Vals.length >= 3 && ibjaOk(h3Vals[0])) {
+              setIBJA(h3Vals[0], "ibjarates.com-hero", h3Vals[2], h3Vals[1]);
+            }
+
+            // Strategy A2: more flexible hero card pattern (catches spacing variants)
+            if (!ibja24k) {
+              const flexRe = /([\d,]{4,7})\s*\(1\s*[Gg]ram\)/g;
+              const flexVals = [];
+              while ((m = flexRe.exec(html)) !== null) {
+                flexVals.push(parseFloat(m[1].replace(/,/g, "")));
               }
-              if (matched || ibja24k) break;
+              console.log("ibjarates A2 (flex):", flexVals);
+              if (flexVals.length >= 1 && ibjaOk(flexVals[0])) {
+                setIBJA(
+                  flexVals[0], "ibjarates.com-flex",
+                  flexVals.length >= 3 ? flexVals[2] : null,
+                  flexVals.length >= 2 ? flexVals[1] : null
+                );
+              }
             }
-          }
 
-          // Strategy C: any three consecutive 6-digit <td> cells
-          if (!ibja24k) {
-            const sm = html.match(/<td>\s*(1[34567]\d{4})\s*<\/td>\s*<td>\s*(1[34567]\d{4})\s*<\/td>\s*<td>\s*(1[0-3]\d{4})\s*<\/td>/);
-            if (sm) {
-              const v999 = parseFloat(sm[1]) / 10;
-              const v995 = parseFloat(sm[2]) / 10;
-              const v916 = parseFloat(sm[3]) / 10;
-              console.log(`ibjarates C (3-cell /10): 999=${v999}, 995=${v995}, 916=${v916}`);
-              if (ibjaOk(v999)) setIBJA(v999, "ibjarates.com-3cell", v916, v995);
+            // Strategy B: date-matched history table row (per 10g -> /10)
+            if (!ibja24k) {
+              const today = new Date();
+              for (let d = 0; d <= 3; d++) {
+                const dt = new Date(today); dt.setDate(dt.getDate() - d);
+                const ds = `${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}/${dt.getFullYear()}`;
+                const datePatterns = [
+                  new RegExp(`(?:<strong>|<b>)\\s*${ds.replace(/\//g,"\\/")}\\s*(?:</strong>|</b>)\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>`, "i"),
+                  new RegExp(`${ds.replace(/\//g,"\\/")}[^<]{0,30}</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>\\s*<td>\\s*(\\d{5,6})\\s*</td>`, "i"),
+                ];
+                let matched = false;
+                for (const pat of datePatterns) {
+                  const tm = html.match(pat);
+                  if (tm) {
+                    const v999 = parseFloat(tm[1]) / 10;
+                    const v995 = parseFloat(tm[2]) / 10;
+                    const v916 = parseFloat(tm[3]) / 10;
+                    console.log(`ibjarates B (table ${ds} /10): 999=${v999}, 995=${v995}, 916=${v916}`);
+                    if (ibjaOk(v999)) { setIBJA(v999, `ibjarates.com-table-${ds}`, v916, v995); matched = true; break; }
+                  }
+                }
+                if (matched || ibja24k) break;
+              }
             }
-          }
 
-          // Strategy D: any "NNNNN (1 Gram)" pattern anywhere on page
-          if (!ibja24k) {
-            const dm = html.match(/(1[34567]\d{3})\s*\(1\s*[Gg]ram\)/);
-            if (dm) {
-              const v = parseFloat(dm[1]);
-              console.log(`ibjarates D (any 1-gram): ${v}`);
-              if (ibjaOk(v)) setIBJA(v, "ibjarates.com-ctx");
+            // Strategy C: any three consecutive 5-6 digit <td> cells (per 10g -> /10)
+            // FIX 3: removed hardcoded 1[34567] range; now uses \d{5,6} + ibjaOk validation
+            if (!ibja24k) {
+              const sm = html.match(/<td>\s*(\d{5,6})\s*<\/td>\s*<td>\s*(\d{5,6})\s*<\/td>\s*<td>\s*(\d{5,6})\s*<\/td>/);
+              if (sm) {
+                const v999 = parseFloat(sm[1]) / 10;
+                const v995 = parseFloat(sm[2]) / 10;
+                const v916 = parseFloat(sm[3]) / 10;
+                console.log(`ibjarates C (3-cell /10): 999=${v999}, 995=${v995}, 916=${v916}`);
+                if (ibjaOk(v999)) setIBJA(v999, "ibjarates.com-3cell", v916, v995);
+              }
+            }
+
+            // Strategy D: any "NNNNN (1 Gram)" pattern anywhere on page
+            // FIX 3: removed hardcoded 1[34567] range; now uses \d{4,6} + ibjaOk validation
+            if (!ibja24k) {
+              const dm = html.match(/(\d{4,6})\s*\(1\s*[Gg]ram\)/);
+              if (dm) {
+                const v = parseFloat(dm[1]);
+                console.log(`ibjarates D (any 1-gram): ${v}`);
+                if (ibjaOk(v)) setIBJA(v, "ibjarates.com-ctx");
+              }
             }
           }
         } else {
@@ -227,8 +338,8 @@ export default async function handler(req, res) {
         if (r.ok) {
           const html = await r.text();
           const patterns = [
-            /(1[34567]\d{3})\s*(?:per gram|\/gram|per gm)/i,
-            /(?:24\s*[Kk]|999)[\s\S]{1,200}?(1[34567]\d{3})/i,
+            /(\d{4,6})\s*(?:per gram|\/gram|per gm)/i,
+            /(?:24\s*[Kk]|999)[\s\S]{1,200}?(\d{4,6})/i,
           ];
           for (const pat of patterns) {
             const pm = html.match(pat);
@@ -242,11 +353,12 @@ export default async function handler(req, res) {
     }
 
     // -- S4: Yahoo MCX --
-    // GOLDM.MCX = mini contract, Rs./gram directly (no division)
-    // GOLD.MCX  = main contract, Rs./10g -> divide by 10
+    // MCX GOLD  (1kg contract)  : quoted in Rs. per 10 grams -> div:10
+    // MCX GOLDM (100g contract) : quoted in Rs. per 10 grams -> div:10
+    // FIX 4: GOLDM.MCX div corrected from 1 -> 10 (was returning ~10x the correct value)
     if (!ibja24k) {
       const mcxSymbols = [
-        { sym: "GOLDM.MCX", div: 1  },
+        { sym: "GOLDM.MCX", div: 10 },   // FIX 4: was div:1, now div:10
         { sym: "GOLD.MCX",  div: 10 },
       ];
       outer:
