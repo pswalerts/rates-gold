@@ -205,9 +205,6 @@
     .card-value { font-family:var(--mono); font-size:26px; font-weight:500; color:#f1f5f9; margin-top:12px; }
     .card-sub   { font-size:13px; color:var(--muted); margin-top:7px; }
 
-    .source-tag { display:inline-flex; align-items:center; gap:5px; margin-top:8px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:10px; font-family:var(--mono); color:var(--muted); letter-spacing:0.04em; }
-    .source-tag span { color:var(--accent); }
-
     .footer { margin-top:48px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
     .footer-note { font-size:12px; color:var(--muted); }
     .refresh-btn { background:none; border:1px solid var(--border); color:var(--muted); font-family:var(--mono); font-size:12px; padding:6px 14px; border-radius:6px; cursor:pointer; transition:all 0.2s; }
@@ -257,10 +254,10 @@
   <div style="overflow:hidden;flex:1"><div class="ticker-track" id="tickerTrack"></div></div>
 </div>
 
-<div class="ad-banner"><div class="ad-placeholder">Advertisement · 728×90</div></div>
+<div class="ad-banner"><div class="ad-placeholder">Advertisement · 728x90</div></div>
 
 <div class="page-wrap">
-  <div class="side-col"><div class="ad-side">Advertisement · 160×600</div></div>
+  <div class="side-col"><div class="ad-side">Advertisement · 160x600</div></div>
   <div class="main-col">
 
     <div class="header">
@@ -276,7 +273,7 @@
         </div>
         <div class="status">
           <div class="dot" id="statusDot"></div>
-          <span id="statusText">connecting…</span>
+          <span id="statusText">connecting...</span>
         </div>
       </div>
     </div>
@@ -288,34 +285,34 @@
         <div class="dual-rate-box">
           <div class="dual-rate-col">
             <div class="dual-rate-col-header">
-              <div class="dual-rate-col-title">🌐 International Spot → INR</div>
+              <div class="dual-rate-col-title">International Spot -> INR</div>
               <span class="source-badge calc-src" id="intlSourceBadge">CALCULATED</span>
             </div>
-            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.05em;margin-bottom:4px;">999 · 24K · ₹/gram</div>
-            <div class="dual-rate-main" id="intl-24k">—</div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.05em;margin-bottom:4px;">999 · 24K · Rs./gram</div>
+            <div class="dual-rate-main" id="intl-24k">--</div>
             <div class="dual-rate-sub-grid">
-              <div class="dual-rate-sub-item"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="intl-22k">—</div></div>
-              <div class="dual-rate-sub-item"><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val" id="intl-18k">—</div></div>
+              <div class="dual-rate-sub-item"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="intl-22k">--</div></div>
+              <div class="dual-rate-sub-item"><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val" id="intl-18k">--</div></div>
             </div>
             <div class="dual-rate-formula">
-              XAU/USD <span id="intl-xau" style="color:var(--text)">—</span>
-              &nbsp;÷ 31.1035g × <span id="intl-inr" style="color:var(--text)">—</span>
-              &nbsp;= <span id="intl-result" style="color:var(--gold)">—</span>/g
+              XAU/USD <span id="intl-xau" style="color:var(--text)">--</span>
+              &nbsp;/ 31.1035g x <span id="intl-inr" style="color:var(--text)">--</span>
+              &nbsp;= <span id="intl-result" style="color:var(--gold)">--</span>/g
             </div>
           </div>
           <div class="dual-rate-col">
             <div class="dual-rate-col-header">
-              <div class="dual-rate-col-title">🇮🇳 IBJA Official Rate</div>
+              <div class="dual-rate-col-title">IBJA Official Rate</div>
               <span class="source-badge calc-src" id="ibjaLiveBadge">LOADING</span>
             </div>
-            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.05em;margin-bottom:4px;">999 · 24K · ₹/gram</div>
-            <div class="dual-rate-main ibja-val" id="ibja24k">—</div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.05em;margin-bottom:4px;">999 · 24K · Rs./gram</div>
+            <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
             <div class="dual-rate-sub-grid">
-              <div class="dual-rate-sub-item"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val" id="ibja995">—</div></div>
-              <div class="dual-rate-sub-item"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="ibja22k">—</div></div>
+              <div class="dual-rate-sub-item"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val" id="ibja995">--</div></div>
+              <div class="dual-rate-sub-item"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="ibja22k">--</div></div>
             </div>
-            <div class="dual-rate-stale" id="ibjaStaleMsg" style="display:none;">⚠ Showing previous session IBJA rate. Live data unavailable right now.</div>
-            <div class="dual-rate-unavail" id="ibjaCalcMsg" style="display:none;">ℹ Rate estimated from international spot + India import duty (6% customs + 2.5% IGST, post July 2024 Budget). IBJA publishes official rates at ~10 AM IST on trading days.</div>
+            <div class="dual-rate-stale" id="ibjaStaleMsg" style="display:none;">Warning: Showing previous session IBJA rate. Live data unavailable right now.</div>
+            <div class="dual-rate-unavail" id="ibjaCalcMsg" style="display:none;">Rate estimated from international spot. IBJA publishes official rates at ~10 AM IST on trading days.</div>
           </div>
         </div>
 
@@ -336,20 +333,19 @@
 
       </div>
 
-      <div class="section-title">Physical Gold — Live Retailer Rates</div>
+      <div class="section-title">Physical Gold -- Live Retailer Rates</div>
       <div class="retailer-grid" id="physicalRetailers"></div>
 
-      <div class="section-title" style="margin-top:40px">Digital Gold — Platform Rates</div>
+      <div class="section-title" style="margin-top:40px">Digital Gold -- Platform Rates</div>
       <div class="retailer-grid" id="digitalPlatforms" style="grid-template-columns:repeat(2,1fr);"></div>
 
-      <div class="ad-inline" style="margin-top:32px;margin-bottom:0">Advertisement · 728×50</div>
+      <div class="ad-inline" style="margin-top:32px;margin-bottom:0">Advertisement · 728x50</div>
 
-      <div class="section-title" style="margin-top:32px">Gold ETFs — Live NAV & ₹/gram Equivalent</div>
+      <div class="section-title" style="margin-top:32px">Gold ETFs -- Live NAV & Rs./gram Equivalent</div>
       <div class="etf-section-wrap">
         <div id="etfGrid">
           <div class="retailer-card" style="grid-column:1/-1;justify-content:center;flex-direction:row;gap:10px;">
-            <span style="font-family:var(--mono);font-size:12px;color:var(--muted);animation:blink 1.5s infinite">⬤</span>
-            <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">loading ETF prices…</span>
+            <span style="font-family:var(--mono);font-size:12px;color:var(--muted);animation:blink 1.5s infinite">loading ETF prices...</span>
           </div>
         </div>
         <div id="etfHistPanel" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 16px;display:none;">
@@ -368,91 +364,91 @@
 
       <div class="tl-panel" style="margin-top:44px;">
         <div class="tl-header">
-          <div class="tl-header-title">Best Way to Buy Gold — Live Comparison</div>
-          <span class="source-badge live-src" id="tlUpdated">—</span>
+          <div class="tl-header-title">Best Way to Buy Gold -- Live Comparison</div>
+          <span class="source-badge live-src" id="tlUpdated">--</span>
         </div>
-        <div class="tl-body" id="tlBody"><div style="font-size:13px;color:var(--muted);font-family:var(--mono);">Analyzing live rates…</div></div>
+        <div class="tl-body" id="tlBody"><div style="font-size:13px;color:var(--muted);font-family:var(--mono);">Analyzing live rates...</div></div>
       </div>
 
       <div class="section-title" style="margin-top:44px">Dubai Gold Rates</div>
       <div class="dubai-card">
         <div class="dubai-header">
-          <div class="dubai-title">🇦🇪 Dubai · Live Gold Prices <span class="dubai-title-arabic">أسعار الذهب · دبي</span></div>
-          <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">—</div>
+          <div class="dubai-title">Dubai · Live Gold Prices <span class="dubai-title-arabic">اسعار الذهب · دبي</span></div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">--</div>
         </div>
         <div class="dxb-fx-strip">
-          <div class="dxb-fx-item"><div class="dxb-fx-label">USD / INR</div><div class="dxb-fx-val" id="dxb-usd-inr">—</div><div class="dxb-fx-sub">live rate</div></div>
-          <div class="dxb-fx-item"><div class="dxb-fx-label">AED / INR</div><div class="dxb-fx-val" id="dxb-aed-inr-strip">—</div><div class="dxb-fx-sub">USD peg 3.6725</div></div>
-          <div class="dxb-fx-item"><div class="dxb-fx-label">XAU / USD</div><div class="dxb-fx-val" id="dxb-xau-usd">—</div><div class="dxb-fx-sub">international spot</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">USD / INR</div><div class="dxb-fx-val" id="dxb-usd-inr">--</div><div class="dxb-fx-sub">live rate</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">AED / INR</div><div class="dxb-fx-val" id="dxb-aed-inr-strip">--</div><div class="dxb-fx-sub">USD peg 3.6725</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">XAU / USD</div><div class="dxb-fx-val" id="dxb-xau-usd">--</div><div class="dxb-fx-sub">international spot</div></div>
         </div>
         <div class="dxb-3col">
           <div class="dxb-col">
-            <div class="dxb-col-head aed-head">🇦🇪 Dubai Rates (AED) &nbsp;<span style="font-family:var(--sans);direction:rtl;font-size:11px;opacity:0.8;">بالدرهم</span></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val aed" id="dxb-24k-aed">—</div><div class="dxb-arabic">ذهب ٢٤ قيراط · للجرام</div><div class="dxb-price-sub">local price</div></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val aed" id="dxb-22k-aed">—</div><div class="dxb-arabic">ذهب ٢٢ قيراط · للجرام</div><div class="dxb-price-sub">local price</div></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">18K · per gram</div><div class="dxb-price-val aed" id="dxb-18k-aed">—</div><div class="dxb-arabic">ذهب ١٨ قيراط · للجرام</div><div class="dxb-price-sub">local price</div></div>
+            <div class="dxb-col-head aed-head">Dubai Rates (AED)</div>
+            <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val aed" id="dxb-24k-aed">--</div><div class="dxb-price-sub">local price</div></div>
+            <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val aed" id="dxb-22k-aed">--</div><div class="dxb-price-sub">local price</div></div>
+            <div class="dxb-price-item"><div class="dxb-price-label">18K · per gram</div><div class="dxb-price-val aed" id="dxb-18k-aed">--</div><div class="dxb-price-sub">local price</div></div>
           </div>
           <div class="dxb-col">
-            <div class="dxb-col-head">🇮🇳 INR Equivalent</div>
-            <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val inr" id="dxb-24k-inr">—</div><div class="dxb-price-sub">at live AED/INR</div></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val inr" id="dxb-22k-inr">—</div><div class="dxb-price-sub">at live AED/INR</div></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">AED / INR rate</div><div class="dxb-price-val inr" style="font-size:15px;" id="dxb-aed-inr">—</div><div class="dxb-price-sub">live exchange rate</div></div>
+            <div class="dxb-col-head">INR Equivalent</div>
+            <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val inr" id="dxb-24k-inr">--</div><div class="dxb-price-sub">at live AED/INR</div></div>
+            <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val inr" id="dxb-22k-inr">--</div><div class="dxb-price-sub">at live AED/INR</div></div>
+            <div class="dxb-price-item"><div class="dxb-price-label">AED / INR rate</div><div class="dxb-price-val inr" style="font-size:15px;" id="dxb-aed-inr">--</div><div class="dxb-price-sub">live exchange rate</div></div>
           </div>
           <div class="dxb-col">
-            <div class="dxb-col-head">📊 India vs Dubai</div>
-            <div class="dxb-spread-item"><div class="dxb-spread-label">India 24K</div><div class="dxb-spread-val dim" id="ds-india">—</div><div class="dxb-price-sub">IBJA / calculated</div></div>
-            <div class="dxb-spread-item"><div class="dxb-spread-label">Dubai 24K (INR)</div><div class="dxb-spread-val dim" id="ds-dubai">—</div><div class="dxb-price-sub">converted at live rate</div></div>
-            <div class="dxb-spread-item"><div class="dxb-spread-label">Spread</div><div class="dxb-spread-val" id="ds-spread">—</div><div class="dxb-price-sub" id="ds-spreadpct">—</div></div>
+            <div class="dxb-col-head">India vs Dubai</div>
+            <div class="dxb-spread-item"><div class="dxb-spread-label">India 24K</div><div class="dxb-spread-val dim" id="ds-india">--</div><div class="dxb-price-sub">IBJA / calculated</div></div>
+            <div class="dxb-spread-item"><div class="dxb-spread-label">Dubai 24K (INR)</div><div class="dxb-spread-val dim" id="ds-dubai">--</div><div class="dxb-price-sub">converted at live rate</div></div>
+            <div class="dxb-spread-item"><div class="dxb-spread-label">Spread</div><div class="dxb-spread-val" id="ds-spread">--</div><div class="dxb-price-sub" id="ds-spreadpct">--</div></div>
           </div>
         </div>
-        <div class="dubai-note">Dubai gold has no import duty locally. India levies 6% customs duty + 2.5% IGST on international spot (post July 2024 Union Budget). Buying in Dubai only makes financial sense within personal allowance limits (20g duty-free for women, 10g for men).</div>
+        <div class="dubai-note">Dubai gold has no import duty locally. India levies 6% customs duty + 3% IGST on international spot (post July 2024 Union Budget). Buying in Dubai only makes financial sense within personal allowance limits (20g duty-free for women, 10g for men).</div>
       </div>
 
-      <div class="ad-inline">Advertisement · 728×50</div>
+      <div class="ad-inline">Advertisement · 728x50</div>
     </div><!-- /gold-section -->
 
     <!-- SILVER SECTION -->
     <div class="silver-section">
       <div class="hero">
-        <div style="font-size:16px;letter-spacing:0.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:16px;font-weight:600;">Silver · India · ₹ per gram</div>
-        <div class="hero-price" id="silverPrice">—</div>
+        <div style="font-size:16px;letter-spacing:0.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:16px;font-weight:600;">Silver · India · Rs. per gram</div>
+        <div class="hero-price" id="silverPrice">--</div>
         <div class="hero-meta">
-          <div class="hero-sub" id="silverUpdated">fetching live rate…</div>
-          <div id="silverSignal" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:999px;font-size:13px;font-weight:500;font-family:var(--mono);letter-spacing:0.03em;background:rgba(234,179,8,0.1);color:var(--yellow);border:1px solid rgba(234,179,8,0.2);">analyzing…</div>
+          <div class="hero-sub" id="silverUpdated">fetching live rate...</div>
+          <div id="silverSignal" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:999px;font-size:13px;font-weight:500;font-family:var(--mono);letter-spacing:0.03em;background:rgba(234,179,8,0.1);color:var(--yellow);border:1px solid rgba(234,179,8,0.2);">analyzing...</div>
         </div>
       </div>
-      <div class="section-title">Buy Options — Silver · lowest price flashes green</div>
+      <div class="section-title">Buy Options -- Silver · lowest price flashes green</div>
       <div class="option-cards">
-        <div class="option-card" id="scard-physical"><div class="option-label">Physical Buy</div><div class="option-value" id="sopt-physical">—</div><div class="option-sub">3% making + 3% GST</div></div>
-        <div class="option-card" id="scard-digital"><div class="option-label">Digital Silver</div><div class="option-value" id="sopt-digital">—</div><div class="option-sub">~1.5% platform fee</div></div>
-        <div class="option-card" id="scard-etf"><div class="option-label">Silver ETF</div><div class="option-value" id="sopt-etf">—</div><div class="option-sub">~0.5% expense ratio</div></div>
-        <div class="option-card" id="scard-intl"><div class="option-label">XAG/USD (Intl)</div><div class="option-value" id="sopt-intl">—</div><div class="option-sub">per troy oz · USD</div></div>
+        <div class="option-card" id="scard-physical"><div class="option-label">Physical Buy</div><div class="option-value" id="sopt-physical">--</div><div class="option-sub">3% making + 3% GST</div></div>
+        <div class="option-card" id="scard-digital"><div class="option-label">Digital Silver</div><div class="option-value" id="sopt-digital">--</div><div class="option-sub">~1.5% platform fee</div></div>
+        <div class="option-card" id="scard-etf"><div class="option-label">Silver ETF</div><div class="option-value" id="sopt-etf">--</div><div class="option-sub">~0.5% expense ratio</div></div>
+        <div class="option-card" id="scard-intl"><div class="option-label">XAG/USD (Intl)</div><div class="option-value" id="sopt-intl">--</div><div class="option-sub">per troy oz · USD</div></div>
       </div>
-      <div class="ad-inline">Advertisement · 728×50</div>
+      <div class="ad-inline">Advertisement · 728x50</div>
       <div class="section-title" style="margin-top:0">Market Data</div>
       <div class="cards">
-        <div class="card"><div class="card-label">Silver per kg</div><div class="card-value" id="silverKg">—</div><div class="card-sub">India rate</div></div>
-        <div class="card"><div class="card-label">Gold/Silver Ratio</div><div class="card-value" id="gsRatioSilver">—</div><div class="card-sub">oz of silver per oz of gold</div></div>
+        <div class="card"><div class="card-label">Silver per kg</div><div class="card-value" id="silverKg">--</div><div class="card-sub">India rate</div></div>
+        <div class="card"><div class="card-label">Gold/Silver Ratio</div><div class="card-value" id="gsRatioSilver">--</div><div class="card-sub">oz of silver per oz of gold</div></div>
       </div>
     </div><!-- /silver-section -->
 
     <div class="fx-bar">
-      <div class="fx-item"><span class="fx-label">XAU/USD</span><span class="fx-value" id="fxGold">—</span></div>
-      <div class="fx-item"><span class="fx-label">XAG/USD</span><span class="fx-value" id="fxSilver">—</span></div>
-      <div class="fx-item"><span class="fx-label">USD/INR</span><span class="fx-value" id="fxInr">—</span></div>
-      <div class="fx-item"><span class="fx-label">AED/INR</span><span class="fx-value" id="fxAed">—</span></div>
+      <div class="fx-item"><span class="fx-label">XAU/USD</span><span class="fx-value" id="fxGold">--</span></div>
+      <div class="fx-item"><span class="fx-label">XAG/USD</span><span class="fx-value" id="fxSilver">--</span></div>
+      <div class="fx-item"><span class="fx-label">USD/INR</span><span class="fx-value" id="fxInr">--</span></div>
+      <div class="fx-item"><span class="fx-label">AED/INR</span><span class="fx-value" id="fxAed">--</span></div>
       <div class="fx-item"><span class="fx-label">Troy oz</span><span class="fx-value">31.1035 g</span></div>
     </div>
 
     <div class="footer">
       <div class="footer-note" id="footerNote">Auto-refreshes every 60 minutes</div>
-      <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">↻ refresh now</button>
+      <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">refresh now</button>
     </div>
 
   </div><!-- /main-col -->
   <div class="side-col">
-    <div class="ad-side">Advertisement · 160×600</div>
-    <div class="ad-side" style="margin-top:16px;min-height:160px">Advertisement · 160×160</div>
+    <div class="ad-side">Advertisement · 160x600</div>
+    <div class="ad-side" style="margin-top:16px;min-height:160px">Advertisement · 160x160</div>
   </div>
 </div>
 
@@ -502,17 +498,20 @@
     document.getElementById("tickerTrack").innerHTML = all.map(i => `<span class="ticker-item"><span class="t-name">${i.name}</span><span class="t-val">${i.val}</span></span>`).join("");
   }
 
-  function buildPhysicalRetailers(base24k) {
-    const phys = (r, mp) => { const m = r * mp; return r + m + (r + m) * 0.03; };
+  // FIX 4: accepts india22 (916 purity price from IBJA) as the base.
+  // Making charge + GST applied on the 22K base only -- not the 999 base.
+  // Formula: (base22k * (1 + making)) * 1.03  (GST applied once, correctly)
+  function buildPhysicalRetailers(base22k) {
+    const phys = (base, mp) => base * (1 + mp) * 1.03;
     const retailers = [
-      { name: "Tanishq", emoji: "💍", type: "Jeweller · Tata", making: 0.14, note: "14% making + 3% GST" },
-      { name: "PNG Jewellers", emoji: "🪙", type: "Jeweller · Pune", making: 0.12, note: "12% making + 3% GST" },
-      { name: "RidhiSidhi", emoji: "✨", type: "Jeweller · Multi-city", making: 0.10, note: "10% making + 3% GST" },
-      { name: "Kalyan", emoji: "👑", type: "Jeweller · Pan-India", making: 0.10, note: "10% making + 3% GST" },
-      { name: "CaratLane", emoji: "💎", type: "Online · Tata", making: 0.08, note: "8% making + 3% GST" },
-      { name: "BlueStone", emoji: "🔷", type: "Online Jeweller", making: 0.07, note: "7% making + 3% GST" },
+      { name: "Tanishq",       emoji: "\uD83D\uDC8D", type: "Jeweller · Tata",       making: 0.14, note: "14% making + 3% GST" },
+      { name: "PNG Jewellers", emoji: "\uD83E\uDE99", type: "Jeweller · Pune",       making: 0.12, note: "12% making + 3% GST" },
+      { name: "RidhiSidhi",   emoji: "\u2728",        type: "Jeweller · Multi-city", making: 0.10, note: "10% making + 3% GST" },
+      { name: "Kalyan",        emoji: "\uD83D\uDC51", type: "Jeweller · Pan-India",  making: 0.10, note: "10% making + 3% GST" },
+      { name: "CaratLane",     emoji: "\uD83D\uDC8E", type: "Online · Tata",         making: 0.08, note: "8% making + 3% GST"  },
+      { name: "BlueStone",     emoji: "\uD83D\uDD37", type: "Online Jeweller",       making: 0.07, note: "7% making + 3% GST"  },
     ];
-    const priced = retailers.map(r => ({ ...r, total: phys(base24k, r.making) }));
+    const priced = retailers.map(r => ({ ...r, total: phys(base22k, r.making) }));
     const minVal = Math.min(...priced.map(r => r.total));
     document.getElementById("physicalRetailers").innerHTML = priced.map(r => `
       <div class="retailer-card ${r.total === minVal ? "best-buy" : ""}">
@@ -527,10 +526,10 @@
 
   function buildDigitalPlatforms(base24k) {
     const platforms = [
-      { name: "MMTC-PAMP", emoji: "🏅", type: "Govt. backed", spread: 0.010, note: "1% spread · No GST" },
-      { name: "Augmont", emoji: "⚡", type: "Digital Gold", spread: 0.015, note: "1.5% spread · No GST" },
-      { name: "SafeGold", emoji: "🔒", type: "NSDL backed", spread: 0.018, note: "1.8% spread · No GST" },
-      { name: "Paytm Gold", emoji: "📱", type: "MMTC-PAMP pwrd", spread: 0.020, note: "2% spread · No GST" },
+      { name: "MMTC-PAMP",  emoji: "\uD83C\uDFC5", type: "Govt. backed",    spread: 0.010, note: "1% spread · No GST"   },
+      { name: "Augmont",    emoji: "\u26A1",        type: "Digital Gold",    spread: 0.015, note: "1.5% spread · No GST" },
+      { name: "SafeGold",   emoji: "\uD83D\uDD12", type: "NSDL backed",      spread: 0.018, note: "1.8% spread · No GST" },
+      { name: "Paytm Gold", emoji: "\uD83D\uDCF1", type: "MMTC-PAMP pwrd",  spread: 0.020, note: "2% spread · No GST"   },
     ];
     const priced = platforms.map(p => ({ ...p, total: base24k * (1 + p.spread) }));
     const minVal = Math.min(...priced.map(p => p.total));
@@ -548,12 +547,12 @@
   }
 
   const ETF_LIST = [
-    { symbol: "GOLDBEES",   name: "Nippon Gold ETF", fund: "Nippon India MF",  expense: 0.0051, aum: "₹9,800Cr+", emoji: "🟡" },
-    { symbol: "SBIGETS",    name: "SBI Gold ETF",    fund: "SBI Mutual Fund",  expense: 0.0065, aum: "₹2,100Cr+", emoji: "🔵" },
-    { symbol: "HDFCMFGETF", name: "HDFC Gold ETF",   fund: "HDFC AMC",         expense: 0.0059, aum: "₹3,200Cr+", emoji: "🔴" },
-    { symbol: "AXISGOLD",   name: "Axis Gold ETF",   fund: "Axis AMC",         expense: 0.0060, aum: "₹900Cr+",   emoji: "🟣" },
-    { symbol: "KOTAKGOLD",  name: "Kotak Gold ETF",  fund: "Kotak AMC",        expense: 0.0055, aum: "₹3,500Cr+", emoji: "🟠" },
-    { symbol: "ICICIGOLD",  name: "ICICI Pru Gold",  fund: "ICICI Prudential", expense: 0.0050, aum: "₹4,100Cr+", emoji: "🟤" },
+    { symbol: "GOLDBEES",   name: "Nippon Gold ETF", fund: "Nippon India MF",  expense: 0.0051, aum: "Rs.9,800Cr+", emoji: "\uD83D\uDFE1" },
+    { symbol: "SBIGETS",    name: "SBI Gold ETF",    fund: "SBI Mutual Fund",  expense: 0.0065, aum: "Rs.2,100Cr+", emoji: "\uD83D\uDD35" },
+    { symbol: "HDFCMFGETF", name: "HDFC Gold ETF",   fund: "HDFC AMC",         expense: 0.0059, aum: "Rs.3,200Cr+", emoji: "\uD83D\uDD34" },
+    { symbol: "AXISGOLD",   name: "Axis Gold ETF",   fund: "Axis AMC",         expense: 0.0060, aum: "Rs.900Cr+",   emoji: "\uD83D\uDFE3" },
+    { symbol: "KOTAKGOLD",  name: "Kotak Gold ETF",  fund: "Kotak AMC",        expense: 0.0055, aum: "Rs.3,500Cr+", emoji: "\uD83D\uDFE0" },
+    { symbol: "ICICIGOLD",  name: "ICICI Pru Gold",  fund: "ICICI Prudential", expense: 0.0050, aum: "Rs.4,100Cr+", emoji: "\uD83D\uDFE4" },
   ];
   let _etfSparklines = {};
 
@@ -612,8 +611,8 @@
       const vsSpot = e.gramRate - baseRate;
       const vsPct  = ((vsSpot / baseRate) * 100).toFixed(2);
       const dClr   = Math.abs(vsSpot) < 50 ? "var(--muted)" : vsSpot > 0 ? "var(--red)" : "var(--green)";
-      const dTxt   = Math.abs(vsSpot) < 50 ? "≈ Near spot" : vsSpot > 0 ? `▲ ${fmt(vsSpot)} over spot (${vsPct}%)` : `▼ ${fmt(Math.abs(vsSpot))} under spot`;
-      const dcHtml = e.dayChg != null ? `<div style="font-size:10px;font-family:var(--mono);color:${e.dayChg>=0?"var(--green)":"var(--red)"};text-align:center;margin-top:1px">${e.dayChg>=0?"▲":"▼"} ${Math.abs(e.dayChg).toFixed(2)}% today</div>` : "";
+      const dTxt   = Math.abs(vsSpot) < 50 ? "Near spot" : vsSpot > 0 ? `${fmt(vsSpot)} over spot (${vsPct}%)` : `${fmt(Math.abs(vsSpot))} under spot`;
+      const dcHtml = e.dayChg != null ? `<div style="font-size:10px;font-family:var(--mono);color:${e.dayChg>=0?"var(--green)":"var(--red)"};text-align:center;margin-top:1px">${e.dayChg>=0?"up":"dn"} ${Math.abs(e.dayChg).toFixed(2)}% today</div>` : "";
       const hasSp  = _etfSparklines[e.symbol] && Object.keys(_etfSparklines[e.symbol]).length > 0;
       return `<div class="retailer-card ${isBest?"best-buy":""}" style="cursor:${hasSp?"pointer":"default"}" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
         ${isBest?'<div class="retailer-best-badge">Best Value</div>':""}
@@ -624,8 +623,8 @@
         <div class="retailer-sub" style="font-size:10px;color:var(--muted);text-align:center;font-family:var(--mono)">${e.symbol} · ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div>
         <div style="font-size:10px;font-family:var(--mono);color:${dClr};text-align:center;margin-top:2px">${dTxt}</div>
         ${dcHtml}
-        <div style="margin-top:4px">${e.live?'<span class="etf-live-badge">● NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
-        ${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em">tap for chart →</div>':""}
+        <div style="margin-top:4px">${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
+        ${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em">tap for chart</div>':""}
       </div>`;
     }).join("");
     const firstWith1y = ETF_LIST.find(e => getSparkValues(_etfSparklines, "1y", e.symbol));
@@ -633,21 +632,24 @@
     const navs = {}; results.forEach(e => navs[e.symbol] = e.gramRate); return navs;
   }
 
-  function buildTrafficLight(india24, etfNavs) {
+  // FIX 3: physical gold cost formula corrected.
+  // Uses india22 as base (22K purity), GST applied once: (india22 * 1.07) * 1.03
+  // Old broken version was: india24 * 1.07 * 1.03 * 1.03  (wrong base, GST twice)
+  function buildTrafficLight(india24, india22, etfNavs) {
     const bestEtf  = Math.min(...Object.values(etfNavs).filter(v => v > 0));
     const etfEntry = bestEtf * 1.001;
     const digi     = india24 * 1.01;
-    const phys     = india24 * 1.07 * 1.03 * 1.03;
+    const phys     = india22 * 1.07 * 1.03;
     const now = new Date(), mktOpen = now.getHours() >= 9 && now.getHours() < 16;
     const opts = [
       { name: "Gold ETF (999.9 · 24K)",    detail: "GOLDBEES / SBIGETS / HDFCMFGETF", price: etfEntry, color: "green",  rank: "#1 Best Entry",   desc: `Zero GST · 0.1% brokerage · 99.5%+ purity · LTCG 12.5% after 2yr · Demat needed${mktOpen?" · Markets OPEN":" · Markets closed"}` },
-      { name: "Digital Gold (999.9 · 24K)", detail: "MMTC-PAMP · Augmont · SafeGold",  price: digi,     color: "orange", rank: "#2 Moderate",     desc: "No GST · ~1–2% spread · ~0.5% annual storage · ₹1 min · Not SEBI regulated" },
-      { name: "Physical Gold (916 · 22K)",  detail: "Jewellers & online retailers",      price: phys,     color: "red",    rank: "#3 Highest Cost", desc: "3% GST · 7–14% making charges · Storage & insurance needed · Best for jewellery / gifting" },
+      { name: "Digital Gold (999.9 · 24K)", detail: "MMTC-PAMP · Augmont · SafeGold",  price: digi,     color: "orange", rank: "#2 Moderate",     desc: "No GST · ~1-2% spread · ~0.5% annual storage · Rs.1 min · Not SEBI regulated" },
+      { name: "Physical Gold (916 · 22K)",  detail: "Jewellers & online retailers",      price: phys,     color: "red",    rank: "#3 Highest Cost", desc: "3% GST · 7-14% making charges · Storage & insurance needed · Best for jewellery / gifting" },
     ].sort((a, b) => a.price - b.price);
     const sav = phys - etfEntry, savPct = ((sav/phys)*100).toFixed(1);
     document.getElementById("tlBody").innerHTML = opts.map((opt, i) => `
       <div class="tl-row tl-${opt.color}">
-        <div class="tl-dot ${opt.color}">${i===0?"✓":i===1?"~":"✗"}</div>
+        <div class="tl-dot ${opt.color}">${i===0?"v":i===1?"~":"x"}</div>
         <div class="tl-content">
           <div class="tl-option-name ${opt.color}">${opt.name}<span class="tl-rank ${opt.color}">${opt.rank}</span></div>
           <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px">${opt.detail}</div>
@@ -658,7 +660,7 @@
       <div class="tl-verdict">
         <div class="tl-verdict-label">Today's Recommendation</div>
         <div class="tl-verdict-text"><strong>Gold ETF saves ${fmt(sav)}/g (${savPct}%)</strong> vs physical at best-case prices.
-        For any holding period over 2 years, <strong>GOLDBEES or HDFCMFGETF are the smartest entry points today</strong> — full purity, instant NSE/BSE liquidity, zero storage cost.</div>
+        For any holding period over 2 years, <strong>GOLDBEES or HDFCMFGETF are the smartest entry points today</strong> -- full purity, instant NSE/BSE liquidity, zero storage cost.</div>
       </div>`;
     document.getElementById("tlUpdated").textContent = "updated " + timeStr(null);
   }
@@ -696,6 +698,9 @@
     showHistTab("1d", document.querySelector(".hero-hist-tab.active"));
   }
 
+  // FIX 2: sparkline values are already Rs./gram from the API.
+  // Use vals[0] directly as the historical price -- no re-scaling.
+  // Old broken version applied (current/last) ratio which introduced drift.
   function showHistTab(tabKey, btn) {
     document.querySelectorAll(".hero-hist-tab").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
@@ -703,20 +708,28 @@
     const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
     const current = _heroHistCurrentPrice;
     let past = null;
+
     if (cfg.use1DPrevClose) past = _heroHistPrevClose || null;
+
     if (!past) {
-      let vals = getSparkValues(_heroHistSparklines, cfg.rangeKey);
-      if (!vals || vals.length < 2) vals = getSparkValues(_heroHistSparklines, cfg.fallback);
-      if (vals && vals.length >= 2) { const last = vals[vals.length-1]; past = vals[0] * (last > 0 ? current/last : 1); }
+      const vals = getSparkValues(_heroHistSparklines, cfg.rangeKey)
+                || getSparkValues(_heroHistSparklines, cfg.fallback);
+      // Use first sparkline value directly -- already in Rs./gram, no scaling needed
+      if (vals && vals.length >= 2) past = vals[0];
     }
-    if (!past || past <= 0) { document.getElementById("heroHistBody").innerHTML = `<div class="hero-hist-cell" style="grid-column:1/-1"><div class="hero-hist-clabel">No data available for this period</div></div>`; return; }
-    const chg = current - past, pct = (chg/past)*100, dir = chg >= 0 ? "up" : "dn", sign = chg >= 0 ? "+" : "−";
+
+    if (!past || past <= 0) {
+      document.getElementById("heroHistBody").innerHTML = `<div class="hero-hist-cell" style="grid-column:1/-1"><div class="hero-hist-clabel">No data available for this period</div></div>`;
+      return;
+    }
+
+    const chg = current - past, pct = (chg/past)*100, dir = chg >= 0 ? "up" : "dn", sign = chg >= 0 ? "+" : "-";
     const periodLabel = tabKey==="1d" ? "Yesterday's Close" : tabKey==="ytd" ? "Price Jan 1" : `Price ${cfg.label.replace("vs ","")}`;
     const cells = [
       { label: "Current Price",                        val: fmt(current),                           chg: null },
-      { label: `Change (${cfg.label})`,               val: sign + fmt(Math.abs(chg)),              chg: dir, chgTxt: sign + Math.abs(pct).toFixed(2) + "%" },
+      { label: `Change (${cfg.label})`,                val: sign + fmt(Math.abs(chg)),              chg: dir, chgTxt: sign + Math.abs(pct).toFixed(2) + "%" },
       { label: periodLabel,                            val: fmt(past),                              chg: null },
-      { label: tabKey.toUpperCase() + " Performance", val: sign + Math.abs(pct).toFixed(2) + "%", chg: dir, chgTxt: dir==="up"?"▲ Gain":"▼ Loss" },
+      { label: tabKey.toUpperCase() + " Performance", val: sign + Math.abs(pct).toFixed(2) + "%", chg: dir, chgTxt: dir==="up"?"Gain":"Loss" },
     ];
     document.getElementById("heroHistBody").innerHTML = cells.map(c => `
       <div class="hero-hist-cell">
@@ -732,23 +745,24 @@
       if (!res.ok) throw new Error("API error " + res.status);
       const data = await res.json();
 
-      const usdInr  = data.usdInr  || 95.0;
+      // FIX 1: fallback matches the API's own fallback (85.0, not the old 95.0)
+      const usdInr  = data.usdInr  || 85.0;
       const aedInr  = data.aedInr  || (usdInr / 3.6725);
       const gramUSD = data.price / TROY;
       const calc24k = gramUSD * usdInr;
 
-      // IBJA — server now always returns a number (9 sources + calculated fallback)
-      // Cache the last real (non-calculated) value for stale display
       const ibjaSourceIsReal = data.sources?.ibja && data.sources.ibja !== "calculated";
       if (data.ibja24k > 0 && ibjaSourceIsReal) {
         ibjaCache.ibja24k = data.ibja24k;
         ibjaCache.ibja22k = data.ibja22k;
         ibjaCache.ibja995 = data.ibja995;
       }
+      // ibja values flow straight through -- no markup added here
       const ibja24  = data.ibja24k  || ibjaCache.ibja24k  || calc24k;
       const ibja22  = data.ibja22k  || ibjaCache.ibja22k  || ibja24 * 0.916;
       const ibja995 = data.ibja995  || ibjaCache.ibja995  || ibja24 * 0.995;
-      const india24 = ibja24, india22 = ibja22;
+      const india24 = ibja24;
+      const india22 = ibja22;
 
       const silverUSD  = data.silverPrice || (data.price / 85);
       const silverGram = (silverUSD / TROY) * usdInr;
@@ -772,7 +786,7 @@
       }
       prevSilverPrice = silverGram;
 
-      // International spot column
+      // International spot column (no duty -- pure calc)
       document.getElementById("intl-xau").textContent    = fmtUSD(data.price);
       document.getElementById("intl-inr").textContent    = "\u20B9" + usdInr.toFixed(2);
       document.getElementById("intl-result").textContent = fmt(calc24k);
@@ -780,7 +794,7 @@
       document.getElementById("intl-22k").textContent    = fmt(calc24k * 0.916);
       document.getElementById("intl-18k").textContent    = fmt(calc24k * 0.75);
 
-      // IBJA column — 3-state badge
+      // IBJA column -- values shown directly, no markup
       const badge    = document.getElementById("ibjaLiveBadge");
       const staleMsg = document.getElementById("ibjaStaleMsg");
       const calcMsg  = document.getElementById("ibjaCalcMsg");
@@ -789,23 +803,25 @@
       document.getElementById("ibja995").textContent = fmt(ibja995);
       const ibjaSource = data.sources?.ibja || "unknown";
       if (ibjaSource === "calculated") {
-        badge.textContent = "● CALC"; badge.className = "source-badge calc-src";
+        badge.textContent = "CALC"; badge.className = "source-badge calc-src";
         staleMsg.style.display = "none"; calcMsg.style.display = "block";
       } else if (ibjaSourceIsReal) {
-        badge.textContent = "● IBJA LIVE"; badge.className = "source-badge live-src";
+        badge.textContent = "IBJA LIVE"; badge.className = "source-badge live-src";
         staleMsg.style.display = "none"; calcMsg.style.display = "none";
       } else if (ibjaCache.ibja24k) {
-        badge.textContent = "● IBJA PREV"; badge.className = "source-badge stale-src";
+        badge.textContent = "IBJA PREV"; badge.className = "source-badge stale-src";
         staleMsg.style.display = "block"; calcMsg.style.display = "none";
       } else {
-        badge.textContent = "● CALC"; badge.className = "source-badge calc-src";
+        badge.textContent = "CALC"; badge.className = "source-badge calc-src";
         staleMsg.style.display = "none"; calcMsg.style.display = "block";
       }
 
-      buildPhysicalRetailers(india24);
+      // FIX 4: pass india22 (916 base) to physical retailers
+      buildPhysicalRetailers(india22);
       buildDigitalPlatforms(india24);
       const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfPrevClose, data.etfSparklines);
-      buildTrafficLight(india24, etfNavsForTL);
+      // FIX 3: pass both india24 and india22 to traffic light
+      buildTrafficLight(india24, india22, etfNavsForTL);
       buildHeroHistPanel(india24, data.etfSparklines, data.etfPrevClose);
 
       document.getElementById("dxb-usd-inr").textContent       = "\u20B9 " + usdInr.toFixed(2);
@@ -821,7 +837,7 @@
       document.getElementById("ds-india").textContent = fmt(india24);
       document.getElementById("ds-dubai").textContent = fmt(dubai24Inr);
       const spreadEl = document.getElementById("ds-spread");
-      spreadEl.textContent = (spread >= 0 ? "+" : "−") + fmt(Math.abs(spread));
+      spreadEl.textContent = (spread >= 0 ? "+" : "-") + fmt(Math.abs(spread));
       spreadEl.className   = "dxb-spread-val " + (spread >= 0 ? "pos" : "neg");
       document.getElementById("ds-spreadpct").textContent = Math.abs(spreadPct) + "% " + (spread >= 0 ? "India pricier" : "Dubai pricier");
 
@@ -841,9 +857,9 @@
       highlightBest({ physical: physSilver, digital: digiSilver, etf: etfSilver }, "s");
       const ratio = data.price / silverUSD;
       const sSignal = document.getElementById("silverSignal");
-      if      (ratio > 85) { sSignal.textContent = "▲ BUY · Silver undervalued"; sSignal.style.background = "rgba(34,197,94,0.12)"; sSignal.style.color = "var(--green)"; sSignal.style.border = "1px solid rgba(34,197,94,0.25)"; }
-      else if (ratio < 70) { sSignal.textContent = "◆ WAIT · Silver expensive"; }
-      else                  { sSignal.textContent = "◆ NEUTRAL · Fair value"; }
+      if      (ratio > 85) { sSignal.textContent = "BUY · Silver undervalued"; sSignal.style.background = "rgba(34,197,94,0.12)"; sSignal.style.color = "var(--green)"; sSignal.style.border = "1px solid rgba(34,197,94,0.25)"; }
+      else if (ratio < 70) { sSignal.textContent = "WAIT · Silver expensive"; }
+      else                  { sSignal.textContent = "NEUTRAL · Fair value"; }
 
       buildTicker({ price: data.price, india24, india22, dubai24: dubai24Inr, dubai22: dubai22Inr, silverUSD, silverGram, usdInr, aedInr });
 
@@ -852,7 +868,7 @@
       document.getElementById("footerNote").textContent = "Auto-refreshes every 60 min · last: " + timeStr(data.timestamp);
 
     } catch(e) {
-      document.getElementById("silverPrice").textContent = "—";
+      document.getElementById("silverPrice").textContent = "--";
       document.getElementById("statusDot").className     = "dot error";
       document.getElementById("statusText").textContent  = "error";
       document.getElementById("footerNote").textContent  = e.message;
@@ -862,8 +878,8 @@
 
   function manualRefresh() {
     const btn = document.getElementById("refreshBtn");
-    btn.classList.add("refreshing"); btn.textContent = "↻ refreshing…";
-    loadPrice().finally(() => { btn.classList.remove("refreshing"); btn.textContent = "↻ refresh now"; });
+    btn.classList.add("refreshing"); btn.textContent = "refreshing...";
+    loadPrice().finally(() => { btn.classList.remove("refreshing"); btn.textContent = "refresh now"; });
   }
 
   loadPrice();
