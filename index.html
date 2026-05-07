@@ -104,7 +104,7 @@
     .retailer-logo { width:44px; height:44px; border-radius:10px; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; font-family:var(--mono); color:var(--accent); flex-shrink:0; overflow:hidden; }
     .retailer-name  { font-size:12px; font-weight:600; color:var(--text); text-align:center; }
     .retailer-type  { font-size:10px; color:var(--muted); text-align:center; letter-spacing:0.04em; }
-    .purity-pill    { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:999px; font-family:var(--mono); font-size:9px; letter-spacing:0.07em; text-transform:uppercase; background:rgba(212,168,83,0.1); color:var(--gold); border:1px solid rgba(212,168,83,0.22); margin-top:2px; }
+    .purity-pill    { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:999px; font-family:var(--mono); font-size:9px; letter-spacing:0.07em; text-transform:uppercase; background:rgba(212,168,83,0.1); color:var(--gold); border:1px solid rgba(212,168,83,0.22); margin-top:2px; white-space:nowrap; }
     .purity-pill.silver-pill { background:rgba(168,184,200,0.1); color:var(--silver); border-color:rgba(168,184,200,0.22); }
     .retailer-price { font-family:var(--mono); font-size:18px; font-weight:700; color:var(--inr-color); margin-top:4px; }
     .retailer-card.best-buy .retailer-price { color:var(--green); }
@@ -140,7 +140,7 @@
     .tl-verdict { grid-column:1/-1; background:rgba(212,168,83,0.06); border:1px solid rgba(212,168,83,0.2); border-radius:10px; padding:14px 18px; }
     .tl-verdict-label { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-family:var(--mono); font-weight:700; margin-bottom:8px; }
     .tl-verdict-text { font-size:15px; color:var(--text); line-height:1.65; font-weight:500; }
-    .tl-verdict-text strong { color:var(--gold); font-size:16px; }
+    .tl-verdict-text strong { color:var(--text); font-size:16px; }
     .dubai-callout { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:rgba(224,120,40,0.08); border:1px solid rgba(224,120,40,0.22); border-radius:10px; padding:10px 16px; margin-top:14px; font-size:13px; font-family:var(--mono); }
     .dubai-callout-flag { font-size:18px; flex-shrink:0; }
     .dubai-callout-text { color:var(--text); flex:1; min-width:200px; }
@@ -338,7 +338,7 @@
         <!-- Dubai callout strip — between price boxes and history -->
         <div class="dubai-callout" id="dubaiCallout" style="display:none;">
           <span class="dubai-callout-flag">🇦🇪</span>
-          <span class="dubai-callout-text">Dubai 24K ≈ <strong id="dubaiCalloutRate">--</strong>/g &nbsp;·&nbsp; <strong id="dubaiCalloutSave" id="dubaiCalloutSave">--</strong>/g (<span id="dubaiCalloutPct">--</span>%) <span id="dubaiCalloutDir">cheaper</span> than India</span>
+          <span class="dubai-callout-text">Dubai 24K ≈ <strong id="dubaiCalloutRate" style="color:var(--aed-color)">--</strong>/g &nbsp;·&nbsp; <strong id="dubaiCalloutSave">--</strong>/g (<span id="dubaiCalloutPct">--</span>%) <span id="dubaiCalloutDir">cheaper</span> than India</span>
           <a class="dubai-callout-link" href="#dubai-section">Full comparison ↓</a>
         </div>
 
@@ -360,8 +360,8 @@
               <button class="hist-toggle-btn" id="histModeInd" onclick="setHistMode('ind',this)">IND</button>
             </div>
           </div>
-          <div style="padding:6px 14px 0;font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.04em;" id="histModeLabel">
-            📊 International Spot (XAU/USD → ₹/gram)
+          <div style="padding:6px 14px 0;font-size:10px;font-family:var(--mono);letter-spacing:0.04em;" id="histModeLabel">
+            <span style="color:var(--green)">📊 International Spot (XAU/USD → ₹/gram · no import duty)</span>
           </div>
           <div class="hero-hist-body" id="heroHistBody"></div>
         </div>
@@ -400,7 +400,7 @@
 
       <div class="tl-panel" style="margin-top:44px;">
         <div class="tl-header">
-          <div class="tl-header-title">Best Option to Buy Gold Today — Live Comparison</div>
+          <div class="tl-header-title">Best Buy Today — Live Comparison</div>
           <span class="source-badge live-src" id="tlUpdated">--</span>
         </div>
         <div class="tl-body" id="tlBody"><div style="font-size:13px;color:var(--muted);font-family:var(--mono);">Analyzing live rates...</div></div>
@@ -412,9 +412,9 @@
           <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">--</div>
         </div>
         <div class="dxb-fx-strip">
-          <div class="dxb-fx-item"><div class="dxb-fx-label">🇺🇸 USD / INR</div><div class="dxb-fx-val" id="dxb-usd-inr" style="color:var(--usd-color)">--</div><div class="dxb-fx-sub">live rate</div></div>
-          <div class="dxb-fx-item"><div class="dxb-fx-label">🇦🇪 AED / INR</div><div class="dxb-fx-val" id="dxb-aed-inr-strip" style="color:var(--aed-color)">--</div><div class="dxb-fx-sub">USD peg 3.6725</div></div>
-          <div class="dxb-fx-item"><div class="dxb-fx-label">🌐 XAU / USD</div><div class="dxb-fx-val" id="dxb-xau-usd" style="color:var(--usd-color)">--</div><div class="dxb-fx-sub">international spot</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">🇺🇸 <span style="color:var(--usd-color)">USD</span> <span style="opacity:.5">/</span> <span style="color:var(--inr-color)">INR</span></div><div class="dxb-fx-val" id="dxb-usd-inr" style="color:var(--usd-color)">--</div><div class="dxb-fx-sub">live rate</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">🇦🇪 <span style="color:var(--aed-color)">AED</span> <span style="opacity:.5">/</span> <span style="color:var(--inr-color)">INR</span></div><div class="dxb-fx-val" id="dxb-aed-inr-strip" style="color:var(--aed-color)">--</div><div class="dxb-fx-sub">USD peg 3.6725</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">🌐 <span style="color:var(--gold-bright)">XAU</span> <span style="opacity:.5">/</span> <span style="color:var(--usd-color)">USD</span></div><div class="dxb-fx-val" id="dxb-xau-usd" style="color:var(--gold-bright)">--</div><div class="dxb-fx-sub">international spot</div></div>
         </div>
         <div class="dxb-3col">
           <div class="dxb-col">
@@ -801,44 +801,57 @@
 
   function selectEtfHistory(symbol) { const sel = document.getElementById("etfHistSelect"); if (sel) sel.value = symbol; renderHistChart(symbol); }
 
-  function renderETFNavs(baseRate, serverNavs, sparklines, navRaw) {
+  function renderETFNavs(baseRate, serverNavs, sparklines, navRaw, intlSpot) {
     _etfSparklines = sparklines || {};
     const grid = document.getElementById("etfGrid");
     const results = ETF_LIST.map(etf => {
       const unitNav      = navRaw?.[etf.symbol] > 0 ? navRaw[etf.symbol] : 0;
       const gramsPerUnit = unitNav > 0 && baseRate > 0 ? unitNav / baseRate : null;
-      // Effective per-gram cost is same for all ETFs: spot + 0.1% brokerage.
-      // Expense ratio (TER) is an annual fee deducted from NAV daily — NOT a purchase markup.
-      // Differentiator between ETFs = TER (lower = better) and unit NAV (varies).
+      // All ETFs: effective per-gram = ibja24k + 0.1% brokerage (TER is annual, not purchase cost)
       const gramRate = baseRate * 1.001;
-      return { ...etf, unitNav, gramsPerUnit, gramRate, live: !!(navRaw?.[etf.symbol] > 0) };
+      // India import duty premium over international spot (same for all ETFs, shown for info)
+      const dutyPremium = intlSpot > 0 ? gramRate - intlSpot : null;
+      const dutyPct     = intlSpot > 0 ? ((dutyPremium / intlSpot) * 100).toFixed(1) : null;
+      return { ...etf, unitNav, gramsPerUnit, gramRate, dutyPremium, dutyPct, live: !!(navRaw?.[etf.symbol] > 0) };
     });
-    // BEST VALUE = lowest TER (expense ratio) since per-gram cost is identical for all
+    // BEST VALUE = lowest TER — per-gram cost is mathematically identical for all Gold ETFs
     const minExpense = Math.min(...results.map(e => e.expense));
     grid.innerHTML = results.map(e => {
       const isBest = e.expense === minExpense;
       const hasSp  = _etfSparklines[e.symbol]?.["1y"]?.length >= 2;
-      // Show unit NAV as the main price (this is what actually differs per ETF and what investors pay)
-      const navDisplay = e.unitNav > 0
+      const navStr  = e.unitNav > 0
         ? `₹ ${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}`
-        : `≈ ${fmt(e.gramRate)}`;
-      const navSubLabel = e.unitNav > 0 ? "per unit (live NAV)" : "per gram (est.)";
-      const gramsLine   = e.gramsPerUnit
-        ? `<div class="etf-grams-unit" style="color:var(--muted);font-size:10px;margin-top:3px;">≈ ${e.gramsPerUnit.toFixed(4)}g gold / unit</div>` : "";
-      const perGramLine = `<div class="etf-grams-unit" style="color:var(--muted);font-size:10px;margin-top:1px;">≈ ${fmt(e.gramRate)}/g (spot + 0.1% brokerage)</div>`;
+        : "— est.";
+      const gpuStr  = e.gramsPerUnit ? `${e.gramsPerUnit.toFixed(4)} g` : "—";
+      const premStr = e.dutyPremium != null
+        ? `<span style="color:var(--orange)">${fmt(e.dutyPremium)} (+${e.dutyPct}%)</span>`
+        : `<span style="color:var(--muted)">—</span>`;
       return `<div class="retailer-card ${isBest?"best-buy":""}" style="cursor:${hasSp?"pointer":"default"}" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
-        ${isBest?'<div class="retailer-best-badge">Lowest TER</div>':""}
+        ${isBest?'<div class="retailer-best-badge">Best Value</div>':""}
         <div class="retailer-logo">${e.emoji}</div>
         <div class="retailer-name">${e.name}</div>
         <div class="retailer-type">${e.fund}</div>
         <div class="purity-pill">999 · 24K · NSE/BSE</div>
-        <div class="retailer-price">${navDisplay}</div>
-        <div class="retailer-sub">${navSubLabel}</div>
-        ${gramsLine}${perGramLine}
-        <div style="font-size:11px;font-family:var(--mono);font-weight:700;color:var(--gold);text-align:center;margin-top:6px;">TER ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div>
-        <div style="font-size:10px;font-family:var(--mono);color:var(--muted);text-align:center;margin-top:2px;">${e.symbol}</div>
-        <div style="margin-top:5px">${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
-        ${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em">tap for chart ↓</div>':""}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;width:100%;">
+          <div class="dual-rate-sub-box">
+            <div class="dual-rate-sub-label">Unit NAV</div>
+            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);white-space:nowrap;">${navStr}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">${gpuStr} / unit</div>
+          </div>
+          <div class="dual-rate-sub-box">
+            <div class="dual-rate-sub-label">Per Gram</div>
+            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);white-space:nowrap;">${fmt(e.gramRate)}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">+0.1% brokerage</div>
+          </div>
+        </div>
+        <div class="dual-rate-sub-box" style="margin-top:6px;width:100%;box-sizing:border-box;">
+          <div class="dual-rate-sub-label">India Duty Premium vs Intl</div>
+          <div style="font-family:var(--mono);font-size:12px;font-weight:700;margin-top:2px;">${premStr}</div>
+        </div>
+        <div style="font-size:11px;font-family:var(--mono);font-weight:600;color:var(--gold);text-align:center;margin-top:8px;">TER ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--muted);text-align:center;margin-top:2px;letter-spacing:0.04em;">${e.symbol}</div>
+        <div style="margin-top:5px;">${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
+        ${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em;">tap for chart ↓</div>':""}
       </div>`;
     }).join("");
     const firstWith1y = ETF_LIST.find(e => _etfSparklines[e.symbol]?.["1y"]?.length >= 2);
@@ -899,9 +912,9 @@
     if (btn) btn.classList.add(mode === "int" ? "active-int" : "active-ind");
     const label = document.getElementById("histModeLabel");
     const premPct = _histIbjaFactor > 1 ? ((_histIbjaFactor - 1) * 100).toFixed(1) : "~5";
-    if (label) label.textContent = mode === "int"
-      ? "📊 International Spot (XAU/USD → ₹/gram · no import duty)"
-      : `📊 India Gold Rate (IBJA · duty-adjusted · +${premPct}% premium over spot)`;
+    if (label) label.innerHTML = mode === "int"
+      ? `<span style="color:var(--green)">📊 International Spot (XAU/USD → ₹/gram · no import duty)</span>`
+      : `<span style="color:var(--inr-color)">📊 India Gold Rate (IBJA · duty-adjusted · +${premPct}% premium over spot)</span>`;
     showHistTab(_histActiveTab, document.querySelector("#heroHistPanel .hero-hist-tab.active"));
   }
   const HIST_TAB_CONFIG = {
@@ -935,13 +948,15 @@
     const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
     const current = _heroHistCurrentPrice * factor;
     let past = null;
+    // INT mode: current = intl spot today, past = intl spot historical → pure international % change
+    // IND mode: current = ibja24k today (duty-adjusted), past = intl spot historical
+    //   → % change reflects India rate relative to international history (shows duty-premium effect)
     if (tabKey === "1d") {
-      // Use 1-month daily data: second-to-last point = previous trading day close
       const mPts = _heroHistSparklines?.["1m"] || _heroHistSparklines?.["1w"];
-      if (mPts && mPts.length >= 2) past = mPts[mPts.length - 2].v * factor;
+      if (mPts && mPts.length >= 2) past = mPts[mPts.length - 2].v;
     } else {
       const pts = _heroHistSparklines?.[cfg.rangeKey] || _heroHistSparklines?.[cfg.fallback];
-      if (pts && pts.length >= 2) past = pts[0].v * factor;
+      if (pts && pts.length >= 2) past = pts[0].v;
     }
     renderHistCells("heroHistBody", tabKey, cfg, current, past);
   }
@@ -1077,7 +1092,7 @@
       // --- Gold: Retailers & ETFs ---
       buildPhysicalRetailers(india24);
       buildDigitalPlatforms(india24, data.digitalGoldPrices);
-      const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfSparklines, data.etfNavRaw);
+      const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfSparklines, data.etfNavRaw, calc24k);
       buildTrafficLight(india24, etfNavsForTL);
 
       // --- Gold: History panel ---
