@@ -588,6 +588,7 @@ export default async function handler(req, res) {
       ibja22k,
       ibja995,
       etfNavs,
+      etfNavRaw:    { ...etfRaw },   // raw unit NAV price (Rs./unit) for grams-per-unit calc
       etfPrevClose,
       etfSparklines,
       goldHistory,
