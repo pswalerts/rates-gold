@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>rateof.gold — Live Gold & Silver Rates India</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23b8860b' stroke='%23f0c060' stroke-width='4.5'/%3E%3Ccircle cx='50' cy='50' r='38' fill='none' stroke='rgba(255,240,150,0.3)' stroke-width='1.5'/%3E%3Ctext x='50' y='64' text-anchor='middle' font-family='Georgia,serif' font-size='50' font-weight='bold' fill='%23fff8e1'%3EG%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23d4a853' stroke='%23ffe066' stroke-width='4.5'/%3E%3Ccircle cx='50' cy='50' r='38' fill='none' stroke='rgba(255,240,150,0.3)' stroke-width='1.5'/%3E%3Ctext x='50' y='64' text-anchor='middle' font-family='Georgia,serif' font-size='50' font-weight='bold' fill='%23fff8e1'%3EG%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
   <style>
@@ -74,14 +74,14 @@
     .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-top:20px; border:1px solid rgba(212,168,83,0.18); border-radius:16px; overflow:hidden; background:linear-gradient(145deg,rgba(212,168,83,0.06) 0%,var(--surface) 60%); box-shadow:0 4px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(212,168,83,0.06); }
     .dual-rate-col { padding:22px 26px; }
     .dual-rate-col:first-child { border-right:1px solid rgba(255,255,255,0.07); }
-    .dual-rate-col-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:6px; }
-    .dual-rate-col-title { font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); font-weight:600; }
+    .dual-rate-col-header { display:flex; align-items:center; justify-content:center; flex-direction:column; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:6px; }
+    .dual-rate-col-title { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:#ffffff; font-family:var(--mono); font-weight:700; text-align:center; width:100%; }
     .dual-rate-fx-line { display:flex; align-items:baseline; gap:6px; font-family:var(--mono); margin-bottom:8px; flex-wrap:wrap; }
     .fx-usd-hero { color:var(--usd-color); font-size:16px; font-weight:700; }
     .fx-inr-hero { color:var(--inr-color); font-size:16px; font-weight:700; }
     .fx-sep-hero { font-size:11px; color:var(--muted); }
-    .dual-rate-main { font-family:var(--mono); font-size:36px; font-weight:700; color:var(--inr-color); line-height:1.1; }
-    .dual-rate-main.ibja-val { color:var(--gold-bright); }
+    .dual-rate-main { font-family:var(--mono); font-size:36px; font-weight:700; color:var(--gold-bright); line-height:1.1; }
+    .dual-rate-main.ibja-val { color:var(--inr-color); }
     .dual-rate-main.silver-val { color:var(--silver-bright, #d0dce8); }
     .dual-rate-perkg { font-family:var(--mono); font-size:17px; font-weight:500; color:var(--inr-color); opacity:0.6; margin-top:5px; }
     .etf-unit-nav   { font-family:var(--mono); font-size:10px; color:var(--usd-color); margin-top:3px; }
@@ -89,11 +89,11 @@
     .v-inr { color:var(--inr-color); } .v-usd { color:var(--usd-color); } .v-aed { color:var(--aed-color); }
     .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
     .dual-rate-sub-label { font-size:10px; color:var(--muted); font-family:var(--mono); margin-bottom:3px; }
-    .dual-rate-sub-val   { font-family:var(--mono); font-size:16px; color:var(--text); }
-    .dual-rate-formula   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-family:var(--mono); font-size:11px; color:var(--muted); line-height:1.7; margin-top:12px; }
+    .dual-rate-sub-val   { font-family:var(--mono); font-size:16px; color:var(--inr-color); }
+    .dual-rate-formula   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-family:var(--mono); font-size:12px; color:rgba(255,255,255,0.5); line-height:1.7; margin-top:12px; }
     .dual-rate-stale     { background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--yellow); line-height:1.6; margin-top:12px; }
     .dual-rate-unavail   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--muted); line-height:1.6; margin-top:12px; }
-    .section-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:48px; margin-bottom:18px; font-weight:600; }
+    .section-title { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-top:48px; margin-bottom:18px; font-weight:700; border-left:3px solid var(--gold); padding-left:10px; }
     .retailer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
     .retailer-card { background:linear-gradient(145deg,rgba(212,168,83,0.055) 0%,var(--surface) 55%); border:1px solid rgba(212,168,83,0.13); border-radius:14px; padding:18px 16px; display:flex; flex-direction:column; align-items:center; gap:6px; transition:border-color 0.25s,box-shadow 0.25s; position:relative; overflow:hidden; cursor:default; }
     .retailer-card:hover { border-color:rgba(212,168,83,0.28); box-shadow:0 4px 20px rgba(212,168,83,0.08); }
@@ -104,7 +104,7 @@
     .retailer-type  { font-size:10px; color:var(--muted); text-align:center; letter-spacing:0.04em; }
     .purity-pill    { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:999px; font-family:var(--mono); font-size:9px; letter-spacing:0.07em; text-transform:uppercase; background:rgba(212,168,83,0.1); color:var(--gold); border:1px solid rgba(212,168,83,0.22); margin-top:2px; }
     .purity-pill.silver-pill { background:rgba(168,184,200,0.1); color:var(--silver); border-color:rgba(168,184,200,0.22); }
-    .retailer-price { font-family:var(--mono); font-size:18px; font-weight:600; color:var(--text); margin-top:4px; }
+    .retailer-price { font-family:var(--mono); font-size:18px; font-weight:700; color:var(--inr-color); margin-top:4px; }
     .retailer-card.best-buy .retailer-price { color:var(--green); }
     .retailer-sub   { font-size:10px; color:var(--muted); text-align:center; font-family:var(--mono); }
     .retailer-best-badge { position:absolute; top:8px; right:8px; background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); font-family:var(--mono); font-size:9px; letter-spacing:0.07em; padding:2px 7px; border-radius:999px; text-transform:uppercase; }
@@ -139,7 +139,7 @@
     .tl-verdict-label { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); margin-bottom:6px; }
     .tl-verdict-text { font-size:14px; color:var(--text); line-height:1.55; }
     .tl-verdict-text strong { color:var(--gold); }
-    .dubai-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px 28px; transition:border-color 0.2s; }
+    .dubai-card { background:var(--surface); border:1px solid rgba(224,120,40,0.25); border-radius:16px; padding:26px 28px; transition:border-color 0.2s; }
     .dubai-card:hover { border-color:rgba(255,255,255,0.14); }
     .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px; }
     .dubai-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--aed-color); font-family:var(--mono); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -167,6 +167,7 @@
     .dxb-spread-val.neg { color:var(--red); }
     .dxb-spread-val.dim { color:var(--text); }
     .dubai-note { margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }
+    .dubai-header { background:rgba(224,120,40,0.06); border-bottom:1px solid rgba(224,120,40,0.15); border-radius:10px 10px 0 0; padding:16px 20px; margin:-26px -28px 18px; }
     .hero-hist-panel { margin-top:20px; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
     .hero-hist-tabs { display:flex; border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
     .hero-hist-tabs::-webkit-scrollbar { display:none; }
@@ -230,11 +231,14 @@
       .dxb-fx-strip { grid-template-columns:1fr 1fr; }
       .dxb-3col { grid-template-columns:1fr; }
       .dxb-col:not(:last-child) { border-right:none; border-bottom:1px solid var(--border); }
-      .tl-row { flex-wrap:wrap; gap:12px; }
-      .tl-price-right { text-align:left; }
+      .tl-row { flex-wrap:wrap; gap:12px; flex-direction:column; align-items:flex-start; }
+      .tl-price-right { text-align:left; align-self:flex-end; }
       .hero-hist-body { grid-template-columns:repeat(2,1fr); }
       .dual-rate-box { grid-template-columns:1fr; }
       .dual-rate-col:first-child { border-right:none; border-bottom:1px solid var(--border); }
+      .dual-rate-col { padding:16px 18px; }
+      .dual-rate-main { font-size:28px; }
+      .retailer-grid { grid-template-columns:repeat(2,1fr) !important; }
     }
     @media (max-width:480px) {
       .retailer-grid { grid-template-columns:1fr 1fr; }
@@ -258,7 +262,6 @@
   <div class="main-col">
     <div class="header">
       <a class="logo-wrap" href="/" aria-label="rateof.gold home">
-        <div class="logo-coin-icon">G</div>
         <div class="logo-text-block">
           <div class="logo-main-line">
             <span class="logo-rate">rate</span>
@@ -296,16 +299,16 @@
               <span class="fx-inr-hero" id="intl-inr-hero">--</span>
               <span class="fx-sep-hero">USD/INR</span>
             </div>
-            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.05em;margin-bottom:6px;">999 · 24K · Rs./gram</div>
+            <div style="font-size:11px;font-family:var(--mono);letter-spacing:0.07em;margin-bottom:6px;font-weight:600;color:var(--gold-bright);">999 · 24K · Rs./gram</div>
             <div class="dual-rate-main" id="intl-24k">--</div>
             <div class="dual-rate-sub-grid">
               <div><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="intl-22k">--</div></div>
               <div><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val" id="intl-18k">--</div></div>
             </div>
             <div class="dual-rate-formula">
-              XAU/USD <span id="intl-xau" style="color:var(--text)">--</span>
-              &nbsp;/ 31.1035g × <span id="intl-inr" style="color:var(--text)">--</span>
-              &nbsp;= <span id="intl-result" style="color:var(--gold)">--</span>/g
+              XAU/USD <span id="intl-xau" style="color:var(--usd-color);font-weight:700">--</span>
+              &nbsp;/ 31.1035g × <span id="intl-inr" style="color:var(--inr-color);font-weight:700">--</span>
+              &nbsp;= <span id="intl-result" style="color:var(--gold-bright);font-weight:700">--</span>/g
             </div>
           </div>
           <div class="dual-rate-col">
@@ -313,7 +316,7 @@
               <div class="dual-rate-col-title">IBJA Official Rate</div>
               <span class="source-badge calc-src" id="ibjaLiveBadge">LOADING</span>
             </div>
-            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.05em;margin-bottom:4px;">999 · 24K · Rs./gram</div>
+            <div style="font-size:11px;font-family:var(--mono);letter-spacing:0.07em;margin-bottom:6px;font-weight:600;color:var(--inr-color);">999 · 24K · Rs./gram</div>
             <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
             <div class="dual-rate-sub-grid">
               <div><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val" id="ibja995">--</div></div>
@@ -373,7 +376,7 @@
 
       <div class="tl-panel" style="margin-top:44px;">
         <div class="tl-header">
-          <div class="tl-header-title">Best Way to Buy Gold — Live Comparison</div>
+          <div class="tl-header-title">Best Option to Buy Gold Today — Live Comparison</div>
           <span class="source-badge live-src" id="tlUpdated">--</span>
         </div>
         <div class="tl-body" id="tlBody"><div style="font-size:13px;color:var(--muted);font-family:var(--mono);">Analyzing live rates...</div></div>
@@ -382,13 +385,13 @@
       <div class="section-title" style="margin-top:44px">Dubai Gold Rates</div>
       <div class="dubai-card">
         <div class="dubai-header">
-          <div class="dubai-title">Dubai · Live Gold Prices <span class="dubai-title-arabic">اسعار الذهب · دبي</span></div>
+          <div class="dubai-title" style="font-size:14px;font-weight:700;">Dubai · Live Gold Prices <span class="dubai-title-arabic">اسعار الذهب · دبي</span></div>
           <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">--</div>
         </div>
         <div class="dxb-fx-strip">
-          <div class="dxb-fx-item"><div class="dxb-fx-label">USD / INR</div><div class="dxb-fx-val" id="dxb-usd-inr">--</div><div class="dxb-fx-sub">live rate</div></div>
-          <div class="dxb-fx-item"><div class="dxb-fx-label">AED / INR</div><div class="dxb-fx-val" id="dxb-aed-inr-strip">--</div><div class="dxb-fx-sub">USD peg 3.6725</div></div>
-          <div class="dxb-fx-item"><div class="dxb-fx-label">XAU / USD</div><div class="dxb-fx-val" id="dxb-xau-usd">--</div><div class="dxb-fx-sub">international spot</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">🇺🇸 USD / INR</div><div class="dxb-fx-val" id="dxb-usd-inr" style="color:var(--usd-color)">--</div><div class="dxb-fx-sub">live rate</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">🇦🇪 AED / INR</div><div class="dxb-fx-val" id="dxb-aed-inr-strip" style="color:var(--aed-color)">--</div><div class="dxb-fx-sub">USD peg 3.6725</div></div>
+          <div class="dxb-fx-item"><div class="dxb-fx-label">🌐 XAU / USD</div><div class="dxb-fx-val" id="dxb-xau-usd" style="color:var(--usd-color)">--</div><div class="dxb-fx-sub">international spot</div></div>
         </div>
         <div class="dxb-3col">
           <div class="dxb-col">
@@ -501,11 +504,11 @@
 
     <!-- FX Bar (always visible) -->
     <div class="fx-bar">
-      <div class="fx-item"><span class="fx-label">XAU/USD</span><span class="fx-value" id="fxGold">--</span></div>
-      <div class="fx-item"><span class="fx-label">XAG/USD</span><span class="fx-value" id="fxSilver">--</span></div>
-      <div class="fx-item"><span class="fx-label">USD/INR</span><span class="fx-value" id="fxInr">--</span></div>
-      <div class="fx-item"><span class="fx-label">AED/INR</span><span class="fx-value" id="fxAed">--</span></div>
-      <div class="fx-item"><span class="fx-label">Troy oz</span><span class="fx-value">31.1035 g</span></div>
+      <div class="fx-item"><span class="fx-label">🌐 XAU/USD</span><span class="fx-value" id="fxGold" style="color:var(--usd-color)">--</span></div>
+      <div class="fx-item"><span class="fx-label">🌐 XAG/USD</span><span class="fx-value" id="fxSilver" style="color:var(--silver)">--</span></div>
+      <div class="fx-item"><span class="fx-label">🇺🇸 USD/INR</span><span class="fx-value" id="fxInr" style="color:var(--inr-color)">--</span></div>
+      <div class="fx-item"><span class="fx-label">🇦🇪 AED/INR</span><span class="fx-value" id="fxAed" style="color:var(--aed-color)">--</span></div>
+      <div class="fx-item"><span class="fx-label">⚖️ Troy oz</span><span class="fx-value" style="color:var(--gold)">31.1035 g</span></div>
     </div>
     <div class="disclaimer">
       ⚠️ <strong>Disclaimer:</strong> All rates shown are for informational purposes only and may not reflect current market prices. Rates are sourced from public APIs and may be delayed or inaccurate. Please verify all rates with official sources such as IBJA, your bank, or authorised dealers before making any financial decisions. rateof.gold and its operators are not responsible for any losses, decisions, or actions taken based on data displayed on this website.
@@ -844,7 +847,7 @@
   // -------------------------------------------------------
   let _heroHistSparklines = null, _heroHistCurrentPrice = null;
   const HIST_TAB_CONFIG = {
-    "1d":  { rangeKey: "1d",  fallback: "1w",  label: "vs yesterday"    },
+    "1d":  { rangeKey: "1d",  fallback: "1w",  label: "vs prior session" },
     "1w":  { rangeKey: "1w",  fallback: "1m",  label: "vs 1 week ago"   },
     "1m":  { rangeKey: "1m",  fallback: "3m",  label: "vs 1 month ago"  },
     "3m":  { rangeKey: "3m",  fallback: "6m",  label: "vs 3 months ago" },
@@ -870,8 +873,14 @@
     const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
     const current = _heroHistCurrentPrice;
     let past = null;
-    const pts = _heroHistSparklines?.[cfg.rangeKey] || _heroHistSparklines?.[cfg.fallback];
-    if (pts && pts.length >= 2) past = pts[0].v;
+    if (tabKey === "1d") {
+      // For 1-day view: use last point of 1-week data as prior session close
+      const wPts = _heroHistSparklines?.["1w"] || _heroHistSparklines?.["1m"];
+      if (wPts && wPts.length >= 2) past = wPts[wPts.length - 2].v;
+    } else {
+      const pts = _heroHistSparklines?.[cfg.rangeKey] || _heroHistSparklines?.[cfg.fallback];
+      if (pts && pts.length >= 2) past = pts[0].v;
+    }
     renderHistCells("heroHistBody", tabKey, cfg, current, past);
   }
 
@@ -895,8 +904,14 @@
     const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
     const current = _silverHistCurrentPrice;
     let past = null;
-    const pts = _silverHistSparklines?.[cfg.rangeKey] || _silverHistSparklines?.[cfg.fallback];
-    if (pts && pts.length >= 2) past = pts[0].v;
+    if (tabKey === "1d") {
+      // For 1-day view: use last point of 1-week data as prior session close
+      const wPts = _silverHistSparklines?.["1w"] || _silverHistSparklines?.["1m"];
+      if (wPts && wPts.length >= 2) past = wPts[wPts.length - 2].v;
+    } else {
+      const pts = _silverHistSparklines?.[cfg.rangeKey] || _silverHistSparklines?.[cfg.fallback];
+      if (pts && pts.length >= 2) past = pts[0].v;
+    }
     renderHistCells("silverHistBody", tabKey, cfg, current, past);
   }
 
@@ -909,7 +924,7 @@
       return;
     }
     const chg = current - past, pct = (chg/past)*100, dir = chg >= 0 ? "up" : "dn", sign = chg >= 0 ? "+" : "-";
-    const periodLabel = tabKey==="1d" ? "Yesterday's Close" : tabKey==="ytd" ? "Price Jan 1" : `Price ${cfg.label.replace("vs ","")}`;
+    const periodLabel = tabKey==="1d" ? "Prior Session Close" : tabKey==="ytd" ? "Price Jan 1" : `Price ${cfg.label.replace("vs ","")}`;
     const cells = [
       { label: "Current Price",              val: fmt(current),                            chg: null },
       { label: `Change (${cfg.label})`,      val: sign + fmt(Math.abs(chg)),               chg: dir, chgTxt: sign + Math.abs(pct).toFixed(2) + "%" },
@@ -1022,7 +1037,8 @@
       const spreadEl = document.getElementById("ds-spread");
       spreadEl.textContent = (spread >= 0 ? "+" : "-") + fmt(Math.abs(spread));
       spreadEl.className   = "dxb-spread-val " + (spread >= 0 ? "pos" : "neg");
-      document.getElementById("ds-spreadpct").textContent = Math.abs(spreadPct) + "% " + (spread >= 0 ? "India pricier" : "Dubai pricier");
+      const spreadDir = spread >= 0 ? "India" : "Dubai";
+      document.getElementById("ds-spreadpct").textContent = spreadDir + " rate higher by " + fmt(Math.abs(spread)) + "/g · " + Math.abs(spreadPct) + "%";
 
       // --- Silver section ---
       document.getElementById("sil-xag").textContent       = fmtUSD(silverUSD);
