@@ -1,29 +1,30 @@
 // -----------------------------------------------------------------
 //  rateof.gold -- /api/price
 //
-//  IBJA scraping chain:
-//  S0: ibja.co official website
-//  S1: ibjarates.com (Cloudflare-detection added)
+//  IBJA scraping chain (S0 → S8, stops at first success):
+//  S0: ibja.co official (multiple URL variants)
+//  S1: ibjarates.com (Cloudflare-detection)
 //  S2: livemint.com gold rates
-//  S3: economictimes.indiatimes.com gold rates
-//  S4: goodreturns.in
-//  S5: Yahoo MCX GOLD.MCX / GOLDM.MCX (both div:10)
-//  S6: Duty-adjusted calculated fallback (spot × 1.09, labelled CALC)
+//  S3: goldrate24.in
+//  S4: economictimes.indiatimes.com
+//  S5: goodreturns.in
+//  S6: 24carat.in
+//  S7: Yahoo Finance MCX GOLD.MCX / GOLDM.MCX (div:10)
+//  S8: Duty-adjusted calculated fallback (spot × 1.05, labelled CALC)
 //
-//  goldHistory: XAU/USD converted to Rs./gram for each time range.
-//  Used by the hero history panel -- NOT ETF sparklines.
-//  ETF sparklines are still fetched separately for the ETF chart panel.
+//  goldHistory / silverHistory: XAU(XAG)/USD converted to Rs./gram
+//  for each time range — used by hero history panels.
 //
-//  CRITICAL: ibja24k/22k/995 are returned as-is to the frontend.
-//  Do NOT multiply by any duty/GST factor here.
+//  ETF sparklines are fetched separately for the ETF 52-week chart.
+//
+//  CRITICAL: ibja24k/22k/995 returned as-is; do NOT add duty/GST here.
 // -----------------------------------------------------------------
 
 let cache = null;
 let cacheTime = 0;
 const CACHE_DURATION = 60 * 60 * 1000;
 
-const TROY           = 31.1035;
-const GRAMS_PER_UNIT = 0.9950;
+const TROY = 31.1035;
 
 export default async function handler(req, res) {
   try {
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
               .then(r => r.ok ? r.json() : null).then(d => d?.chart?.result?.[0]?.meta?.regularMarketPrice),
     ];
     for (const fn of fxSources) {
-      try { const v = await fn(); if (v && v > 75 && v < 120) { usdInr = v; break; } } catch (_) {}
+      try { const v = await fn(); if (v && v > 75 && v < 130) { usdInr = v; break; } } catch (_) {}
     }
     if (!usdInr) { usdInr = 85.0; console.log("USD/INR: fallback 85.0"); }
     else { console.log(`USD/INR: ${usdInr.toFixed(4)} (live)`); }
@@ -117,13 +118,13 @@ export default async function handler(req, res) {
     // =========================================================
     // STEP 4: IBJA India gold rate (Rs./gram, 999 purity)
     //
-    // ibjaOk   : valid per-gram  range Rs. 7,000 – 25,000
-    // per10gOk : valid per-10g   range Rs. 70,000 – 250,000
+    // ibjaOk   : valid per-gram  range Rs. 5,000 – 30,000
+    // per10gOk : valid per-10g   range Rs. 50,000 – 300,000
     // =========================================================
     let ibja24k = null, ibja22k = null, ibja995 = null, ibjaSrc = "?";
 
-    const ibjaOk   = v => typeof v === "number" && isFinite(v) && v > 7000  && v < 25000;
-    const per10gOk = v => typeof v === "number" && isFinite(v) && v > 70000 && v < 250000;
+    const ibjaOk   = v => typeof v === "number" && isFinite(v) && v > 5000  && v < 30000;
+    const per10gOk = v => typeof v === "number" && isFinite(v) && v > 50000 && v < 300000;
 
     const setIBJA = (v24, src, v22 = null, v995 = null) => {
       ibja24k = v24;
@@ -136,15 +137,25 @@ export default async function handler(req, res) {
     // Helper: parse a number from an HTML snippet that might be per-gram or per-10g
     function parseRsVal(str) {
       if (!str) return null;
-      const n = parseFloat(str.replace(/,/g, ""));
+      const n = parseFloat(String(str).replace(/,/g, ""));
       if (ibjaOk(n))   return { v: n,      per10g: false };
       if (per10gOk(n)) return { v: n / 10, per10g: true  };
       return null;
     }
 
-    // -- S0: ibja.co OFFICIAL WEBSITE --
+    const cfCheck = html => /checking your browser|just a moment|cloudflare ray|cf-browser-verification/i.test(html);
+
+    // ---- S0: ibja.co OFFICIAL WEBSITE ----
     if (!ibja24k) {
-      for (const url of ["https://ibja.co/IBJARates", "https://www.ibja.co/IBJARates"]) {
+      const ibjaUrls = [
+        "https://ibja.co/IBJARates",
+        "https://www.ibja.co/IBJARates",
+        "https://ibja.co/",
+        "https://www.ibja.co/",
+        "https://ibja.co/rates",
+        "https://ibja.co/Home",
+      ];
+      for (const url of ibjaUrls) {
         try {
           const r = await tout(fetch(url, {
             headers: {
@@ -152,32 +163,44 @@ export default async function handler(req, res) {
               "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
               "Accept-Language": "en-IN,en;q=0.9",
               "Referer": "https://www.google.com/search?q=ibja+gold+rate+today",
+              "Cache-Control": "no-cache",
             }
           }), 12000);
-          if (!r.ok) { console.log(`ibja.co: HTTP ${r.status}`); continue; }
+          if (!r.ok) { console.log(`ibja.co [${url}]: HTTP ${r.status}`); continue; }
           const html = await r.text();
-          console.log(`ibja.co: HTTP ${r.status}, ${html.length} bytes`);
-          if (/checking your browser|just a moment|cloudflare ray/i.test(html)) { console.log("ibja.co: CF challenge"); continue; }
+          console.log(`ibja.co [${url}]: HTTP ${r.status}, ${html.length} bytes`);
+          if (cfCheck(html)) { console.log(`ibja.co [${url}]: CF challenge`); continue; }
 
           // A: "Fine Gold" label near a number
-          const mFine = html.match(/Fine\s*Gold[^<]{0,80}?([\d,]{5,7})/i);
-          if (mFine) { const p = parseRsVal(mFine[1]); if (p) { setIBJA(p.v, "ibja.co-A"); break; } }
+          const mFine = html.match(/Fine\s*Gold[^<]{0,120}?([\d,]{5,8})/i);
+          if (mFine) { const p = parseRsVal(mFine[1]); if (p) { setIBJA(p.v, "ibja.co-FineGold"); break; } }
 
           // B: "999" near a number
-          const m999 = html.match(/\b999\b[^<]{0,60}?([\d,]{5,7})/i);
-          if (!ibja24k && m999) { const p = parseRsVal(m999[1]); if (p) { setIBJA(p.v, "ibja.co-B"); break; } }
+          const m999 = html.match(/\b999\b[^<]{0,80}?([\d,]{5,8})/i);
+          if (!ibja24k && m999) { const p = parseRsVal(m999[1]); if (p) { setIBJA(p.v, "ibja.co-999"); break; } }
 
-          // C: grab all 5-6 digit numbers; first valid one wins
+          // C: JSON-like data embedded in page scripts
           if (!ibja24k) {
-            const allNums = [...html.matchAll(/([\d,]{5,7})/g)].map(m => m[1]);
-            for (const s of allNums) { const p = parseRsVal(s); if (p && ibjaOk(p.v)) { setIBJA(p.v, "ibja.co-C"); break; } }
+            const jsonMatch = html.match(/"(?:rate999|gold999|rate24k|price999)"\s*:\s*"?([\d.]+)"?/i);
+            if (jsonMatch) { const p = parseRsVal(jsonMatch[1]); if (p) { setIBJA(p.v, "ibja.co-json"); break; } }
           }
-        } catch (e) { console.log(`ibja.co error:`, e.message); }
+
+          // D: grab all valid numbers (per gram or per 10g); first valid one wins
+          if (!ibja24k) {
+            const allNums = [...html.matchAll(/([\d,]{5,8})/g)].map(m => m[1]);
+            for (const s of allNums) {
+              const p = parseRsVal(s);
+              if (p && ibjaOk(p.v) && Math.abs(p.v - calc24k) / calc24k < 0.20) { // within 20% of calc
+                setIBJA(p.v, "ibja.co-scan"); break;
+              }
+            }
+          }
+        } catch (e) { console.log(`ibja.co [${url}] error:`, e.message); }
         if (ibja24k) break;
       }
     }
 
-    // -- S1: ibjarates.com --
+    // ---- S1: ibjarates.com ----
     if (!ibja24k) {
       try {
         const r = await tout(fetch("https://ibjarates.com/", {
@@ -192,7 +215,7 @@ export default async function handler(req, res) {
         if (r.ok) {
           const html = await r.text();
           console.log(`ibjarates.com: HTTP ${r.status}, ${html.length} bytes`);
-          if (/checking your browser|just a moment|cloudflare ray/i.test(html)) {
+          if (cfCheck(html)) {
             console.log("ibjarates.com: Cloudflare challenge, skipping");
           } else {
             // A: <h3>NNNNN (1 Gram)</h3>
@@ -229,7 +252,7 @@ export default async function handler(req, res) {
               }
             }
 
-            // C: three consecutive 5-6 digit <td> cells (flexible range)
+            // C: three consecutive 5-6 digit <td> cells
             if (!ibja24k) {
               const sm = html.match(/<td>\s*(\d{5,6})\s*<\/td>\s*<td>\s*(\d{5,6})\s*<\/td>\s*<td>\s*(\d{5,6})\s*<\/td>/);
               if (sm) {
@@ -238,7 +261,7 @@ export default async function handler(req, res) {
               }
             }
 
-            // D: any "(1 Gram)" pattern (flexible range)
+            // D: any "(1 Gram)" pattern
             if (!ibja24k) {
               const dm = html.match(/(\d{4,6})\s*\(1\s*[Gg]ram\)/);
               if (dm) { const v = parseFloat(dm[1]); if (ibjaOk(v)) setIBJA(v, "ibjarates.com-ctx"); }
@@ -248,7 +271,7 @@ export default async function handler(req, res) {
       } catch (e) { console.log("ibjarates.com error:", e.message); }
     }
 
-    // -- S2: livemint.com --
+    // ---- S2: livemint.com ----
     if (!ibja24k) {
       try {
         const r = await tout(fetch("https://www.livemint.com/market/commodities/gold-rate-today", {
@@ -257,12 +280,11 @@ export default async function handler(req, res) {
         if (r.ok) {
           const html = await r.text();
           console.log(`livemint: HTTP ${r.status}, ${html.length} bytes`);
-          if (!/checking your browser|just a moment/i.test(html)) {
-            // Look for 24K / 999 gold price per gram
+          if (!cfCheck(html)) {
             const patterns = [
               /24\s*[Kk][^<]{0,120}?([\d,]{4,6})\s*(?:per gram|\/gram|per gm)/i,
               /999[^<]{0,120}?([\d,]{4,6})/i,
-              /(?:10\s*gram|10g)[^<]{0,80}?([\d,]{6,7})/i,  // per 10g
+              /(?:10\s*gram|10g)[^<]{0,80}?([\d,]{6,7})/i,
             ];
             for (const pat of patterns) {
               const pm = html.match(pat);
@@ -273,7 +295,38 @@ export default async function handler(req, res) {
       } catch (e) { console.log("livemint error:", e.message); }
     }
 
-    // -- S3: economictimes.indiatimes.com --
+    // ---- S3: goldrate24.in ----
+    if (!ibja24k) {
+      try {
+        const r = await tout(fetch("https://goldrate24.in/", {
+          headers: { "User-Agent": UA, "Accept": "text/html", "Referer": "https://www.google.com/search?q=ibja+gold+rate+today" }
+        }), 10000);
+        if (r.ok) {
+          const html = await r.text();
+          console.log(`goldrate24.in: HTTP ${r.status}, ${html.length} bytes`);
+          if (!cfCheck(html)) {
+            const patterns = [
+              /IBJA[^<]{0,60}?([\d,]{4,6})\s*(?:per gram|\/gram|per gm)?/i,
+              /999[^<]{0,80}?(?:IBJA|pure|purity)[^<]{0,80}?([\d,]{4,6})/i,
+              /24\s*(?:K|carat|karat)[^<]{0,80}?([\d,]{4,6})\s*(?:per gram|\/gram)?/i,
+              // table approach: look for per-gram numbers near IBJA context
+              /([\d,]{4,6})\s*(?:per gram|\/gram|per gm)/i,
+            ];
+            for (const pat of patterns) {
+              const pm = html.match(pat);
+              if (pm) {
+                const raw = pm[pm.length - 1]; // last capture group
+                const v = parseFloat(raw.replace(/,/g, ""));
+                if (ibjaOk(v)) { setIBJA(v, "goldrate24.in"); break; }
+                const p = parseRsVal(raw); if (p && ibjaOk(p.v)) { setIBJA(p.v, "goldrate24.in-10g"); break; }
+              }
+            }
+          }
+        }
+      } catch (e) { console.log("goldrate24.in error:", e.message); }
+    }
+
+    // ---- S4: economictimes.indiatimes.com ----
     if (!ibja24k) {
       try {
         const r = await tout(fetch("https://economictimes.indiatimes.com/markets/gold/gold-rate-in-india", {
@@ -282,7 +335,7 @@ export default async function handler(req, res) {
         if (r.ok) {
           const html = await r.text();
           console.log(`economictimes: HTTP ${r.status}, ${html.length} bytes`);
-          if (!/checking your browser|just a moment/i.test(html)) {
+          if (!cfCheck(html)) {
             const patterns = [
               /24\s*[Kk][^<]{0,120}?([\d,]{4,6})\s*(?:per gram|\/gram|per gm)/i,
               /999\s*purity[^<]{0,120}?([\d,]{4,6})/i,
@@ -297,7 +350,7 @@ export default async function handler(req, res) {
       } catch (e) { console.log("economictimes error:", e.message); }
     }
 
-    // -- S4: goodreturns.in --
+    // ---- S5: goodreturns.in ----
     if (!ibja24k) {
       try {
         const r = await tout(fetch("https://www.goodreturns.in/gold-rates/", {
@@ -305,19 +358,39 @@ export default async function handler(req, res) {
         }), 10000);
         if (r.ok) {
           const html = await r.text();
-          const patterns = [
-            /(\d{4,6})\s*(?:per gram|\/gram|per gm)/i,
-            /(?:24\s*[Kk]|999)[\s\S]{1,200}?(\d{4,6})/i,
-          ];
-          for (const pat of patterns) {
-            const pm = html.match(pat);
-            if (pm) { const v = parseFloat(pm[1].replace(/,/g, "")); if (ibjaOk(v)) { setIBJA(v, "goodreturns"); break; } }
+          console.log(`goodreturns: HTTP ${r.status}, ${html.length} bytes`);
+          if (!cfCheck(html)) {
+            const patterns = [
+              /(\d{4,6})\s*(?:per gram|\/gram|per gm)/i,
+              /(?:24\s*[Kk]|999)[\s\S]{1,200}?(\d{4,6})/i,
+            ];
+            for (const pat of patterns) {
+              const pm = html.match(pat);
+              if (pm) { const v = parseFloat(pm[1].replace(/,/g, "")); if (ibjaOk(v)) { setIBJA(v, "goodreturns"); break; } }
+            }
           }
         }
       } catch (e) { console.log("goodreturns.in error:", e.message); }
     }
 
-    // -- S5: Yahoo MCX --
+    // ---- S6: 24carat.in ----
+    if (!ibja24k) {
+      try {
+        const r = await tout(fetch("https://24carat.in/frame.php?q=gold_rate_today", {
+          headers: { "User-Agent": UA, "Referer": "https://www.google.com/" }
+        }), 10000);
+        if (r.ok) {
+          const html = await r.text();
+          console.log(`24carat.in: HTTP ${r.status}, ${html.length} bytes`);
+          if (!cfCheck(html)) {
+            const pm = html.match(/(?:24\s*karat|999|Fine\s*Gold)[^<]{0,100}?([\d,]{4,6})/i);
+            if (pm) { const v = parseFloat(pm[1].replace(/,/g, "")); if (ibjaOk(v)) setIBJA(v, "24carat.in"); }
+          }
+        }
+      } catch (e) { console.log("24carat.in error:", e.message); }
+    }
+
+    // ---- S7: Yahoo Finance MCX ----
     // Both contracts quoted in Rs./10g → div:10
     if (!ibja24k) {
       const mcxSymbols = [
@@ -337,7 +410,7 @@ export default async function handler(req, res) {
               const price = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
               if (price > 0) {
                 const v = price / div;
-                console.log(`Yahoo ${host} ${sym}: raw=${price} /${div}=${v}/g`);
+                console.log(`Yahoo ${host} ${sym}: raw=${price} /${div}=${v.toFixed(2)}/g`);
                 if (ibjaOk(v)) { setIBJA(v, `yahoo-${sym}`); break outer; }
               }
             }
@@ -346,14 +419,14 @@ export default async function handler(req, res) {
       }
     }
 
-    // -- S6: Calculated fallback with estimated 9% India duty --
-    // (6% customs + 3% IGST, post July 2024 Budget)
-    // Labelled "calculated" so the frontend shows the CALC badge.
-    // This is a much closer approximation to IBJA than bare calc24k.
+    // ---- S8: Calculated fallback ----
+    // Based on observed IBJA vs international spot ratio (~5% premium post 2024 duty cut).
+    // This is closer to actual IBJA than the old 9% estimate.
+    // Labelled "calculated" so frontend shows CALC badge.
     if (!ibja24k) {
-      const dutyAdj = calc24k * 1.09;
+      const dutyAdj = calc24k * 1.05;
       setIBJA(dutyAdj, "calculated");
-      console.log(`IBJA fallback = calc24k*1.09 = Rs.${dutyAdj.toFixed(2)}/g`);
+      console.log(`IBJA fallback = calc24k×1.05 = Rs.${dutyAdj.toFixed(2)}/g`);
     }
 
     console.log(`=== IBJA FINAL: 999=Rs.${ibja24k?.toFixed(2)}, 916=Rs.${ibja22k?.toFixed(2)}, 995=Rs.${ibja995?.toFixed(2)} [${ibjaSrc}] ===`);
@@ -405,21 +478,20 @@ export default async function handler(req, res) {
       }
     });
 
-    // Convert ETF unit price -> Rs./gram using ibja24k as the gold reference.
-    // This avoids the GRAMS_PER_UNIT constant becoming stale after ETF splits.
-    // gramsPerUnit = etfUnitPrice / ibja24k  (dynamic, self-correcting)
+    // Convert ETF unit price -> Rs./gram using ibja24k as gold reference.
+    // gramsPerUnit = etfUnitPrice / ibja24k (dynamic, self-correcting after splits)
     const etfNavs = {}, etfPrevClose = {};
     ETF_SYMS.forEach(s => {
       if (etfRaw[s] > 0 && ibja24k > 0) {
         const gramsPerUnit = etfRaw[s] / ibja24k;
-        etfNavs[s]    = etfRaw[s]    / gramsPerUnit;   // = ibja24k (approx, with tracking error)
+        etfNavs[s]    = etfRaw[s]    / gramsPerUnit;   // ≈ ibja24k with tracking error
         if (etfPrevRaw[s]) etfPrevClose[s] = etfPrevRaw[s] / gramsPerUnit;
       }
     });
     console.log("ETF Rs./g:", Object.entries(etfNavs).map(([k, v]) => `${k}:${v.toFixed(0)}`).join(", ") || "none");
 
     // =========================================================
-    // STEP 6: ETF Sparklines (for the ETF 52-week chart panel only)
+    // STEP 6: ETF Sparklines (for the ETF 52-week chart panel)
     // =========================================================
     const RANGES = [
       { key: "1d",  range: "5d",  iv: "5m"  },
@@ -444,7 +516,6 @@ export default async function handler(req, res) {
           const d = await r.json(), res = d?.chart?.result?.[0];
           const ts = res?.timestamp, cls = res?.indicators?.quote?.[0]?.close;
           if (!cls || cls.length < 2) continue;
-          // Store as raw ETF unit price — the ETF chart panel handles its own display
           const pts = cls.map((c, i) => c != null ? { t: ts?.[i] ?? null, v: Math.round(c * 100) / 100 } : null).filter(Boolean);
           if (pts.length >= 2) return pts;
         } catch (_) {}
@@ -465,14 +536,11 @@ export default async function handler(req, res) {
     });
 
     // =========================================================
-    // STEP 7: Gold price history -> Rs./gram  (for hero history panel)
-    //
+    // STEP 7: Gold price history -> Rs./gram (hero history panel)
     // Uses XAU/USD spot/futures converted to Rs./gram via USD/INR.
-    // This is what the hero "1D / 1W / 1M..." tabs should display.
-    // NOT ETF prices — those are in per-unit, not per-gram.
     // =========================================================
-    async function fetchGoldHist(range, iv) {
-      for (const sym of ["GC%3DF", "XAUUSD%3DX"]) {
+    async function fetchMetalHist(range, iv, syms) {
+      for (const sym of syms) {
         for (const host of ["query1", "query2"]) {
           try {
             const r = await tout(fetch(
@@ -493,16 +561,20 @@ export default async function handler(req, res) {
       return null;
     }
 
-    const ghResults = await Promise.allSettled(
-      RANGES.map(({ range, iv }) => fetchGoldHist(range, iv))
-    );
-    const goldHistory = {};
-    ghResults.forEach((r, i) => {
-      if (r.status === "fulfilled" && r.value?.length >= 2) {
-        goldHistory[RANGES[i].key] = r.value;
-      }
-    });
-    console.log("goldHistory keys:", Object.keys(goldHistory).join(", ") || "none");
+    const goldSyms   = ["GC%3DF",  "XAUUSD%3DX"];
+    const silverSyms = ["SI%3DF",  "XAGUSD%3DX"];
+
+    const [ghResults, shResults] = await Promise.all([
+      Promise.allSettled(RANGES.map(({ range, iv }) => fetchMetalHist(range, iv, goldSyms))),
+      Promise.allSettled(RANGES.map(({ range, iv }) => fetchMetalHist(range, iv, silverSyms))),
+    ]);
+
+    const goldHistory = {}, silverHistory = {};
+    ghResults.forEach((r, i) => { if (r.status === "fulfilled" && r.value?.length >= 2) goldHistory[RANGES[i].key] = r.value; });
+    shResults.forEach((r, i) => { if (r.status === "fulfilled" && r.value?.length >= 2) silverHistory[RANGES[i].key] = r.value; });
+
+    console.log("goldHistory keys:",   Object.keys(goldHistory).join(", ")   || "none");
+    console.log("silverHistory keys:", Object.keys(silverHistory).join(", ") || "none");
 
     // =========================================================
     // Build cache & respond
@@ -518,7 +590,8 @@ export default async function handler(req, res) {
       etfNavs,
       etfPrevClose,
       etfSparklines,
-      goldHistory,      // <-- NEW: used by hero history panel
+      goldHistory,
+      silverHistory,
       timestamp:    new Date().toISOString(),
       sources: {
         fx:   usdInr === 85.0 ? "fallback-85" : "live",
