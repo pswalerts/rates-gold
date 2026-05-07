@@ -12,17 +12,22 @@
 //  S7: Yahoo Finance MCX GOLD.MCX / GOLDM.MCX (div:10)
 //  S8: Duty-adjusted calculated fallback (spot × 1.05, labelled CALC)
 //
+//  ETF NAV chain (per symbol):
+//  Phase 1: Yahoo Finance v7 bulk (.NS)
+//  Phase 2 individual: v8 chart → v7 single → BSE API (x2) → MoneyControl → AMFI
+//
+//  Digital gold live prices:
+//  MMTC-PAMP → Augmont → SafeGold  (multi-endpoint each, formula fallback)
+//
 //  goldHistory / silverHistory: XAU(XAG)/USD converted to Rs./gram
 //  for each time range — used by hero history panels.
-//
-//  ETF sparklines are fetched separately for the ETF 52-week chart.
 //
 //  CRITICAL: ibja24k/22k/995 returned as-is; do NOT add duty/GST here.
 // -----------------------------------------------------------------
 
 let cache = null;
 let cacheTime = 0;
-const CACHE_DURATION = 60 * 60 * 1000;
+const CACHE_DURATION = 15 * 60 * 1000;  // 15 min — keeps digital gold prices fresh
 
 const TROY = 31.1035;
 
@@ -434,49 +439,151 @@ export default async function handler(req, res) {
     // =========================================================
     // STEP 5: ETF NAV -> Rs. per gram
     // =========================================================
-    const ETF_SYMS = ["GOLDBEES", "SBIGETS", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
+    // NOTE: All symbols are NSE symbols (Yahoo Finance uses .NS = NSE)
+    // SBI Gold ETF is SETFGOLD on NSE; SBIGETS is the old BSE-only symbol.
+    const ETF_SYMS = ["GOLDBEES", "SETFGOLD", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
     const BSE_CODES = {
-      GOLDBEES: "590096", SBIGETS: "590091", HDFCMFGETF: "590094",
+      GOLDBEES: "590096", SETFGOLD: "590091", HDFCMFGETF: "590094",
       AXISGOLD: "590102", KOTAKGOLD: "590103", ICICIGOLD: "590100",
     };
+    // AMFI name fragments for fallback NAV lookup
+    const AMFI_NAMES = {
+      GOLDBEES:   "Gold BeES",
+      SETFGOLD:   "SBI-ETF Gold",
+      HDFCMFGETF: "HDFC Gold ETF",
+      AXISGOLD:   "Axis Gold ETF",
+      KOTAKGOLD:  "Kotak Gold ETF",
+      ICICIGOLD:  "ICICI Prudential Gold ETF",
+    };
 
-    async function fetchETF(sym) {
+    async function fetchETFIndividual(sym) {
+      // S1: Yahoo Finance v8 (5d range more reliable than 1d for intraday)
+      for (const host of ["query1", "query2"]) {
+        for (const range of ["1d", "5d"]) {
+          try {
+            const r = await tout(fetch(
+              `https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=${range}`,
+              { headers: { "User-Agent": UA, "Accept": "application/json" } }
+            ));
+            if (r.ok) {
+              const d = await r.json(), m = d?.chart?.result?.[0]?.meta;
+              if (m?.regularMarketPrice > 0)
+                return { nav: m.regularMarketPrice, prevClose: m.chartPreviousClose || m.previousClose || null };
+            }
+          } catch (_) {}
+        }
+      }
+      // S2: Yahoo Finance v7 quoteSummary
       for (const host of ["query1", "query2"]) {
         try {
           const r = await tout(fetch(
-            `https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=1d`,
-            { headers: { "User-Agent": UA } }
+            `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${sym}.NS`,
+            { headers: { "User-Agent": UA, "Accept": "application/json" } }
           ));
           if (r.ok) {
-            const d = await r.json(), m = d?.chart?.result?.[0]?.meta;
-            if (m?.regularMarketPrice > 0)
-              return { nav: m.regularMarketPrice, prevClose: m.chartPreviousClose || m.previousClose || null };
+            const d = await r.json();
+            const q = d?.quoteResponse?.result?.[0];
+            if (q?.regularMarketPrice > 0)
+              return { nav: q.regularMarketPrice, prevClose: q.regularMarketPreviousClose || null };
           }
         } catch (_) {}
       }
+      // S3: BSE API (multiple field name variants)
       try {
         const r = await tout(fetch(
           `https://api.bseindia.com/BseIndiaAPI/api/getScripHeaderData/w?Debtflag=&scripcode=${BSE_CODES[sym]}&seriesid=`,
+          { headers: { Referer: "https://www.bseindia.com/", "User-Agent": UA, "Accept": "application/json" } }
+        ));
+        if (r.ok) {
+          const d = await r.json();
+          const ltp  = parseFloat(d?.CurrRate || d?.Ltp || d?.LastRate || d?.currentValue || d?.LTP || d?.price || 0);
+          const prev = parseFloat(d?.PrevClose || d?.PrevRate || d?.previousClose || d?.PrevClosing || 0);
+          if (ltp > 10) return { nav: ltp, prevClose: prev || null };
+        }
+      } catch (_) {}
+      // S4: BSE India market data endpoint
+      try {
+        const r = await tout(fetch(
+          `https://api.bseindia.com/BseIndiaAPI/api/StockReachGraph/w?scripcode=${BSE_CODES[sym]}&seriesid=&flag=0`,
           { headers: { Referer: "https://www.bseindia.com/", "User-Agent": UA } }
         ));
         if (r.ok) {
           const d = await r.json();
-          const ltp  = parseFloat(d?.CurrRate || d?.Ltp || d?.LastRate || 0);
-          const prev = parseFloat(d?.PrevClose || d?.PrevRate || 0);
-          if (ltp > 0) return { nav: ltp, prevClose: prev || null };
+          const ltp = parseFloat(d?.CurrRate || d?.close || d?.LTP || 0);
+          if (ltp > 10) return { nav: ltp, prevClose: null };
+        }
+      } catch (_) {}
+      // S5: MoneyControl price feed
+      try {
+        const r = await tout(fetch(
+          `https://priceapi.moneycontrol.com/pricefeed/nse/equityCash/${sym}`,
+          { headers: { "User-Agent": UA, "Referer": "https://www.moneycontrol.com/" } }
+        ));
+        if (r.ok) {
+          const d = await r.json();
+          const ltp = parseFloat(d?.data?.pricecurrent || d?.data?.price || 0);
+          if (ltp > 10) return { nav: ltp, prevClose: parseFloat(d?.data?.previousclose || 0) || null };
+        }
+      } catch (_) {}
+      // S6: AMFI India official NAV (T-1 close, but reliable — better than no data)
+      try {
+        const r = await tout(fetch("https://www.amfiindia.com/spages/NAVAll.txt", { headers: { "User-Agent": UA } }), 12000);
+        if (r.ok) {
+          const txt = await r.text();
+          const term = AMFI_NAMES[sym];
+          if (term) {
+            const line = txt.split("\n").find(l => l.includes(term) && l.includes(";"));
+            if (line) {
+              const parts = line.split(";");
+              const nav = parseFloat(parts[4]);
+              if (nav > 10) return { nav, prevClose: null };
+            }
+          }
         }
       } catch (_) {}
       return { nav: null, prevClose: null };
     }
 
-    const etfResults = await Promise.allSettled(ETF_SYMS.map(s => tout(fetchETF(s))));
+    // First try bulk Yahoo v7 fetch (gets all 6 in one request — most efficient)
     const etfRaw = {}, etfPrevRaw = {};
-    etfResults.forEach((res, i) => {
-      if (res.status === "fulfilled" && res.value?.nav > 0) {
-        etfRaw[ETF_SYMS[i]] = res.value.nav;
-        if (res.value.prevClose) etfPrevRaw[ETF_SYMS[i]] = res.value.prevClose;
+    try {
+      const symbols = ETF_SYMS.map(s => s + ".NS").join(",");
+      for (const host of ["query1", "query2"]) {
+        try {
+          const r = await tout(fetch(
+            `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`,
+            { headers: { "User-Agent": UA, "Accept": "application/json" } }
+          ), 10000);
+          if (r.ok) {
+            const d = await r.json();
+            const quotes = d?.quoteResponse?.result || [];
+            for (const q of quotes) {
+              const sym = q.symbol?.replace(".NS", "");
+              if (sym && ETF_SYMS.includes(sym) && q.regularMarketPrice > 0) {
+                etfRaw[sym] = q.regularMarketPrice;
+                if (q.regularMarketPreviousClose > 0) etfPrevRaw[sym] = q.regularMarketPreviousClose;
+              }
+            }
+            if (Object.keys(etfRaw).length >= 4) break; // got enough, stop trying other host
+          }
+        } catch (_) {}
       }
-    });
+      console.log(`ETF bulk v7: got ${Object.keys(etfRaw).length} symbols`);
+    } catch (_) {}
+
+    // Fill any missing ETFs with individual fetches
+    const missingSyms = ETF_SYMS.filter(s => !etfRaw[s]);
+    if (missingSyms.length > 0) {
+      const etfResults = await Promise.allSettled(missingSyms.map(s => tout(fetchETFIndividual(s), 12000)));
+      missingSyms.forEach((sym, i) => {
+        const res = etfResults[i];
+        if (res.status === "fulfilled" && res.value?.nav > 0) {
+          etfRaw[sym] = res.value.nav;
+          if (res.value.prevClose) etfPrevRaw[sym] = res.value.prevClose;
+        }
+      });
+    }
+    console.log(`ETF raw NAVs (${Object.keys(etfRaw).length}/${ETF_SYMS.length}):`, Object.entries(etfRaw).map(([k,v])=>`${k}:${v}`).join(", ") || "none");
 
     // Convert ETF unit price -> Rs./gram using ibja24k as gold reference.
     // gramsPerUnit = etfUnitPrice / ibja24k (dynamic, self-correcting after splits)
@@ -536,6 +643,146 @@ export default async function handler(req, res) {
     });
 
     // =========================================================
+    // STEP 6b: Digital gold live buy prices
+    // Tries multiple endpoint patterns per platform.
+    // Returns per-gram buy price (already includes platform spread + 3% GST).
+    // Falls back to ibja24k × spread × 1.03 if all live fetches fail.
+    // =========================================================
+    async function fetchDigitalGoldPrices(base) {
+      const live = {};
+
+      // ---- MMTC-PAMP ----
+      // Try internal JSON endpoints their app / website uses
+      for (const url of [
+        "https://www.mmtcpamp.com/service/api/v1/digitalGoldPrice",
+        "https://www.mmtcpamp.com/fetchCurrentPrice",
+        "https://www.mmtcpamp.com/service/goldprice",
+        "https://www.mmtcpamp.com/api/v1/price",
+        "https://www.mmtcpamp.com/goldprice",
+      ]) {
+        try {
+          const r = await tout(fetch(url, {
+            headers: { "User-Agent": UA, "Referer": "https://www.mmtcpamp.com/", "Accept": "application/json" }
+          }), 6000);
+          if (!r.ok) continue;
+          const ct = r.headers.get("content-type") || "";
+          if (!ct.includes("json")) continue;
+          const d = await r.json();
+          const v = parseFloat(
+            d?.buyPrice || d?.buy_price || d?.goldBuyPrice || d?.buy ||
+            d?.data?.buyPrice || d?.data?.goldBuyPrice || d?.price || 0
+          );
+          if (v > 5000 && v < 30000) { live.mmtcPamp = v; break; }
+        } catch (_) {}
+      }
+      // HTML scrape fallback for MMTC-PAMP
+      if (!live.mmtcPamp) {
+        try {
+          const r = await tout(fetch("https://www.mmtcpamp.com/gold-silver-rate-today", {
+            headers: { "User-Agent": UA, "Accept": "text/html", "Referer": "https://www.google.com/" }
+          }), 8000);
+          if (r.ok) {
+            const html = await r.text();
+            const m = html.match(/(?:buy|purchase)\s*(?:price|rate)?[^₹\d]{0,40}[₹]?\s*([\d,]{4,6})/i);
+            if (m) { const v = parseFloat(m[1].replace(/,/g,"")); if (v > 5000 && v < 30000) live.mmtcPamp = v; }
+          }
+        } catch (_) {}
+      }
+
+      // ---- AUGMONT ----
+      for (const url of [
+        "https://spot.augmont.com/liverates",
+        "https://www.augmont.com/api/v1/live_rates",
+        "https://api.augmont.com/api/v1/liveRates",
+        "https://www.augmont.com/api/goldrate",
+        "https://business.augmont.com/api/live-rates",
+      ]) {
+        try {
+          const r = await tout(fetch(url, {
+            headers: { "User-Agent": UA, "Referer": "https://www.augmont.com/", "Accept": "application/json" }
+          }), 6000);
+          if (!r.ok) continue;
+          const ct = r.headers.get("content-type") || "";
+          if (!ct.includes("json")) continue;
+          const d = await r.json();
+          const v = parseFloat(
+            d?.goldBuyPrice || d?.buyPrice || d?.buy_price || d?.buy ||
+            d?.data?.goldBuyPrice || d?.data?.buyPrice ||
+            d?.rates?.gold?.buy || d?.gold?.buy || 0
+          );
+          if (v > 5000 && v < 30000) { live.augmont = v; break; }
+        } catch (_) {}
+      }
+      // HTML scrape fallback for Augmont
+      if (!live.augmont) {
+        try {
+          const r = await tout(fetch("https://www.augmont.com/gold-rate-today", {
+            headers: { "User-Agent": UA, "Accept": "text/html", "Referer": "https://www.google.com/" }
+          }), 8000);
+          if (r.ok) {
+            const html = await r.text();
+            const m = html.match(/(?:buy|purchase)[^₹\d]{0,50}[₹]?\s*([\d,]{4,6})/i);
+            if (m) { const v = parseFloat(m[1].replace(/,/g,"")); if (v > 5000 && v < 30000) live.augmont = v; }
+          }
+        } catch (_) {}
+      }
+
+      // ---- SAFEGOLD ----
+      for (const url of [
+        "https://www.safegold.com/goldrate",
+        "https://app.safegold.com/api/v1/price",
+        "https://www.safegold.com/api/gold-price",
+        "https://www.safegold.com/api/v1/gold/price",
+        "https://api.safegold.com/v1/price",
+      ]) {
+        try {
+          const r = await tout(fetch(url, {
+            headers: { "User-Agent": UA, "Referer": "https://www.safegold.com/", "Accept": "application/json" }
+          }), 6000);
+          if (!r.ok) continue;
+          const ct = r.headers.get("content-type") || "";
+          if (!ct.includes("json")) continue;
+          const d = await r.json();
+          const v = parseFloat(
+            d?.buyPrice || d?.buy || d?.price || d?.goldBuyPrice ||
+            d?.data?.buyPrice || d?.data?.price || 0
+          );
+          if (v > 5000 && v < 30000) { live.safegold = v; break; }
+        } catch (_) {}
+      }
+      // HTML scrape fallback for SafeGold
+      if (!live.safegold) {
+        try {
+          const r = await tout(fetch("https://www.safegold.com/gold-rate", {
+            headers: { "User-Agent": UA, "Accept": "text/html", "Referer": "https://www.google.com/" }
+          }), 8000);
+          if (r.ok) {
+            const html = await r.text();
+            const m = html.match(/(?:buy|purchase)[^₹\d]{0,50}[₹]?\s*([\d,]{4,6})/i);
+            if (m) { const v = parseFloat(m[1].replace(/,/g,"")); if (v > 5000 && v < 30000) live.safegold = v; }
+          }
+        } catch (_) {}
+      }
+
+      // Paytm Gold uses MMTC-PAMP backend + ~1% extra spread
+      if (live.mmtcPamp) live.paytm = Math.round(live.mmtcPamp * 1.01 * 100) / 100;
+
+      // Formula fallbacks for any that failed (ibja × spread × 1.03 GST)
+      if (!live.mmtcPamp) live.mmtcPamp = null;   // frontend will use formula
+      if (!live.augmont)  live.augmont  = null;
+      if (!live.safegold) live.safegold = null;
+      if (!live.paytm)    live.paytm    = null;
+
+      const gotLive = Object.values(live).filter(Boolean).length;
+      console.log(`Digital gold live: ${gotLive}/4 fetched —`,
+        Object.entries(live).filter(([,v])=>v).map(([k,v])=>`${k}:₹${v.toFixed(0)}`).join(", ") || "all formula"
+      );
+      return live;
+    }
+
+    const digitalGoldPrices = await fetchDigitalGoldPrices(ibja24k);
+
+    // =========================================================
     // STEP 7: Gold price history -> Rs./gram (hero history panel)
     // Uses XAU/USD spot/futures converted to Rs./gram via USD/INR.
     // =========================================================
@@ -588,9 +835,10 @@ export default async function handler(req, res) {
       ibja22k,
       ibja995,
       etfNavs,
-      etfNavRaw:    { ...etfRaw },   // raw unit NAV price (Rs./unit) for grams-per-unit calc
+      etfNavRaw:      { ...etfRaw },   // raw unit NAV price (Rs./unit) for grams-per-unit calc
       etfPrevClose,
       etfSparklines,
+      digitalGoldPrices,               // { mmtcPamp, augmont, safegold, paytm } — null = use formula
       goldHistory,
       silverHistory,
       timestamp:    new Date().toISOString(),
