@@ -88,10 +88,11 @@
     .etf-grams-unit { font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:1px; }
     .v-inr { color:var(--inr-color); } .v-usd { color:var(--usd-color); } .v-aed { color:var(--aed-color); }
     .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:14px; }
-    .dual-rate-sub-label { font-size:10px; color:var(--muted); font-family:var(--mono); margin-bottom:4px; letter-spacing:0.05em; }
-    .dual-rate-sub-val   { font-family:var(--mono); font-size:17px; font-weight:600; color:var(--inr-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .dual-rate-sub-label { font-size:11px; color:var(--text); font-family:var(--mono); margin-bottom:5px; letter-spacing:0.07em; font-weight:600; text-transform:uppercase; }
+    .dual-rate-sub-val   { font-family:var(--mono); font-size:15px; font-weight:700; color:var(--inr-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .dual-rate-sub-box   { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:8px 10px; }
     .dual-rate-sub-val.intl-sub { color:var(--gold-bright); }
-    .dual-rate-formula   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px 14px; font-family:var(--mono); font-size:14px; color:rgba(255,255,255,0.6); line-height:2; margin-top:14px; }
+    .dual-rate-formula   { background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:8px; padding:9px 14px; font-family:var(--mono); font-size:12px; color:rgba(255,255,255,0.55); line-height:1.4; margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
     .dual-rate-stale     { background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--yellow); line-height:1.6; margin-top:12px; }
     .dual-rate-unavail   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--muted); line-height:1.6; margin-top:12px; }
     .section-title { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-top:48px; margin-bottom:18px; font-weight:700; border-left:3px solid var(--gold); padding-left:10px; }
@@ -107,7 +108,7 @@
     .purity-pill.silver-pill { background:rgba(168,184,200,0.1); color:var(--silver); border-color:rgba(168,184,200,0.22); }
     .retailer-price { font-family:var(--mono); font-size:18px; font-weight:700; color:var(--inr-color); margin-top:4px; }
     .retailer-card.best-buy .retailer-price { color:var(--green); }
-    .retailer-sub   { font-size:10px; color:var(--muted); text-align:center; font-family:var(--mono); }
+    .retailer-sub   { font-size:11px; color:var(--muted); text-align:center; font-family:var(--mono); line-height:1.5; }
     .retailer-best-badge { position:absolute; top:8px; right:8px; background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); font-family:var(--mono); font-size:9px; letter-spacing:0.07em; padding:2px 7px; border-radius:999px; text-transform:uppercase; }
     .etf-live-badge { display:inline-block; font-size:9px; font-family:var(--mono); background:rgba(34,197,94,0.1); color:var(--green); border:1px solid rgba(34,197,94,0.2); border-radius:999px; padding:2px 7px; letter-spacing:0.06em; margin-top:5px; }
     .etf-calc-badge { display:inline-block; font-size:9px; font-family:var(--mono); background:rgba(100,116,139,0.1); color:var(--muted); border:1px solid rgba(255,255,255,0.07); border-radius:999px; padding:2px 7px; letter-spacing:0.06em; margin-top:5px; }
@@ -180,8 +181,10 @@
     .hero-hist-tab { flex-shrink:0; padding:9px 16px; font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; transition:all 0.2s; }
     .hero-hist-tab:hover { color:var(--text); }
     .hero-hist-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
-    .hist-mode-btn { border:1px solid var(--border) !important; border-radius:4px; margin:4px 2px; padding:4px 10px !important; font-size:10px !important; }
-    .hist-mode-btn.active-mode { color:var(--gold) !important; border-color:var(--gold) !important; background:rgba(212,168,83,0.1); }
+    .hist-toggle-wrap { display:flex; background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:3px; gap:2px; align-self:center; flex-shrink:0; margin:0 6px; }
+    .hist-toggle-btn { padding:5px 16px; border-radius:999px; border:none; font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:0.06em; cursor:pointer; transition:all 0.25s; background:none; color:var(--muted); text-transform:uppercase; }
+    .hist-toggle-btn.active-int { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); box-shadow:0 2px 8px rgba(34,197,94,0.15); }
+    .hist-toggle-btn.active-ind { background:linear-gradient(135deg,#b8860b,#d4a853,#f0c060,#d4a853); color:#060b14; box-shadow:0 2px 8px rgba(212,168,83,0.3); }
     body.silver-mode .hero-hist-tab.active { color:var(--silver); border-bottom-color:var(--silver); }
     .hero-hist-body { display:grid; grid-template-columns:repeat(4,1fr); gap:0; }
     .hero-hist-cell { padding:14px 18px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
@@ -307,15 +310,12 @@
             <div style="font-size:11px;font-family:var(--mono);letter-spacing:0.07em;margin-bottom:6px;font-weight:600;color:var(--gold-bright);">999 · 24K · Rs./gram</div>
             <div class="dual-rate-main" id="intl-24k">--</div>
             <div class="dual-rate-sub-grid">
-              <div><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val intl-sub" id="intl-995">--</div></div>
-              <div><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val intl-sub" id="intl-916">--</div></div>
-              <div><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val intl-sub" id="intl-750">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val intl-sub" id="intl-995">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val intl-sub" id="intl-916">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val intl-sub" id="intl-750">--</div></div>
             </div>
             <div class="dual-rate-formula">
-              🌐 <span style="color:var(--usd-color);font-weight:700" id="intl-xau">--</span> USD/oz
-              &nbsp;÷ 31.1035g &nbsp;×&nbsp;
-              <span style="color:var(--inr-color);font-weight:700" id="intl-inr">--</span> USD/INR
-              &nbsp;= <span style="color:var(--gold-bright);font-weight:700" id="intl-result">--</span>/g
+              🌐 <span style="color:var(--usd-color);font-weight:700" id="intl-xau">--</span> <span style="opacity:.6">USD/oz ÷ 31.1035g ×</span> <span style="color:var(--inr-color);font-weight:700" id="intl-inr">--</span> <span style="opacity:.6">USD/INR =</span> <span style="color:var(--gold-bright);font-weight:700" id="intl-result">--</span><span style="opacity:.6">/g</span>
             </div>
           </div>
           <div class="dual-rate-col">
@@ -326,9 +326,9 @@
             <div style="font-size:11px;font-family:var(--mono);letter-spacing:0.07em;margin-bottom:6px;font-weight:600;color:var(--inr-color);">999 · 24K · Rs./gram</div>
             <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
             <div class="dual-rate-sub-grid">
-              <div><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val" id="ibja995">--</div></div>
-              <div><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="ibja22k">--</div></div>
-              <div><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val" id="ibja750">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val" id="ibja995">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="ibja22k">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val" id="ibja750">--</div></div>
             </div>
             <div class="dual-rate-stale" id="ibjaStaleMsg" style="display:none;">Showing previous session IBJA rate. Live data unavailable right now.</div>
             <div class="dual-rate-unavail" id="ibjaCalcMsg" style="display:none;">Estimated from international spot + ~5% India duty. IBJA publishes official rates at ~10 AM IST on trading days.</div>
@@ -354,9 +354,11 @@
             <button class="hero-hist-tab" onclick="showHistTab('3y',this)">3 Years</button>
             <button class="hero-hist-tab" onclick="showHistTab('5y',this)">5 Years</button>
             <button class="hero-hist-tab" onclick="showHistTab('ytd',this)">YTD</button>
-            <span style="width:1px;background:var(--border);margin:6px 4px;flex-shrink:0;"></span>
-            <button class="hero-hist-tab hist-mode-btn active-mode" id="histModeInt" onclick="setHistMode('int',this)">INT</button>
-            <button class="hero-hist-tab hist-mode-btn" id="histModeInd" onclick="setHistMode('ind',this)">IND</button>
+            <div style="width:1px;background:var(--border);margin:6px 4px;flex-shrink:0;"></div>
+            <div class="hist-toggle-wrap">
+              <button class="hist-toggle-btn active-int" id="histModeInt" onclick="setHistMode('int',this)">INT</button>
+              <button class="hist-toggle-btn" id="histModeInd" onclick="setHistMode('ind',this)">IND</button>
+            </div>
           </div>
           <div style="padding:6px 14px 0;font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.04em;" id="histModeLabel">
             📊 International Spot (XAU/USD → ₹/gram)
@@ -422,13 +424,13 @@
             <div class="dxb-price-item"><div class="dxb-price-label">18K · per gram</div><div class="dxb-price-val aed" id="dxb-18k-aed">--</div><div class="dxb-price-sub">local price</div></div>
           </div>
           <div class="dxb-col">
-            <div class="dxb-col-head">INR Equivalent</div>
+            <div class="dxb-col-head" style="color:var(--inr-color)">INR Equivalent</div>
             <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val inr" id="dxb-24k-inr">--</div><div class="dxb-price-sub">at live AED/INR</div></div>
             <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val inr" id="dxb-22k-inr">--</div><div class="dxb-price-sub">at live AED/INR</div></div>
             <div class="dxb-price-item"><div class="dxb-price-label">AED / INR rate</div><div class="dxb-price-val inr" style="font-size:15px;" id="dxb-aed-inr">--</div><div class="dxb-price-sub">live exchange rate</div></div>
           </div>
           <div class="dxb-col">
-            <div class="dxb-col-head">India vs Dubai</div>
+            <div class="dxb-col-head"><span style="color:var(--inr-color)">India</span> <span style="color:var(--muted);font-size:9px">vs</span> <span style="color:var(--aed-color)">Dubai</span></div>
             <div class="dxb-spread-item"><div class="dxb-spread-label">India 24K</div><div class="dxb-spread-val dim" id="ds-india">--</div><div class="dxb-price-sub">IBJA / calculated</div></div>
             <div class="dxb-spread-item"><div class="dxb-spread-label">Dubai 24K (INR)</div><div class="dxb-spread-val dim" id="ds-dubai">--</div><div class="dxb-price-sub">converted at live rate</div></div>
             <div class="dxb-spread-item"><div class="dxb-spread-label">Spread</div><div class="dxb-spread-val" id="ds-spread">--</div><div class="dxb-price-sub" id="ds-spreadpct">--</div></div>
@@ -454,8 +456,8 @@
             <div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.05em;margin-bottom:4px;">999 · Fine Silver · Rs./gram</div>
             <div class="dual-rate-main silver-val" id="sil-intl-gram">--</div>
             <div class="dual-rate-sub-grid">
-              <div><div class="dual-rate-sub-label">Per 100g</div><div class="dual-rate-sub-val" id="sil-intl-100g">--</div></div>
-              <div><div class="dual-rate-sub-label">Per Kg</div><div class="dual-rate-sub-val" id="sil-intl-kg">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per 100g</div><div class="dual-rate-sub-val" id="sil-intl-100g">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per Kg</div><div class="dual-rate-sub-val" id="sil-intl-kg">--</div></div>
             </div>
             <div class="dual-rate-formula">
               XAG/USD <span id="sil-xag" style="color:var(--text)">--</span>
@@ -472,8 +474,8 @@
             <div class="dual-rate-main silver-val" id="sil-india-gram">--</div>
             <div class="dual-rate-perkg" id="sil-india-kg-hero">-- / kg</div>
             <div class="dual-rate-sub-grid" style="margin-top:14px;">
-              <div><div class="dual-rate-sub-label">Per 100g</div><div class="dual-rate-sub-val" id="sil-india-100g">--</div></div>
-              <div><div class="dual-rate-sub-label">Per Kg</div><div class="dual-rate-sub-val" id="sil-india-kg">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per 100g</div><div class="dual-rate-sub-val" id="sil-india-100g">--</div></div>
+              <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per Kg</div><div class="dual-rate-sub-val" id="sil-india-kg">--</div></div>
             </div>
             <div class="dual-rate-unavail">Estimated from international spot + ~9% India duty (6% customs + 3% IGST). IBJA also publishes official silver rates.</div>
           </div>
@@ -805,37 +807,38 @@
     const results = ETF_LIST.map(etf => {
       const unitNav      = navRaw?.[etf.symbol] > 0 ? navRaw[etf.symbol] : 0;
       const gramsPerUnit = unitNav > 0 && baseRate > 0 ? unitNav / baseRate : null;
-      // Rs./gram effective cost: if we have live NAV, effective cost ≈ ibja24k + 0.1% brokerage
-      // (since ETF tracks gold 1:1, the per-gram effective rate is spot + tiny brokerage)
-      // All ETFs trade near spot — expense ratio is an annual fee deducted from NAV daily,
-      // NOT a purchase markup. Effective buy cost = spot + 0.1% brokerage for all.
+      // Effective per-gram cost is same for all ETFs: spot + 0.1% brokerage.
+      // Expense ratio (TER) is an annual fee deducted from NAV daily — NOT a purchase markup.
+      // Differentiator between ETFs = TER (lower = better) and unit NAV (varies).
       const gramRate = baseRate * 1.001;
       return { ...etf, unitNav, gramsPerUnit, gramRate, live: !!(navRaw?.[etf.symbol] > 0) };
     });
-    const minGram = Math.min(...results.map(e => e.gramRate));
-    const allEqual = results.every(e => e.gramRate === results[0].gramRate);
+    // BEST VALUE = lowest TER (expense ratio) since per-gram cost is identical for all
+    const minExpense = Math.min(...results.map(e => e.expense));
     grid.innerHTML = results.map(e => {
-      const isBest = !allEqual && e.gramRate === minGram;
-      const vsSpot = e.gramRate - baseRate;
-      const vsPct  = ((vsSpot / baseRate) * 100).toFixed(2);
-      const dClr   = Math.abs(vsSpot) < 50 ? "var(--gold)" : vsSpot > 0 ? "var(--red)" : "var(--green)";
-      const dTxt   = Math.abs(vsSpot) < 50 ? "≈ Near Spot" : vsSpot > 0 ? `▲ ${fmt(vsSpot)} over spot` : `▼ ${fmt(Math.abs(vsSpot))} under spot`;
+      const isBest = e.expense === minExpense;
       const hasSp  = _etfSparklines[e.symbol]?.["1y"]?.length >= 2;
-      const unitNavLine   = e.unitNav > 0
-        ? `<div class="etf-unit-nav">NAV ₹${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})} / unit</div>` : "";
-      const gramsUnitLine = e.gramsPerUnit
-        ? `<div class="etf-grams-unit">≈ ${e.gramsPerUnit.toFixed(4)}g gold per unit</div>` : "";
+      // Show unit NAV as the main price (this is what actually differs per ETF and what investors pay)
+      const navDisplay = e.unitNav > 0
+        ? `₹ ${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}`
+        : `≈ ${fmt(e.gramRate)}`;
+      const navSubLabel = e.unitNav > 0 ? "per unit (live NAV)" : "per gram (est.)";
+      const gramsLine   = e.gramsPerUnit
+        ? `<div class="etf-grams-unit" style="color:var(--muted);font-size:10px;margin-top:3px;">≈ ${e.gramsPerUnit.toFixed(4)}g gold / unit</div>` : "";
+      const perGramLine = `<div class="etf-grams-unit" style="color:var(--muted);font-size:10px;margin-top:1px;">≈ ${fmt(e.gramRate)}/g (spot + 0.1% brokerage)</div>`;
       return `<div class="retailer-card ${isBest?"best-buy":""}" style="cursor:${hasSp?"pointer":"default"}" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
-        ${isBest?'<div class="retailer-best-badge">Best Value</div>':""}
+        ${isBest?'<div class="retailer-best-badge">Lowest TER</div>':""}
         <div class="retailer-logo">${e.emoji}</div>
-        <div class="retailer-name">${e.name}</div><div class="retailer-type">${e.fund}</div>
-        <div class="purity-pill">995 · NSE/BSE</div>
-        <div class="retailer-price">${fmt(e.gramRate)}</div>
-        <div class="retailer-sub">${e.symbol} · ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div>
-        ${unitNavLine}${gramsUnitLine}
-        <div style="font-size:12px;font-family:var(--mono);font-weight:700;color:${dClr};text-align:center;margin-top:5px;letter-spacing:0.02em;">${dTxt}</div>
-        <div style="margin-top:4px">${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
-        ${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em">tap for chart</div>':""}
+        <div class="retailer-name">${e.name}</div>
+        <div class="retailer-type">${e.fund}</div>
+        <div class="purity-pill">999 · 24K · NSE/BSE</div>
+        <div class="retailer-price">${navDisplay}</div>
+        <div class="retailer-sub">${navSubLabel}</div>
+        ${gramsLine}${perGramLine}
+        <div style="font-size:11px;font-family:var(--mono);font-weight:700;color:var(--gold);text-align:center;margin-top:6px;">TER ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--muted);text-align:center;margin-top:2px;">${e.symbol}</div>
+        <div style="margin-top:5px">${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
+        ${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em">tap for chart ↓</div>':""}
       </div>`;
     }).join("");
     const firstWith1y = ETF_LIST.find(e => _etfSparklines[e.symbol]?.["1y"]?.length >= 2);
@@ -854,9 +857,9 @@
     const now = new Date(), mktOpen = now.getHours() >= 9 && now.getHours() < 16;
     // Fixed order: Red (worst) → Orange (middle) → Green (best)
     const opts = [
-      { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP",  price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  desc: "3% GST · 0.7–1.5% coin premium · Instant possession · Best for gifts & physical holding" },
-      { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      desc: "3% GST · 1–2% buy spread · ~0.5% annual storage · ₹1 minimum · Not SEBI regulated" },
-      { name: "Gold ETF (999.9 · 24K)",         detail: "GOLDBEES / SETFGOLD / HDFCMFGETF",          price: etfEntry, color: "green",  dot: "✓", rank: "Best Entry",     desc: `Zero GST · 0.1% brokerage · 99.5%+ purity · LTCG 12.5% after 2yr · Demat needed${mktOpen?" · Markets OPEN":" · Markets closed"}` },
+      { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP",  price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  desc: ["3% GST on purchase", "0.7–1.5% coin premium over IBJA", "Instant physical possession", "Best for gifts & long-term holding"] },
+      { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      desc: ["3% GST on purchase", "1–2% buy spread over IBJA", "~0.5% annual storage fee", "₹1 minimum buy · Not SEBI regulated"] },
+      { name: "Gold ETF (999 · 24K)",           detail: "GOLDBEES / SETFGOLD / HDFCMFGETF",          price: etfEntry, color: "green",  dot: "✓", rank: "Best Entry",     desc: ["Zero GST · only 0.1% brokerage", "999 purity gold bars in vault", "LTCG 12.5% after 2 years", `Demat account needed · Markets ${mktOpen?"OPEN":"closed"}`] },
     ];
     const sav = phys24 - etfEntry, savPct = ((sav/phys24)*100).toFixed(1);
     document.getElementById("tlBody").innerHTML = opts.map(opt => `
@@ -866,8 +869,8 @@
           <div class="tl-option-name ${opt.color}">${opt.name}<span class="tl-rank ${opt.color}">${opt.rank}</span></div>
         </div>
         <div class="tl-content">
-          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:2px">${opt.detail}</div>
-          <div class="tl-option-desc">${opt.desc}</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px;letter-spacing:0.03em;">${opt.detail}</div>
+          <div class="tl-option-desc"><ul style="margin:5px 0 0 14px;padding:0;line-height:1.7;">${opt.desc.map(s=>`<li>${s}</li>`).join("")}</ul></div>
         </div>
         <div class="tl-price-right"><div class="tl-price-val">${fmt(opt.price)}</div><div class="tl-price-sub">per gram all-in</div></div>
       </div>`).join("") + `
@@ -892,13 +895,14 @@
 
   function setHistMode(mode, btn) {
     _histMode = mode;
-    document.querySelectorAll(".hist-mode-btn").forEach(b => b.classList.remove("active-mode"));
-    if (btn) btn.classList.add("active-mode");
+    document.querySelectorAll(".hist-toggle-btn").forEach(b => b.classList.remove("active-int", "active-ind"));
+    if (btn) btn.classList.add(mode === "int" ? "active-int" : "active-ind");
     const label = document.getElementById("histModeLabel");
+    const premPct = _histIbjaFactor > 1 ? ((_histIbjaFactor - 1) * 100).toFixed(1) : "~5";
     if (label) label.textContent = mode === "int"
-      ? "📊 International Spot (XAU/USD → ₹/gram)"
-      : "📊 India Gold Rate (IBJA · estimated for history)";
-    showHistTab(_histActiveTab, document.querySelector(".hero-hist-tab.active"));
+      ? "📊 International Spot (XAU/USD → ₹/gram · no import duty)"
+      : `📊 India Gold Rate (IBJA · duty-adjusted · +${premPct}% premium over spot)`;
+    showHistTab(_histActiveTab, document.querySelector("#heroHistPanel .hero-hist-tab.active"));
   }
   const HIST_TAB_CONFIG = {
     "1d":  { rangeKey: "1d",  fallback: "1w",  label: "vs prior session" },
@@ -923,7 +927,7 @@
   }
 
   function showHistTab(tabKey, btn) {
-    document.querySelectorAll("#heroHistPanel .hero-hist-tab:not(.hist-mode-btn)").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll("#heroHistPanel .hero-hist-tab").forEach(b => b.classList.remove("active"));
     if (btn && !btn.classList.contains("hist-mode-btn")) btn.classList.add("active");
     _histActiveTab = tabKey;
     if (!_heroHistCurrentPrice) return;
