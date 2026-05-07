@@ -441,7 +441,10 @@ export default async function handler(req, res) {
     // =========================================================
     // NOTE: All symbols are NSE symbols (Yahoo Finance uses .NS = NSE)
     // SBI Gold ETF is SETFGOLD on NSE; SBIGETS is the old BSE-only symbol.
+    // Kotak Gold ETF trades as GOLD1 on NSE (KOTAKGOLD is a legacy/alternate symbol).
     const ETF_SYMS = ["GOLDBEES", "SETFGOLD", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
+    // NSE ticker overrides: logical key → actual NSE symbol for Yahoo Finance
+    const NSE_OVERRIDES = { KOTAKGOLD: "GOLD1" };
     const BSE_CODES = {
       GOLDBEES: "590096", SETFGOLD: "590091", HDFCMFGETF: "590094",
       AXISGOLD: "590102", KOTAKGOLD: "590103", ICICIGOLD: "590100",
@@ -457,12 +460,14 @@ export default async function handler(req, res) {
     };
 
     async function fetchETFIndividual(sym) {
+      // Use NSE override ticker if available (e.g. KOTAKGOLD → GOLD1)
+      const nseSym = NSE_OVERRIDES[sym] || sym;
       // S1: Yahoo Finance v8 (5d range more reliable than 1d for intraday)
       for (const host of ["query1", "query2"]) {
         for (const range of ["1d", "5d"]) {
           try {
             const r = await tout(fetch(
-              `https://${host}.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&range=${range}`,
+              `https://${host}.finance.yahoo.com/v8/finance/chart/${nseSym}.NS?interval=1d&range=${range}`,
               { headers: { "User-Agent": UA, "Accept": "application/json" } }
             ));
             if (r.ok) {
@@ -477,7 +482,7 @@ export default async function handler(req, res) {
       for (const host of ["query1", "query2"]) {
         try {
           const r = await tout(fetch(
-            `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${sym}.NS`,
+            `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${nseSym}.NS`,
             { headers: { "User-Agent": UA, "Accept": "application/json" } }
           ));
           if (r.ok) {
@@ -545,23 +550,29 @@ export default async function handler(req, res) {
     }
 
     // First try bulk Yahoo v7 fetch (gets all 6 in one request — most efficient)
+    // NSE_OVERRIDES maps logical key → actual NSE ticker (e.g. KOTAKGOLD → GOLD1)
     const etfRaw = {}, etfPrevRaw = {};
     try {
-      const symbols = ETF_SYMS.map(s => s + ".NS").join(",");
+      // Build list of actual NSE tickers, applying overrides
+      const nseSymbols = ETF_SYMS.map(s => (NSE_OVERRIDES[s] || s) + ".NS").join(",");
+      // Reverse map: actual NSE ticker → logical key
+      const nseToKey = {};
+      ETF_SYMS.forEach(s => { nseToKey[NSE_OVERRIDES[s] || s] = s; });
       for (const host of ["query1", "query2"]) {
         try {
           const r = await tout(fetch(
-            `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`,
+            `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${nseSymbols}`,
             { headers: { "User-Agent": UA, "Accept": "application/json" } }
           ), 10000);
           if (r.ok) {
             const d = await r.json();
             const quotes = d?.quoteResponse?.result || [];
             for (const q of quotes) {
-              const sym = q.symbol?.replace(".NS", "");
-              if (sym && ETF_SYMS.includes(sym) && q.regularMarketPrice > 0) {
-                etfRaw[sym] = q.regularMarketPrice;
-                if (q.regularMarketPreviousClose > 0) etfPrevRaw[sym] = q.regularMarketPreviousClose;
+              const nseTicker = q.symbol?.replace(".NS", "");
+              const key = nseToKey[nseTicker];
+              if (key && q.regularMarketPrice > 0) {
+                etfRaw[key] = q.regularMarketPrice;
+                if (q.regularMarketPreviousClose > 0) etfPrevRaw[key] = q.regularMarketPreviousClose;
               }
             }
             if (Object.keys(etfRaw).length >= 4) break; // got enough, stop trying other host
