@@ -307,7 +307,7 @@
               <div class="dual-rate-col-title">International Spot → INR</div>
               <span class="source-badge calc-src" id="intlSourceBadge">CALCULATED</span>
             </div>
-            <div style="font-size:11px;font-family:var(--mono);letter-spacing:0.07em;margin-bottom:6px;font-weight:600;color:var(--gold-bright);">999 · 24K · Rs./gram</div>
+            <div style="font-size:11px;font-family:var(--mono);letter-spacing:0.07em;margin-bottom:6px;font-weight:600;color:#ffffff;">999 · 24K · Rs./gram</div>
             <div class="dual-rate-main" id="intl-24k">--</div>
             <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val intl-sub" id="intl-995">--</div></div>
@@ -323,7 +323,7 @@
               <div class="dual-rate-col-title">India Gold Rate</div>
               <span class="source-badge calc-src" id="ibjaLiveBadge">LOADING</span>
             </div>
-            <div style="font-size:11px;font-family:var(--mono);letter-spacing:0.07em;margin-bottom:6px;font-weight:600;color:var(--inr-color);">999 · 24K · Rs./gram</div>
+            <div style="font-size:11px;font-family:var(--mono);letter-spacing:0.07em;margin-bottom:6px;font-weight:600;color:#ffffff;">999 · 24K · Rs./gram</div>
             <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
             <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val" id="ibja995">--</div></div>
@@ -801,8 +801,9 @@
 
   function selectEtfHistory(symbol) { const sel = document.getElementById("etfHistSelect"); if (sel) sel.value = symbol; renderHistChart(symbol); }
 
-  function renderETFNavs(baseRate, serverNavs, sparklines, navRaw, intlSpot) {
+  function renderETFNavs(baseRate, serverNavs, sparklines, navRaw, intlSpot, etfTrackingMap) {
     _etfSparklines = sparklines || {};
+    etfTrackingMap = etfTrackingMap || {};
     const grid = document.getElementById("etfGrid");
     const results = ETF_LIST.map(etf => {
       const unitNav      = navRaw?.[etf.symbol] > 0 ? navRaw[etf.symbol] : 0;
@@ -812,12 +813,24 @@
       // India import duty premium over international spot (same for all ETFs, shown for info)
       const dutyPremium = intlSpot > 0 ? gramRate - intlSpot : null;
       const dutyPct     = intlSpot > 0 ? ((dutyPremium / intlSpot) * 100).toFixed(1) : null;
-      return { ...etf, unitNav, gramsPerUnit, gramRate, dutyPremium, dutyPct, live: !!(navRaw?.[etf.symbol] > 0) };
+      // Tracking deviation: ETF daily % vs gold daily % — negative = discount (buy signal)
+      const trackDev = etfTrackingMap[etf.symbol] != null ? etfTrackingMap[etf.symbol] : null;
+      return { ...etf, unitNav, gramsPerUnit, gramRate, dutyPremium, dutyPct, trackDev, live: !!(navRaw?.[etf.symbol] > 0) };
     });
-    // BEST VALUE = lowest TER — per-gram cost is mathematically identical for all Gold ETFs
-    const minExpense = Math.min(...results.map(e => e.expense));
+
+    // BEST VALUE logic: ETF with most negative tracking deviation = biggest discount to gold's move = best buy
+    // Fall back to lowest TER if no tracking data available
+    const tracked = results.filter(e => e.trackDev != null);
+    let bestSym;
+    if (tracked.length > 0) {
+      bestSym = tracked.reduce((best, e) => e.trackDev < best.trackDev ? e : best, tracked[0]).symbol;
+    } else {
+      const minExpense = Math.min(...results.map(e => e.expense));
+      bestSym = results.find(e => e.expense === minExpense)?.symbol;
+    }
+
     grid.innerHTML = results.map(e => {
-      const isBest = e.expense === minExpense;
+      const isBest = e.symbol === bestSym;
       const hasSp  = _etfSparklines[e.symbol]?.["1y"]?.length >= 2;
       const navStr  = e.unitNav > 0
         ? `₹ ${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}`
@@ -826,12 +839,36 @@
       const premStr = e.dutyPremium != null
         ? `<span style="color:var(--orange)">${fmt(e.dutyPremium)} (+${e.dutyPct}%)</span>`
         : `<span style="color:var(--muted)">—</span>`;
+
+      // Tracking deviation display
+      let trackHTML = "";
+      if (e.trackDev != null) {
+        const pct = (e.trackDev * 100).toFixed(2);
+        const isDiscount = e.trackDev <= 0;
+        const arrow  = isDiscount ? "▼" : "▲";
+        const clr    = isDiscount ? "var(--green)" : "var(--orange)";
+        const label  = isDiscount ? "discount to gold" : "premium over gold";
+        const absPct = Math.abs(parseFloat(pct)).toFixed(2);
+        trackHTML = `<div class="dual-rate-sub-box" style="margin-top:6px;width:100%;box-sizing:border-box;">
+          <div class="dual-rate-sub-label">Today vs Gold Move</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${clr};margin-top:2px;white-space:nowrap;">
+            ${arrow} ${absPct}% ${label}
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${isDiscount?"ETF lagging gold → buy opportunity":"ETF ahead of gold → wait"}</div>
+        </div>`;
+      } else {
+        trackHTML = `<div class="dual-rate-sub-box" style="margin-top:6px;width:100%;box-sizing:border-box;">
+          <div class="dual-rate-sub-label">India Duty Premium vs Intl</div>
+          <div style="font-family:var(--mono);font-size:12px;font-weight:700;margin-top:2px;">${premStr}</div>
+        </div>`;
+      }
+
       return `<div class="retailer-card ${isBest?"best-buy":""}" style="cursor:${hasSp?"pointer":"default"}" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
-        ${isBest?'<div class="retailer-best-badge">Best Value</div>':""}
+        ${isBest?'<div class="retailer-best-badge">Best Buy Today</div>':""}
         <div class="retailer-logo">${e.emoji}</div>
         <div class="retailer-name">${e.name}</div>
         <div class="retailer-type">${e.fund}</div>
-        <div class="purity-pill">999 · 24K · NSE/BSE</div>
+        <div class="purity-pill" style="white-space:nowrap;">999 · 24K · NSE/BSE</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;width:100%;">
           <div class="dual-rate-sub-box">
             <div class="dual-rate-sub-label">Unit NAV</div>
@@ -844,10 +881,7 @@
             <div style="font-size:10px;color:var(--muted);margin-top:2px;">+0.1% brokerage</div>
           </div>
         </div>
-        <div class="dual-rate-sub-box" style="margin-top:6px;width:100%;box-sizing:border-box;">
-          <div class="dual-rate-sub-label">India Duty Premium vs Intl</div>
-          <div style="font-family:var(--mono);font-size:12px;font-weight:700;margin-top:2px;">${premStr}</div>
-        </div>
+        ${trackHTML}
         <div style="font-size:11px;font-family:var(--mono);font-weight:600;color:var(--gold);text-align:center;margin-top:8px;">TER ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div>
         <div style="font-size:10px;font-family:var(--mono);color:var(--muted);text-align:center;margin-top:2px;letter-spacing:0.04em;">${e.symbol}</div>
         <div style="margin-top:5px;">${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
@@ -862,12 +896,30 @@
   // -------------------------------------------------------
   // TRAFFIC LIGHT (24K coin vs digital vs ETF)
   // -------------------------------------------------------
-  function buildTrafficLight(india24, etfNavs) {
+  function buildTrafficLight(india24, etfNavs, etfTrackingMap) {
+    etfTrackingMap = etfTrackingMap || {};
     const bestEtf  = Math.min(...Object.values(etfNavs).filter(v => v > 0));
     const etfEntry = bestEtf * 1.001;                         // 0.1% brokerage, zero GST
     const digi     = india24 * 1.01 * 1.03;                   // cheapest digital: MMTC-PAMP 1% spread + 3% GST
     const phys24   = india24 * 1.007 * 1.03;                  // cheapest physical: MALABAR GOLD 0.7% coin premium + 3% GST
     const now = new Date(), mktOpen = now.getHours() >= 9 && now.getHours() < 16;
+
+    // Determine best ETF name from tracking map (most negative = biggest discount = best buy today)
+    const tracked = Object.entries(etfTrackingMap);
+    let bestEtfSym = null, bestEtfName = "GOLDBEES / HDFCMFGETF", bestEtfTrack = null;
+    if (tracked.length > 0) {
+      const [sym, dev] = tracked.reduce((best, cur) => cur[1] < best[1] ? cur : best, tracked[0]);
+      bestEtfSym   = sym;
+      bestEtfTrack = dev;
+      // Look up friendly name from ETF_LIST
+      const found = ETF_LIST.find(e => e.symbol === sym);
+      if (found) bestEtfName = found.name;
+    }
+
+    const trackVerdict = bestEtfTrack != null
+      ? `<strong>${bestEtfName}</strong> is trading at a <span style="color:var(--green)">${Math.abs(bestEtfTrack*100).toFixed(2)}% discount to gold's intraday move</span> — best buy signal today.`
+      : `<strong>GOLDBEES or HDFCMFGETF</strong> are the smartest entry points today (tracking data loading…).`;
+
     // Fixed order: Red (worst) → Orange (middle) → Green (best)
     const opts = [
       { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP",  price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  desc: ["3% GST on purchase", "0.7–1.5% coin premium over IBJA", "Instant physical possession", "Best for gifts & long-term holding"] },
@@ -891,8 +943,8 @@
         <div class="tl-verdict-label">Today's Recommendation</div>
         <div class="tl-verdict-text"><ul style="margin:4px 0 0 16px;padding:0;line-height:1.7;">
           <li><strong>Gold ETF saves ${fmt(sav)}/g (${savPct}%)</strong> vs physical coin at best-case prices.</li>
-          <li>For holding periods over 2 years, <strong>GOLDBEES or HDFCMFGETF are the smartest entry points today</strong>.</li>
-          <li>Full 999.9 purity, instant NSE/BSE liquidity, zero storage cost.</li>
+          <li>${trackVerdict}</li>
+          <li>Full 999 purity, instant NSE/BSE liquidity, zero storage cost.</li>
         </ul></div>
       </div>`;
     document.getElementById("tlUpdated").textContent = "updated " + timeStr(null);
@@ -953,7 +1005,14 @@
     //   → % change reflects India rate relative to international history (shows duty-premium effect)
     if (tabKey === "1d") {
       const mPts = _heroHistSparklines?.["1m"] || _heroHistSparklines?.["1w"];
-      if (mPts && mPts.length >= 2) past = mPts[mPts.length - 2].v;
+      if (mPts && mPts.length >= 2) {
+        // If the last candle's timestamp is within the last 28 hours it IS today's session
+        // (live or just-completed) → prior session close = second-to-last point.
+        // If it's older (market closed, data not refreshed) → last point IS prior session close.
+        const lastTs = mPts[mPts.length - 1].t;
+        const isToday = lastTs && (Date.now() - lastTs * 1000) < 28 * 60 * 60 * 1000;
+        past = isToday ? mPts[mPts.length - 2].v : mPts[mPts.length - 1].v;
+      }
     } else {
       const pts = _heroHistSparklines?.[cfg.rangeKey] || _heroHistSparklines?.[cfg.fallback];
       if (pts && pts.length >= 2) past = pts[0].v;
@@ -982,9 +1041,12 @@
     const current = _silverHistCurrentPrice;
     let past = null;
     if (tabKey === "1d") {
-      // Use 1-month daily data: second-to-last point = previous trading day close
       const wPts = _silverHistSparklines?.["1m"] || _silverHistSparklines?.["1w"];
-      if (wPts && wPts.length >= 2) past = wPts[wPts.length - 2].v;
+      if (wPts && wPts.length >= 2) {
+        const lastTs = wPts[wPts.length - 1].t;
+        const isToday = lastTs && (Date.now() - lastTs * 1000) < 28 * 60 * 60 * 1000;
+        past = isToday ? wPts[wPts.length - 2].v : wPts[wPts.length - 1].v;
+      }
     } else {
       const pts = _silverHistSparklines?.[cfg.rangeKey] || _silverHistSparklines?.[cfg.fallback];
       if (pts && pts.length >= 2) past = pts[0].v;
@@ -1092,8 +1154,23 @@
       // --- Gold: Retailers & ETFs ---
       buildPhysicalRetailers(india24);
       buildDigitalPlatforms(india24, data.digitalGoldPrices);
-      const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfSparklines, data.etfNavRaw, calc24k);
-      buildTrafficLight(india24, etfNavsForTL);
+      // Gold daily % move (international spot): first point in 1d history ≈ yesterday's close
+      const goldHist1d = data.goldHistory?.["1d"] || [];
+      const goldPrevClose = goldHist1d.length >= 2 ? goldHist1d[0].v : null;
+      const goldDailyPct  = goldPrevClose ? (calc24k - goldPrevClose) / goldPrevClose : null;
+
+      // Per-ETF daily % move vs gold — the gap is the discount/premium signal
+      const etfTrackingMap = {};
+      for (const sym of Object.keys(data.etfNavRaw || {})) {
+        const live = data.etfNavRaw[sym];
+        const prev = data.etfPrevRaw?.[sym];
+        if (live > 0 && prev > 0 && goldDailyPct != null) {
+          const etfDailyPct = (live - prev) / prev;
+          etfTrackingMap[sym] = etfDailyPct - goldDailyPct; // negative = discount, positive = premium
+        }
+      }
+      const etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfSparklines, data.etfNavRaw, calc24k, etfTrackingMap);
+      buildTrafficLight(india24, etfNavsForTL, etfTrackingMap);
 
       // --- Gold: History panel ---
       // Use calc24k (international spot) as current since history data is also international spot.
