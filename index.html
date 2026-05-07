@@ -89,7 +89,7 @@
     .v-inr { color:var(--inr-color); } .v-usd { color:var(--usd-color); } .v-aed { color:var(--aed-color); }
     .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:14px; }
     .dual-rate-sub-label { font-size:10px; color:var(--muted); font-family:var(--mono); margin-bottom:4px; letter-spacing:0.05em; }
-    .dual-rate-sub-val   { font-family:var(--mono); font-size:17px; font-weight:600; color:var(--inr-color); }
+    .dual-rate-sub-val   { font-family:var(--mono); font-size:17px; font-weight:600; color:var(--inr-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .dual-rate-sub-val.intl-sub { color:var(--gold-bright); }
     .dual-rate-formula   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px 14px; font-family:var(--mono); font-size:14px; color:rgba(255,255,255,0.6); line-height:2; margin-top:14px; }
     .dual-rate-stale     { background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--yellow); line-height:1.6; margin-top:12px; }
@@ -137,9 +137,9 @@
     .tl-rank.orange { background:rgba(249,115,22,0.15); color:var(--orange); border:1px solid rgba(249,115,22,0.3); }
     .tl-rank.red    { background:rgba(239,68,68,0.15);  color:var(--red);    border:1px solid rgba(239,68,68,0.3); }
     .tl-verdict { grid-column:1/-1; background:rgba(212,168,83,0.06); border:1px solid rgba(212,168,83,0.2); border-radius:10px; padding:14px 18px; }
-    .tl-verdict-label { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); margin-bottom:6px; }
-    .tl-verdict-text { font-size:14px; color:var(--text); line-height:1.55; }
-    .tl-verdict-text strong { color:var(--gold); }
+    .tl-verdict-label { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-family:var(--mono); font-weight:700; margin-bottom:8px; }
+    .tl-verdict-text { font-size:15px; color:var(--text); line-height:1.65; font-weight:500; }
+    .tl-verdict-text strong { color:var(--gold); font-size:16px; }
     .dubai-callout { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:rgba(224,120,40,0.08); border:1px solid rgba(224,120,40,0.22); border-radius:10px; padding:10px 16px; margin-top:14px; font-size:13px; font-family:var(--mono); }
     .dubai-callout-flag { font-size:18px; flex-shrink:0; }
     .dubai-callout-text { color:var(--text); flex:1; min-width:200px; }
@@ -180,6 +180,8 @@
     .hero-hist-tab { flex-shrink:0; padding:9px 16px; font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; transition:all 0.2s; }
     .hero-hist-tab:hover { color:var(--text); }
     .hero-hist-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .hist-mode-btn { border:1px solid var(--border) !important; border-radius:4px; margin:4px 2px; padding:4px 10px !important; font-size:10px !important; }
+    .hist-mode-btn.active-mode { color:var(--gold) !important; border-color:var(--gold) !important; background:rgba(212,168,83,0.1); }
     body.silver-mode .hero-hist-tab.active { color:var(--silver); border-bottom-color:var(--silver); }
     .hero-hist-body { display:grid; grid-template-columns:repeat(4,1fr); gap:0; }
     .hero-hist-cell { padding:14px 18px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
@@ -247,9 +249,12 @@
       .dual-rate-col:first-child { border-right:none; border-bottom:1px solid var(--border); }
       .dual-rate-col { padding:16px 18px; }
       .dual-rate-main { font-size:28px; }
+      .dual-rate-sub-val { font-size:13px; }
+      .dual-rate-sub-grid { gap:6px; }
       .retailer-grid { grid-template-columns:repeat(2,1fr) !important; }
     }
     @media (max-width:480px) {
+      .dual-rate-sub-val { font-size:12px; }
       .retailer-grid { grid-template-columns:1fr 1fr; }
       #etfGrid { grid-template-columns:1fr 1fr !important; }
       .dxb-fx-strip { grid-template-columns:1fr; }
@@ -275,7 +280,7 @@
           <div class="logo-main-line">
             <span class="logo-rate">rateof</span><span class="logo-dot">.</span><span class="logo-gold-word" id="logoTld">gold</span>
           </div>
-          <div class="logo-tagline">Real-time Price Comparisons</div>
+          <div class="logo-tagline">The Smarter Way to Buy Gold</div>
         </div>
       </a>
       <div class="header-right">
@@ -330,6 +335,13 @@
           </div>
         </div>
 
+        <!-- Dubai callout strip — between price boxes and history -->
+        <div class="dubai-callout" id="dubaiCallout" style="display:none;">
+          <span class="dubai-callout-flag">🇦🇪</span>
+          <span class="dubai-callout-text">Dubai 24K ≈ <strong id="dubaiCalloutRate">--</strong>/g &nbsp;·&nbsp; <strong id="dubaiCalloutSave" id="dubaiCalloutSave">--</strong>/g (<span id="dubaiCalloutPct">--</span>%) <span id="dubaiCalloutDir">cheaper</span> than India</span>
+          <a class="dubai-callout-link" href="#dubai-section">Full comparison ↓</a>
+        </div>
+
         <!-- Gold History Panel -->
         <div class="hero-hist-panel" id="heroHistPanel" style="display:none;">
           <div class="hero-hist-tabs">
@@ -342,20 +354,17 @@
             <button class="hero-hist-tab" onclick="showHistTab('3y',this)">3 Years</button>
             <button class="hero-hist-tab" onclick="showHistTab('5y',this)">5 Years</button>
             <button class="hero-hist-tab" onclick="showHistTab('ytd',this)">YTD</button>
+            <span style="width:1px;background:var(--border);margin:6px 4px;flex-shrink:0;"></span>
+            <button class="hero-hist-tab hist-mode-btn active-mode" id="histModeInt" onclick="setHistMode('int',this)">INT</button>
+            <button class="hero-hist-tab hist-mode-btn" id="histModeInd" onclick="setHistMode('ind',this)">IND</button>
           </div>
-          <div style="padding:6px 14px 0;font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.04em;">
-            📊 International Spot price (XAU) · converted to ₹/gram at live USD/INR
+          <div style="padding:6px 14px 0;font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.04em;" id="histModeLabel">
+            📊 International Spot (XAU/USD → ₹/gram)
           </div>
           <div class="hero-hist-body" id="heroHistBody"></div>
         </div>
       </div>
 
-      <!-- Dubai callout strip -->
-      <div class="dubai-callout" id="dubaiCallout" style="display:none;">
-        <span class="dubai-callout-flag">🇦🇪</span>
-        <span class="dubai-callout-text">Dubai 24K ≈ <strong id="dubaiCalloutRate">--</strong>/g &nbsp;·&nbsp; saves <strong id="dubaiCalloutSave" style="color:var(--green)">--</strong>/g (<span id="dubaiCalloutPct">--</span>%) vs India — no import duty locally</span>
-        <a class="dubai-callout-link" href="#dubai-section">See full comparison ↓</a>
-      </div>
 
       <!-- 24K Gold Coins & Bars — Physical Buy Rate -->
       <div class="section-title">24K Gold Coins &amp; Bars — Physical Buy Rate (incl. 3% GST)</div>
@@ -809,8 +818,8 @@
       const isBest = !allEqual && e.gramRate === minGram;
       const vsSpot = e.gramRate - baseRate;
       const vsPct  = ((vsSpot / baseRate) * 100).toFixed(2);
-      const dClr   = Math.abs(vsSpot) < 50 ? "var(--muted)" : vsSpot > 0 ? "var(--red)" : "var(--green)";
-      const dTxt   = Math.abs(vsSpot) < 50 ? "Near spot" : vsSpot > 0 ? `${fmt(vsSpot)} over spot (${vsPct}%)` : `${fmt(Math.abs(vsSpot))} under spot`;
+      const dClr   = Math.abs(vsSpot) < 50 ? "var(--gold)" : vsSpot > 0 ? "var(--red)" : "var(--green)";
+      const dTxt   = Math.abs(vsSpot) < 50 ? "≈ Near Spot" : vsSpot > 0 ? `▲ ${fmt(vsSpot)} over spot` : `▼ ${fmt(Math.abs(vsSpot))} under spot`;
       const hasSp  = _etfSparklines[e.symbol]?.["1y"]?.length >= 2;
       const unitNavLine   = e.unitNav > 0
         ? `<div class="etf-unit-nav">NAV ₹${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})} / unit</div>` : "";
@@ -824,7 +833,7 @@
         <div class="retailer-price">${fmt(e.gramRate)}</div>
         <div class="retailer-sub">${e.symbol} · ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div>
         ${unitNavLine}${gramsUnitLine}
-        <div style="font-size:10px;font-family:var(--mono);color:${dClr};text-align:center;margin-top:2px">${dTxt}</div>
+        <div style="font-size:12px;font-family:var(--mono);font-weight:700;color:${dClr};text-align:center;margin-top:5px;letter-spacing:0.02em;">${dTxt}</div>
         <div style="margin-top:4px">${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
         ${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em">tap for chart</div>':""}
       </div>`;
@@ -843,16 +852,17 @@
     const digi     = india24 * 1.01 * 1.03;                   // cheapest digital: MMTC-PAMP 1% spread + 3% GST
     const phys24   = india24 * 1.007 * 1.03;                  // cheapest physical: MALABAR GOLD 0.7% coin premium + 3% GST
     const now = new Date(), mktOpen = now.getHours() >= 9 && now.getHours() < 16;
+    // Fixed order: Red (worst) → Orange (middle) → Green (best)
     const opts = [
-      { name: "Gold ETF (999.9 · 24K)",        detail: "GOLDBEES / SETFGOLD / HDFCMFGETF",           price: etfEntry, color: "green",  rank: "#1 Best Entry",   desc: `Zero GST · 0.1% brokerage · 99.5%+ purity · LTCG 12.5% after 2yr · Demat needed${mktOpen?" · Markets OPEN":" · Markets closed"}` },
-      { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", rank: "#2 Moderate",     desc: "3% GST · 1-2% buy spread · ~0.5% annual storage · ₹1 minimum · Not SEBI regulated" },
-      { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP", price: phys24,   color: "red",    rank: "#3 Highest Cost", desc: "3% GST · 0.7-1.5% coin premium · Instant possession · Best for gifts & physical holding" },
-    ].sort((a, b) => a.price - b.price);
+      { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP",  price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  desc: "3% GST · 0.7–1.5% coin premium · Instant possession · Best for gifts & physical holding" },
+      { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      desc: "3% GST · 1–2% buy spread · ~0.5% annual storage · ₹1 minimum · Not SEBI regulated" },
+      { name: "Gold ETF (999.9 · 24K)",         detail: "GOLDBEES / SETFGOLD / HDFCMFGETF",          price: etfEntry, color: "green",  dot: "✓", rank: "Best Entry",     desc: `Zero GST · 0.1% brokerage · 99.5%+ purity · LTCG 12.5% after 2yr · Demat needed${mktOpen?" · Markets OPEN":" · Markets closed"}` },
+    ];
     const sav = phys24 - etfEntry, savPct = ((sav/phys24)*100).toFixed(1);
-    document.getElementById("tlBody").innerHTML = opts.map((opt, i) => `
+    document.getElementById("tlBody").innerHTML = opts.map(opt => `
       <div class="tl-row tl-${opt.color}">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div class="tl-dot ${opt.color}">${i===0?"✓":i===1?"~":"×"}</div>
+          <div class="tl-dot ${opt.color}">${opt.dot}</div>
           <div class="tl-option-name ${opt.color}">${opt.name}<span class="tl-rank ${opt.color}">${opt.rank}</span></div>
         </div>
         <div class="tl-content">
@@ -876,6 +886,20 @@
   // GOLD HISTORY PANEL
   // -------------------------------------------------------
   let _heroHistSparklines = null, _heroHistCurrentPrice = null;
+  let _histMode = "int";   // "int" = international spot, "ind" = India gold rate (ibja-adjusted)
+  let _histIbjaFactor = 1; // ibja24k / calc24k — applied to int data to estimate India rates
+  let _histActiveTab  = "1d";
+
+  function setHistMode(mode, btn) {
+    _histMode = mode;
+    document.querySelectorAll(".hist-mode-btn").forEach(b => b.classList.remove("active-mode"));
+    if (btn) btn.classList.add("active-mode");
+    const label = document.getElementById("histModeLabel");
+    if (label) label.textContent = mode === "int"
+      ? "📊 International Spot (XAU/USD → ₹/gram)"
+      : "📊 India Gold Rate (IBJA · estimated for history)";
+    showHistTab(_histActiveTab, document.querySelector(".hero-hist-tab.active"));
+  }
   const HIST_TAB_CONFIG = {
     "1d":  { rangeKey: "1d",  fallback: "1w",  label: "vs prior session" },
     "1w":  { rangeKey: "1w",  fallback: "1m",  label: "vs 1 week ago"   },
@@ -888,28 +912,32 @@
     "ytd": { rangeKey: "ytd", fallback: "1y",  label: "year-to-date"    },
   };
 
-  function buildHeroHistPanel(india24, goldHistory) {
+  function buildHeroHistPanel(calc24k, ibja24k, goldHistory) {
     _heroHistSparklines   = goldHistory || {};
-    _heroHistCurrentPrice = india24;
+    // Store both: international current and ibja factor to derive india history
+    _histIbjaFactor       = (calc24k > 0 && ibja24k > 0) ? ibja24k / calc24k : 1;
+    _heroHistCurrentPrice = calc24k;   // base always international; mode applies factor
     if (!goldHistory || Object.keys(goldHistory).length === 0) return;
     document.getElementById("heroHistPanel").style.display = "block";
     showHistTab("1d", document.querySelector(".hero-hist-tab.active"));
   }
 
   function showHistTab(tabKey, btn) {
-    document.querySelectorAll("#heroHistPanel .hero-hist-tab").forEach(b => b.classList.remove("active"));
-    if (btn) btn.classList.add("active");
+    document.querySelectorAll("#heroHistPanel .hero-hist-tab:not(.hist-mode-btn)").forEach(b => b.classList.remove("active"));
+    if (btn && !btn.classList.contains("hist-mode-btn")) btn.classList.add("active");
+    _histActiveTab = tabKey;
     if (!_heroHistCurrentPrice) return;
+    const factor  = _histMode === "ind" ? _histIbjaFactor : 1;
     const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
-    const current = _heroHistCurrentPrice;
+    const current = _heroHistCurrentPrice * factor;
     let past = null;
     if (tabKey === "1d") {
       // Use 1-month daily data: second-to-last point = previous trading day close
       const mPts = _heroHistSparklines?.["1m"] || _heroHistSparklines?.["1w"];
-      if (mPts && mPts.length >= 2) past = mPts[mPts.length - 2].v;
+      if (mPts && mPts.length >= 2) past = mPts[mPts.length - 2].v * factor;
     } else {
       const pts = _heroHistSparklines?.[cfg.rangeKey] || _heroHistSparklines?.[cfg.fallback];
-      if (pts && pts.length >= 2) past = pts[0].v;
+      if (pts && pts.length >= 2) past = pts[0].v * factor;
     }
     renderHistCells("heroHistBody", tabKey, cfg, current, past);
   }
@@ -1051,7 +1079,7 @@
       // --- Gold: History panel ---
       // Use calc24k (international spot) as current since history data is also international spot.
       // Using ibja24k would inflate the % change by ~5% duty premium vs the history baseline.
-      buildHeroHistPanel(calc24k, data.goldHistory);
+      buildHeroHistPanel(calc24k, india24, data.goldHistory);
 
       // --- Dubai ---
       document.getElementById("dxb-usd-inr").textContent       = "₹ " + usdInr.toFixed(2);
@@ -1072,16 +1100,22 @@
       const spreadDir = spread >= 0 ? "India" : "Dubai";
       document.getElementById("ds-spreadpct").textContent = spreadDir + " rate higher by " + fmt(Math.abs(spread)) + "/g · " + Math.abs(spreadPct) + "%";
 
-      // --- Dubai callout strip (below hero) ---
+      // --- Dubai callout strip (inside hero, between price boxes and history) ---
       const callout = document.getElementById("dubaiCallout");
       if (callout && dubai24Inr > 0 && india24 > 0) {
-        const saving = india24 - dubai24Inr;
-        if (saving > 0) {
-          document.getElementById("dubaiCalloutRate").textContent = fmt(dubai24Inr);
-          document.getElementById("dubaiCalloutSave").textContent = fmt(saving);
-          document.getElementById("dubaiCalloutPct").textContent  = ((saving / india24) * 100).toFixed(1);
-          callout.style.display = "flex";
-        }
+        const diff    = india24 - dubai24Inr;  // positive = Dubai cheaper, negative = Dubai costlier
+        const diffAbs = Math.abs(diff);
+        const pct     = (diffAbs / india24 * 100).toFixed(1);
+        const cheaper = diff > 0;
+        const saveEl  = document.getElementById("dubaiCalloutSave");
+        const dirEl   = document.getElementById("dubaiCalloutDir");
+        document.getElementById("dubaiCalloutRate").textContent = fmt(dubai24Inr);
+        saveEl.textContent = fmt(diffAbs);
+        saveEl.style.color = cheaper ? "var(--green)" : "var(--red)";
+        document.getElementById("dubaiCalloutPct").textContent  = pct;
+        dirEl.textContent  = cheaper ? "cheaper" : "costlier";
+        dirEl.style.color  = cheaper ? "var(--green)" : "var(--red)";
+        callout.style.display = "flex";
       }
 
       // --- Silver section ---
