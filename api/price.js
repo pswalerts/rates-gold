@@ -846,7 +846,8 @@ export default async function handler(req, res) {
       ibja22k,
       ibja995,
       etfNavs,
-      etfNavRaw:      { ...etfRaw },   // raw unit NAV price (Rs./unit) for grams-per-unit calc
+      etfNavRaw:      { ...etfRaw },     // raw unit NAV price (Rs./unit) — live market price per unit
+      etfPrevRaw:     { ...etfPrevRaw }, // previous close unit price — used to compute ETF daily move vs gold
       etfPrevClose,
       etfSparklines,
       digitalGoldPrices,               // { mmtcPamp, augmont, safegold, paytm } — null = use formula
