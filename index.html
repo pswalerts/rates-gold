@@ -87,9 +87,9 @@
     .etf-unit-nav   { font-family:var(--mono); font-size:10px; color:var(--usd-color); margin-top:3px; }
     .etf-grams-unit { font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:1px; }
     .v-inr { color:var(--inr-color); } .v-usd { color:var(--usd-color); } .v-aed { color:var(--aed-color); }
-    .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:14px; }
-    .dual-rate-sub-label { font-size:11px; color:var(--text); font-family:var(--mono); margin-bottom:5px; letter-spacing:0.07em; font-weight:600; text-transform:uppercase; }
-    .dual-rate-sub-val   { font-family:var(--mono); font-size:15px; font-weight:700; color:var(--inr-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:14px; }
+    .dual-rate-sub-label { font-size:10px; color:var(--text); font-family:var(--mono); margin-bottom:4px; letter-spacing:0.06em; font-weight:600; text-transform:uppercase; }
+    .dual-rate-sub-val   { font-family:var(--mono); font-size:13px; font-weight:700; color:var(--inr-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .dual-rate-sub-box   { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:8px 10px; }
     .dual-rate-sub-val.intl-sub { color:var(--gold-bright); }
     .dual-rate-formula   { background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:8px; padding:9px 14px; font-family:var(--mono); font-size:12px; color:rgba(255,255,255,0.55); line-height:1.4; margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
@@ -356,7 +356,7 @@
             <button class="hero-hist-tab" onclick="showHistTab('ytd',this)">YTD</button>
             <div style="width:1px;background:var(--border);margin:6px 4px;flex-shrink:0;"></div>
             <div class="hist-toggle-wrap">
-              <button class="hist-toggle-btn active-int" id="histModeInt" onclick="setHistMode('int',this)">INT</button>
+              <button class="hist-toggle-btn active-int" id="histModeInt" onclick="setHistMode('int',this)">IN</button>
               <button class="hist-toggle-btn" id="histModeInd" onclick="setHistMode('ind',this)">IND</button>
             </div>
           </div>
@@ -867,9 +867,9 @@
             <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);white-space:nowrap;">${navStr}</div>
             <div style="font-size:10px;color:var(--muted);margin-top:2px;">${gpuStr} / unit</div>
           </div>
-          <div class="dual-rate-sub-box">
+          <div class="dual-rate-sub-box" style="overflow:hidden;">
             <div class="dual-rate-sub-label">Per Gram</div>
-            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);white-space:nowrap;">${fmt(e.gramRate)}</div>
+            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${fmt(e.gramRate)}</div>
             <div style="font-size:10px;color:var(--muted);margin-top:2px;">+0.1% brokerage</div>
           </div>
         </div>
@@ -879,8 +879,8 @@
             <span style="font-size:10px;font-family:var(--mono);color:var(--gold);">TER ${(e.expense*100).toFixed(2)}% · ${e.aum}</span>
             <span style="font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:0.04em;">${e.symbol}</span>
           </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:5px;">
-            ${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+            ${e.live?'<span class="etf-live-badge" style="margin-top:0;">NSE LIVE</span>':'<span class="etf-calc-badge" style="margin-top:0;">est.</span>'}
             ${hasSp?'<span style="font-size:9px;font-family:var(--mono);color:var(--muted);letter-spacing:.04em;">tap for chart ↓</span>':""}
           </div>
         </div>
@@ -964,8 +964,8 @@
     const label = document.getElementById("histModeLabel");
     const premPct = _histIbjaFactor > 1 ? ((_histIbjaFactor - 1) * 100).toFixed(1) : "~5";
     if (label) label.innerHTML = mode === "int"
-      ? `<span style="color:var(--green)">📊 International Spot (XAU/USD → ₹/gram · no import duty)</span>`
-      : `<span style="color:var(--inr-color)">📊 India Gold Rate (IBJA · duty-adjusted · +${premPct}% premium over spot)</span>`;
+      ? `<span style="color:var(--green)">📊 International Spot (XAU/USD → ₹/gram) — historical % performance</span>`
+      : `<span style="color:var(--inr-color)">📊 India Gold Rate (IBJA · duty-adjusted · +${premPct}% over spot) — 24K / 22K / 18K breakdown</span>`;
     showHistTab(_histActiveTab, document.querySelector("#heroHistPanel .hero-hist-tab.active"));
   }
   const HIST_TAB_CONFIG = {
@@ -995,26 +995,29 @@
     if (btn && !btn.classList.contains("hist-mode-btn")) btn.classList.add("active");
     _histActiveTab = tabKey;
     if (!_heroHistCurrentPrice) return;
-    const factor  = _histMode === "ind" ? _histIbjaFactor : 1;
+
+    // IND mode: show India price breakdown panel — not time-series (we have no historical IBJA data)
+    if (_histMode === "ind") {
+      renderIndSpreadPanel("heroHistBody");
+      return;
+    }
+
+    // IN (international) mode: time-based % comparison (pure XAU/USD → INR movement)
     const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
-    const current = _heroHistCurrentPrice * factor;
+    const current = _heroHistCurrentPrice;
     let past = null;
-    // Both INT and IND apply the SAME factor to current AND past so the % change reflects
-    // pure gold price movement. IND mode shows higher absolute prices (IBJA level) but
-    // the same % as INT — IBJA tracks international gold with a fixed duty premium.
     if (tabKey === "1d") {
       const mPts = _heroHistSparklines?.["1m"] || _heroHistSparklines?.["1w"];
       if (mPts && mPts.length >= 2) {
-        // If the last candle's timestamp is within the last 28 hours it IS today's session
-        // (live or just-completed) → prior session close = second-to-last point.
-        // If it's older (market closed, data not refreshed) → last point IS prior session close.
+        // Last candle within 28h = today's live session → prior session = second-to-last
+        // Otherwise data is stale/closed → last point IS prior session close
         const lastTs = mPts[mPts.length - 1].t;
         const isToday = lastTs && (Date.now() - lastTs * 1000) < 28 * 60 * 60 * 1000;
-        past = (isToday ? mPts[mPts.length - 2].v : mPts[mPts.length - 1].v) * factor;
+        past = isToday ? mPts[mPts.length - 2].v : mPts[mPts.length - 1].v;
       }
     } else {
       const pts = _heroHistSparklines?.[cfg.rangeKey] || _heroHistSparklines?.[cfg.fallback];
-      if (pts && pts.length >= 2) past = pts[0].v * factor;
+      if (pts && pts.length >= 2) past = pts[0].v;
     }
     renderHistCells("heroHistBody", tabKey, cfg, current, past);
   }
@@ -1030,6 +1033,28 @@
     if (!silverHistory || Object.keys(silverHistory).length === 0) return;
     document.getElementById("silverHistPanel").style.display = "block";
     showSilverHistTab("1d", document.querySelector("#silverHistPanel .hero-hist-tab.active"));
+  }
+
+  // IND mode panel: India price breakdown — 24K IBJA, import premium, 22K, 18K
+  function renderIndSpreadPanel(bodyId) {
+    const bodyEl = document.getElementById(bodyId);
+    if (!bodyEl || !_heroHistCurrentPrice || _histIbjaFactor <= 0) return;
+    const intl  = _heroHistCurrentPrice;
+    const ibja  = intl * _histIbjaFactor;
+    const prem  = ibja - intl;
+    const premP = (prem / intl * 100).toFixed(1);
+    const cells = [
+      { label: "India 24K Rate (IBJA)",    val: fmt(ibja),         chg: null },
+      { label: "Import Premium vs Spot",   val: `+${fmt(prem)}`,   chg: "up", chgTxt: `+${premP}% over international` },
+      { label: "India 22K (916 Hallmark)", val: fmt(ibja * 0.916), chg: null },
+      { label: "India 18K (750 Hallmark)", val: fmt(ibja * 0.75),  chg: null },
+    ];
+    bodyEl.innerHTML = cells.map(c => `
+      <div class="hero-hist-cell">
+        <div class="hero-hist-clabel">${c.label}</div>
+        <div class="hero-hist-cval ${c.chg?("hero-hist-cchg "+c.chg):""}" style="font-size:${c.chg?"18px":"15px"}">${c.val}</div>
+        ${c.chg?`<div class="hero-hist-cchg ${c.chg}">${c.chgTxt}</div>`:""}
+      </div>`).join("");
   }
 
   function showSilverHistTab(tabKey, btn) {
