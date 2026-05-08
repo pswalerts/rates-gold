@@ -840,55 +840,56 @@
         ? `<span style="color:var(--orange)">${fmt(e.dutyPremium)} (+${e.dutyPct}%)</span>`
         : `<span style="color:var(--muted)">—</span>`;
 
-      // Tracking deviation display — only shown when live data available
+      // Tracking pill — slim single line, colour-coded
       let trackHTML = "";
       if (e.trackDev != null) {
         const isDiscount = e.trackDev <= 0;
-        const arrow  = isDiscount ? "▼" : "▲";
-        const clr    = isDiscount ? "var(--green)" : "var(--orange)";
+        const arrow = isDiscount ? "▼" : "▲";
+        const clr   = isDiscount ? "var(--green)" : "var(--orange)";
+        const bg    = isDiscount ? "rgba(34,197,94,0.07)" : "rgba(249,115,22,0.07)";
+        const bdr   = isDiscount ? "rgba(34,197,94,0.22)" : "rgba(249,115,22,0.22)";
         const absPct = Math.abs(e.trackDev * 100).toFixed(2);
-        const subTxt = isDiscount ? "ETF lagging gold · buy opportunity" : "ETF ahead of gold · wait";
-        trackHTML = `<div class="dual-rate-sub-box" style="margin-top:6px;width:100%;box-sizing:border-box;">
-          <div class="dual-rate-sub-label">Today vs Gold Move</div>
-          <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${clr};margin-top:3px;">${arrow} ${absPct}% ${isDiscount?"discount":"premium"}</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${subTxt}</div>
+        const signal = isDiscount ? "buy signal" : "wait";
+        trackHTML = `<div style="width:100%;margin-top:7px;padding:5px 9px;background:${bg};border:1px solid ${bdr};border-radius:7px;font-family:var(--mono);font-size:10px;line-height:1.5;">
+          <div style="color:${clr};font-weight:700;">${arrow} ${absPct}% vs gold today · ${signal}</div>
+          <div style="color:var(--muted);margin-top:1px;">${isDiscount?"ETF lagging gold — buy opportunity":"ETF running ahead of gold — wait"}</div>
         </div>`;
       }
 
-      return `<div class="retailer-card ${isBest?"best-buy":""}" style="cursor:${hasSp?"pointer":"default"};min-height:0;overflow:hidden;" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
+      return `<div class="retailer-card ${isBest?"best-buy":""}" style="cursor:${hasSp?"pointer":"default"};min-height:0;overflow:hidden;gap:0;" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
         ${isBest?'<div class="retailer-best-badge">Best Buy Today</div>':""}
         <div class="retailer-logo">${e.emoji}</div>
-        <div class="retailer-name">${e.name}</div>
+        <div class="retailer-name" style="margin-top:4px;">${e.name}</div>
         <div class="retailer-type">${e.fund}</div>
-        <div class="purity-pill" style="white-space:nowrap;">999 · 24K · NSE/BSE</div>
-        <div style="display:flex;flex-direction:column;gap:5px;margin-top:10px;width:100%;">
-          <div class="dual-rate-sub-box" style="display:flex;align-items:center;justify-content:space-between;">
-            <div>
-              <div class="dual-rate-sub-label">Unit NAV</div>
-              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);">${navStr}</div>
-            </div>
-            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);text-align:right;">${gpuStr}<br>/ unit</div>
+        <div class="purity-pill" style="white-space:nowrap;margin-top:4px;">999 · 24K · NSE/BSE</div>
+
+        <!-- compact key-value stats — no inner boxes -->
+        <div style="width:100%;margin-top:10px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
+            <span style="color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">Unit NAV</span>
+            <span style="color:var(--inr-color);font-size:13px;font-weight:700;">${navStr}</span>
           </div>
-          <div class="dual-rate-sub-box" style="display:flex;align-items:center;justify-content:space-between;">
-            <div>
-              <div class="dual-rate-sub-label">Per Gram</div>
-              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);">${fmt(e.gramRate)}</div>
-            </div>
-            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);text-align:right;">+0.1%<br>brokerage</div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
+            <span style="color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">Per Gram</span>
+            <span style="color:var(--inr-color);font-size:13px;font-weight:700;">${fmt(e.gramRate)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <span style="color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">Gold / Unit</span>
+            <span style="color:var(--text);font-weight:500;">${gpuStr}</span>
           </div>
         </div>
+
         ${trackHTML}
-        <div style="width:100%;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-            <span style="font-size:10px;font-family:var(--mono);color:var(--gold);white-space:nowrap;">TER ${(e.expense*100).toFixed(2)}% · ${e.aum}</span>
-            <span style="font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:0.04em;flex-shrink:0;">${e.symbol}</span>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
-            ${e.live?'<span class="etf-live-badge" style="margin-top:0;">NSE LIVE</span>':'<span class="etf-calc-badge" style="margin-top:0;">est.</span>'}
-            ${hasSp?'<span style="font-size:9px;font-family:var(--mono);color:var(--muted);letter-spacing:.04em;">tap for chart ↓</span>':""}
-          </div>
+
+        <!-- footer: single line -->
+        <div style="width:100%;margin-top:9px;padding-top:7px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;gap:6px;font-family:var(--mono);font-size:9px;color:var(--muted);">
+          <span style="color:var(--gold);">TER ${(e.expense*100).toFixed(2)}%</span>
+          <span>${e.aum}</span>
+          <span style="letter-spacing:0.04em;">${e.symbol}</span>
+          ${e.live?'<span class="etf-live-badge" style="margin-top:0;font-size:8px;padding:1px 5px;">LIVE</span>':'<span class="etf-calc-badge" style="margin-top:0;font-size:8px;padding:1px 5px;">est.</span>'}
         </div>
-      </div>`;
+        ${hasSp?'<div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:4px;letter-spacing:.04em;width:100%;text-align:center;">tap for chart ↓</div>':""}`
+      + `</div>`;
     }).join("");
     const firstWith1y = ETF_LIST.find(e => _etfSparklines[e.symbol]?.["1y"]?.length >= 2);
     if (firstWith1y) { document.getElementById("etfHistPanel").style.display = "block"; document.getElementById("etfHistSelect").value = firstWith1y.symbol; renderHistChart(firstWith1y.symbol); }
