@@ -594,6 +594,19 @@ export default async function handler(req, res) {
         }
       });
     }
+    // Top-up: fetch prevClose individually for any ETF that has a live NAV but no prevClose
+    // (Yahoo bulk v7 sometimes omits regularMarketPreviousClose for lower-volume ETFs like HDFC/ICICI)
+    const missingPrev = ETF_SYMS.filter(s => etfRaw[s] > 0 && !etfPrevRaw[s]);
+    if (missingPrev.length > 0) {
+      const prevResults = await Promise.allSettled(missingPrev.map(s => tout(fetchETFIndividual(s), 12000)));
+      missingPrev.forEach((sym, i) => {
+        const res = prevResults[i];
+        if (res.status === "fulfilled" && res.value?.prevClose > 0) {
+          etfPrevRaw[sym] = res.value.prevClose;
+          console.log(`ETF prevClose top-up: ${sym} = ${res.value.prevClose}`);
+        }
+      });
+    }
     console.log(`ETF raw NAVs (${Object.keys(etfRaw).length}/${ETF_SYMS.length}):`, Object.entries(etfRaw).map(([k,v])=>`${k}:${v}`).join(", ") || "none");
 
     // Convert ETF unit price -> Rs./gram using ibja24k as gold reference.
