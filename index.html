@@ -840,30 +840,22 @@
         ? `<span style="color:var(--orange)">${fmt(e.dutyPremium)} (+${e.dutyPct}%)</span>`
         : `<span style="color:var(--muted)">—</span>`;
 
-      // Tracking deviation display
+      // Tracking deviation display — only shown when live data available
       let trackHTML = "";
       if (e.trackDev != null) {
-        const pct = (e.trackDev * 100).toFixed(2);
         const isDiscount = e.trackDev <= 0;
         const arrow  = isDiscount ? "▼" : "▲";
         const clr    = isDiscount ? "var(--green)" : "var(--orange)";
-        const label  = isDiscount ? "discount to gold" : "premium over gold";
-        const absPct = Math.abs(parseFloat(pct)).toFixed(2);
+        const absPct = Math.abs(e.trackDev * 100).toFixed(2);
+        const subTxt = isDiscount ? "ETF lagging gold · buy opportunity" : "ETF ahead of gold · wait";
         trackHTML = `<div class="dual-rate-sub-box" style="margin-top:6px;width:100%;box-sizing:border-box;">
           <div class="dual-rate-sub-label">Today vs Gold Move</div>
-          <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${clr};margin-top:2px;white-space:nowrap;">
-            ${arrow} ${absPct}% ${label}
-          </div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${isDiscount?"ETF lagging gold → buy opportunity":"ETF ahead of gold → wait"}</div>
-        </div>`;
-      } else {
-        trackHTML = `<div class="dual-rate-sub-box" style="margin-top:6px;width:100%;box-sizing:border-box;">
-          <div class="dual-rate-sub-label">India Duty Premium vs Intl</div>
-          <div style="font-family:var(--mono);font-size:12px;font-weight:700;margin-top:2px;">${premStr}</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${clr};margin-top:3px;">${arrow} ${absPct}% ${isDiscount?"discount":"premium"}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${subTxt}</div>
         </div>`;
       }
 
-      return `<div class="retailer-card ${isBest?"best-buy":""}" style="cursor:${hasSp?"pointer":"default"}" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
+      return `<div class="retailer-card ${isBest?"best-buy":""}" style="cursor:${hasSp?"pointer":"default"};min-height:0;overflow:hidden;" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
         ${isBest?'<div class="retailer-best-badge">Best Buy Today</div>':""}
         <div class="retailer-logo">${e.emoji}</div>
         <div class="retailer-name">${e.name}</div>
@@ -882,10 +874,16 @@
           </div>
         </div>
         ${trackHTML}
-        <div style="font-size:11px;font-family:var(--mono);font-weight:600;color:var(--gold);text-align:center;margin-top:8px;">TER ${(e.expense*100).toFixed(2)}% p.a. · ${e.aum}</div>
-        <div style="font-size:10px;font-family:var(--mono);color:var(--muted);text-align:center;margin-top:2px;letter-spacing:0.04em;">${e.symbol}</div>
-        <div style="margin-top:5px;">${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}</div>
-        ${hasSp?'<div style="font-size:9px;font-family:var(--mono);color:var(--muted);margin-top:3px;letter-spacing:.04em;">tap for chart ↓</div>':""}
+        <div style="width:100%;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:wrap;">
+            <span style="font-size:10px;font-family:var(--mono);color:var(--gold);">TER ${(e.expense*100).toFixed(2)}% · ${e.aum}</span>
+            <span style="font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:0.04em;">${e.symbol}</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:5px;">
+            ${e.live?'<span class="etf-live-badge">NSE LIVE</span>':'<span class="etf-calc-badge">estimated</span>'}
+            ${hasSp?'<span style="font-size:9px;font-family:var(--mono);color:var(--muted);letter-spacing:.04em;">tap for chart ↓</span>':""}
+          </div>
+        </div>
       </div>`;
     }).join("");
     const firstWith1y = ETF_LIST.find(e => _etfSparklines[e.symbol]?.["1y"]?.length >= 2);
@@ -926,7 +924,8 @@
       { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      desc: ["3% GST on purchase", "1–2% buy spread over IBJA", "~0.5% annual storage fee", "₹1 minimum buy · Not SEBI regulated"] },
       { name: "Gold ETF (999 · 24K)",           detail: "GOLDBEES / SETFGOLD / HDFCMFGETF",          price: etfEntry, color: "green",  dot: "✓", rank: "Best Entry",     desc: ["Zero GST · only 0.1% brokerage", "999 purity gold bars in vault", "LTCG 12.5% after 2 years", `Demat account needed · Markets ${mktOpen?"OPEN":"closed"}`] },
     ];
-    const sav = phys24 - etfEntry, savPct = ((sav/phys24)*100).toFixed(1);
+    const savVsPhys = phys24 - etfEntry, savVsPhysPct = ((savVsPhys / phys24) * 100).toFixed(1);
+    const savVsDigi = digi  - etfEntry, savVsDigiPct = ((savVsDigi / digi)  * 100).toFixed(1);
     document.getElementById("tlBody").innerHTML = opts.map(opt => `
       <div class="tl-row tl-${opt.color}">
         <div style="display:flex;align-items:center;gap:10px;">
@@ -942,9 +941,9 @@
       <div class="tl-verdict">
         <div class="tl-verdict-label">Today's Recommendation</div>
         <div class="tl-verdict-text"><ul style="margin:4px 0 0 16px;padding:0;line-height:1.7;">
-          <li><strong>Gold ETF saves ${fmt(sav)}/g (${savPct}%)</strong> vs physical coin at best-case prices.</li>
+          <li>Gold ETF saves <strong>${fmt(savVsPhys)}/g (${savVsPhysPct}%) vs physical coin</strong> and <strong>${fmt(savVsDigi)}/g (${savVsDigiPct}%) vs digital gold</strong> at best-case prices.</li>
           <li>${trackVerdict}</li>
-          <li>Full 999 purity, instant NSE/BSE liquidity, zero storage cost.</li>
+          <li>999 purity gold bars in vault · instant NSE/BSE liquidity · zero storage cost.</li>
         </ul></div>
       </div>`;
     document.getElementById("tlUpdated").textContent = "updated " + timeStr(null);
@@ -1000,9 +999,9 @@
     const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
     const current = _heroHistCurrentPrice * factor;
     let past = null;
-    // INT mode: current = intl spot today, past = intl spot historical → pure international % change
-    // IND mode: current = ibja24k today (duty-adjusted), past = intl spot historical
-    //   → % change reflects India rate relative to international history (shows duty-premium effect)
+    // Both INT and IND apply the SAME factor to current AND past so the % change reflects
+    // pure gold price movement. IND mode shows higher absolute prices (IBJA level) but
+    // the same % as INT — IBJA tracks international gold with a fixed duty premium.
     if (tabKey === "1d") {
       const mPts = _heroHistSparklines?.["1m"] || _heroHistSparklines?.["1w"];
       if (mPts && mPts.length >= 2) {
@@ -1011,11 +1010,11 @@
         // If it's older (market closed, data not refreshed) → last point IS prior session close.
         const lastTs = mPts[mPts.length - 1].t;
         const isToday = lastTs && (Date.now() - lastTs * 1000) < 28 * 60 * 60 * 1000;
-        past = isToday ? mPts[mPts.length - 2].v : mPts[mPts.length - 1].v;
+        past = (isToday ? mPts[mPts.length - 2].v : mPts[mPts.length - 1].v) * factor;
       }
     } else {
       const pts = _heroHistSparklines?.[cfg.rangeKey] || _heroHistSparklines?.[cfg.fallback];
-      if (pts && pts.length >= 2) past = pts[0].v;
+      if (pts && pts.length >= 2) past = pts[0].v * factor;
     }
     renderHistCells("heroHistBody", tabKey, cfg, current, past);
   }
