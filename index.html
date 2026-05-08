@@ -861,23 +861,27 @@
         <div class="retailer-name">${e.name}</div>
         <div class="retailer-type">${e.fund}</div>
         <div class="purity-pill" style="white-space:nowrap;">999 · 24K · NSE/BSE</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;width:100%;">
-          <div class="dual-rate-sub-box">
-            <div class="dual-rate-sub-label">Unit NAV</div>
-            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);white-space:nowrap;">${navStr}</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:2px;">${gpuStr} / unit</div>
+        <div style="display:flex;flex-direction:column;gap:5px;margin-top:10px;width:100%;">
+          <div class="dual-rate-sub-box" style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div class="dual-rate-sub-label">Unit NAV</div>
+              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);">${navStr}</div>
+            </div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);text-align:right;">${gpuStr}<br>/ unit</div>
           </div>
-          <div class="dual-rate-sub-box" style="overflow:hidden;">
-            <div class="dual-rate-sub-label">Per Gram</div>
-            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${fmt(e.gramRate)}</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:2px;">+0.1% brokerage</div>
+          <div class="dual-rate-sub-box" style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div class="dual-rate-sub-label">Per Gram</div>
+              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--inr-color);">${fmt(e.gramRate)}</div>
+            </div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);text-align:right;">+0.1%<br>brokerage</div>
           </div>
         </div>
         ${trackHTML}
         <div style="width:100%;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:wrap;">
-            <span style="font-size:10px;font-family:var(--mono);color:var(--gold);">TER ${(e.expense*100).toFixed(2)}% · ${e.aum}</span>
-            <span style="font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:0.04em;">${e.symbol}</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <span style="font-size:10px;font-family:var(--mono);color:var(--gold);white-space:nowrap;">TER ${(e.expense*100).toFixed(2)}% · ${e.aum}</span>
+            <span style="font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:0.04em;flex-shrink:0;">${e.symbol}</span>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
             ${e.live?'<span class="etf-live-badge" style="margin-top:0;">NSE LIVE</span>':'<span class="etf-calc-badge" style="margin-top:0;">est.</span>'}
@@ -964,8 +968,8 @@
     const label = document.getElementById("histModeLabel");
     const premPct = _histIbjaFactor > 1 ? ((_histIbjaFactor - 1) * 100).toFixed(1) : "~5";
     if (label) label.innerHTML = mode === "int"
-      ? `<span style="color:var(--green)">📊 International Spot (XAU/USD → ₹/gram) — historical % performance</span>`
-      : `<span style="color:var(--inr-color)">📊 India Gold Rate (IBJA · duty-adjusted · +${premPct}% over spot) — 24K / 22K / 18K breakdown</span>`;
+      ? `<span style="color:var(--green)">📊 International Spot — 999 · 24K · Rs./gram (no import duty)</span>`
+      : `<span style="color:var(--inr-color)">📊 India Rate (IBJA) — 999 · 24K · Rs./gram (duty-adjusted · +${premPct}% over spot)</span>`;
     showHistTab(_histActiveTab, document.querySelector("#heroHistPanel .hero-hist-tab.active"));
   }
   const HIST_TAB_CONFIG = {
@@ -995,29 +999,22 @@
     if (btn && !btn.classList.contains("hist-mode-btn")) btn.classList.add("active");
     _histActiveTab = tabKey;
     if (!_heroHistCurrentPrice) return;
-
-    // IND mode: show India price breakdown panel — not time-series (we have no historical IBJA data)
-    if (_histMode === "ind") {
-      renderIndSpreadPanel("heroHistBody");
-      return;
-    }
-
-    // IN (international) mode: time-based % comparison (pure XAU/USD → INR movement)
+    // IN mode: international prices. IND mode: IBJA prices. Same % change (gold moved X% in both),
+    // different absolute rupee levels. Factor applied to BOTH current and past — no fake duty-premium spike.
+    const factor  = _histMode === "ind" ? _histIbjaFactor : 1;
     const cfg = HIST_TAB_CONFIG[tabKey] || HIST_TAB_CONFIG["1y"];
-    const current = _heroHistCurrentPrice;
+    const current = _heroHistCurrentPrice * factor;
     let past = null;
     if (tabKey === "1d") {
       const mPts = _heroHistSparklines?.["1m"] || _heroHistSparklines?.["1w"];
       if (mPts && mPts.length >= 2) {
-        // Last candle within 28h = today's live session → prior session = second-to-last
-        // Otherwise data is stale/closed → last point IS prior session close
         const lastTs = mPts[mPts.length - 1].t;
         const isToday = lastTs && (Date.now() - lastTs * 1000) < 28 * 60 * 60 * 1000;
-        past = isToday ? mPts[mPts.length - 2].v : mPts[mPts.length - 1].v;
+        past = (isToday ? mPts[mPts.length - 2].v : mPts[mPts.length - 1].v) * factor;
       }
     } else {
       const pts = _heroHistSparklines?.[cfg.rangeKey] || _heroHistSparklines?.[cfg.fallback];
-      if (pts && pts.length >= 2) past = pts[0].v;
+      if (pts && pts.length >= 2) past = pts[0].v * factor;
     }
     renderHistCells("heroHistBody", tabKey, cfg, current, past);
   }
@@ -1033,28 +1030,6 @@
     if (!silverHistory || Object.keys(silverHistory).length === 0) return;
     document.getElementById("silverHistPanel").style.display = "block";
     showSilverHistTab("1d", document.querySelector("#silverHistPanel .hero-hist-tab.active"));
-  }
-
-  // IND mode panel: India price breakdown — 24K IBJA, import premium, 22K, 18K
-  function renderIndSpreadPanel(bodyId) {
-    const bodyEl = document.getElementById(bodyId);
-    if (!bodyEl || !_heroHistCurrentPrice || _histIbjaFactor <= 0) return;
-    const intl  = _heroHistCurrentPrice;
-    const ibja  = intl * _histIbjaFactor;
-    const prem  = ibja - intl;
-    const premP = (prem / intl * 100).toFixed(1);
-    const cells = [
-      { label: "India 24K Rate (IBJA)",    val: fmt(ibja),         chg: null },
-      { label: "Import Premium vs Spot",   val: `+${fmt(prem)}`,   chg: "up", chgTxt: `+${premP}% over international` },
-      { label: "India 22K (916 Hallmark)", val: fmt(ibja * 0.916), chg: null },
-      { label: "India 18K (750 Hallmark)", val: fmt(ibja * 0.75),  chg: null },
-    ];
-    bodyEl.innerHTML = cells.map(c => `
-      <div class="hero-hist-cell">
-        <div class="hero-hist-clabel">${c.label}</div>
-        <div class="hero-hist-cval ${c.chg?("hero-hist-cchg "+c.chg):""}" style="font-size:${c.chg?"18px":"15px"}">${c.val}</div>
-        ${c.chg?`<div class="hero-hist-cchg ${c.chg}">${c.chgTxt}</div>`:""}
-      </div>`).join("");
   }
 
   function showSilverHistTab(tabKey, btn) {
