@@ -840,19 +840,32 @@
         ? `<span style="color:var(--orange)">${fmt(e.dutyPremium)} (+${e.dutyPct}%)</span>`
         : `<span style="color:var(--muted)">—</span>`;
 
-      // Tracking pill — slim single line, colour-coded
-      let trackHTML = "";
+      // Tracking band — always shown for uniform card height; muted placeholder when no data
+      let trackHTML;
       if (e.trackDev != null) {
         const isDiscount = e.trackDev <= 0;
-        const arrow = isDiscount ? "▼" : "▲";
-        const clr   = isDiscount ? "var(--green)" : "var(--orange)";
-        const bg    = isDiscount ? "rgba(34,197,94,0.07)" : "rgba(249,115,22,0.07)";
-        const bdr   = isDiscount ? "rgba(34,197,94,0.22)" : "rgba(249,115,22,0.22)";
+        const arrow  = isDiscount ? "▼" : "▲";
+        const clr    = isDiscount ? "var(--green)" : "var(--orange)";
+        const bg     = isDiscount ? "rgba(34,197,94,0.07)"  : "rgba(249,115,22,0.07)";
+        const bdr    = isDiscount ? "rgba(34,197,94,0.2)"   : "rgba(249,115,22,0.2)";
         const absPct = Math.abs(e.trackDev * 100).toFixed(2);
-        const signal = isDiscount ? "buy signal" : "wait";
-        trackHTML = `<div style="width:100%;margin-top:7px;padding:5px 9px;background:${bg};border:1px solid ${bdr};border-radius:7px;font-family:var(--mono);font-size:10px;line-height:1.5;">
-          <div style="color:${clr};font-weight:700;">${arrow} ${absPct}% vs gold today · ${signal}</div>
-          <div style="color:var(--muted);margin-top:1px;">${isDiscount?"ETF lagging gold — buy opportunity":"ETF running ahead of gold — wait"}</div>
+        const line2  = isDiscount ? "ETF lagging gold — buy opportunity" : "ETF running ahead of gold — wait";
+        trackHTML = `
+        <div style="width:100%;margin-top:7px;padding:6px 10px;background:${bg};border:1px solid ${bdr};border-radius:7px;font-family:var(--mono);font-size:10px;line-height:1.6;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <span style="color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-size:9px;">vs Gold Today</span>
+            <span style="color:${clr};font-weight:700;white-space:nowrap;">${arrow} ${absPct}%</span>
+          </div>
+          <div style="color:var(--muted);font-size:9px;margin-top:1px;">${line2}</div>
+        </div>`;
+      } else {
+        trackHTML = `
+        <div style="width:100%;margin-top:7px;padding:6px 10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:7px;font-family:var(--mono);font-size:10px;line-height:1.6;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <span style="color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-size:9px;">vs Gold Today</span>
+            <span style="color:var(--muted);font-weight:700;">—</span>
+          </div>
+          <div style="color:var(--muted);font-size:9px;margin-top:1px;opacity:0.6;">tracking data loading…</div>
         </div>`;
       }
 
@@ -863,15 +876,15 @@
         <div class="retailer-type">${e.fund}</div>
         <div class="purity-pill" style="white-space:nowrap;margin-top:4px;">999 · 24K · NSE/BSE</div>
 
-        <!-- compact key-value stats — no inner boxes -->
+        <!-- stats band -->
         <div style="width:100%;margin-top:10px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:10px;">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
             <span style="color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">Unit NAV</span>
-            <span style="color:var(--inr-color);font-size:13px;font-weight:700;">${navStr}</span>
+            <span style="color:var(--inr-color);font-size:13px;font-weight:700;white-space:nowrap;">${navStr}</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
             <span style="color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">Per Gram</span>
-            <span style="color:var(--inr-color);font-size:13px;font-weight:700;">${fmt(e.gramRate)}</span>
+            <span style="color:var(--inr-color);font-size:13px;font-weight:700;white-space:nowrap;">${fmt(e.gramRate)}</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;">
             <span style="color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">Gold / Unit</span>
@@ -881,15 +894,21 @@
 
         ${trackHTML}
 
-        <!-- footer: single line -->
-        <div style="width:100%;margin-top:9px;padding-top:7px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;gap:6px;font-family:var(--mono);font-size:9px;color:var(--muted);">
-          <span style="color:var(--gold);">TER ${(e.expense*100).toFixed(2)}%</span>
-          <span>${e.aum}</span>
-          <span style="letter-spacing:0.04em;">${e.symbol}</span>
-          ${e.live?'<span class="etf-live-badge" style="margin-top:0;font-size:8px;padding:1px 5px;">LIVE</span>':'<span class="etf-calc-badge" style="margin-top:0;font-size:8px;padding:1px 5px;">est.</span>'}
+        <!-- footer band -->
+        <div style="width:100%;margin-top:7px;padding:5px 10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:7px;font-family:var(--mono);font-size:9px;color:var(--muted);">
+          <div style="display:flex;align-items:center;gap:0;">
+            <span style="color:var(--gold);white-space:nowrap;">TER ${(e.expense*100).toFixed(2)}%</span>
+            <span style="margin:0 5px;opacity:0.3;">·</span>
+            <span style="white-space:nowrap;">${e.aum}</span>
+            <span style="margin:0 5px;opacity:0.3;">·</span>
+            <span style="letter-spacing:0.04em;white-space:nowrap;">${e.symbol}</span>
+            <span style="margin-left:auto;">
+              ${e.live?'<span class="etf-live-badge" style="margin-top:0;font-size:8px;padding:1px 5px;">LIVE</span>':'<span class="etf-calc-badge" style="margin-top:0;font-size:8px;padding:1px 5px;">est.</span>'}
+            </span>
+          </div>
+          ${hasSp?'<div style="text-align:center;margin-top:3px;font-size:8px;opacity:0.5;">tap card for chart ↓</div>':""}
         </div>
-        ${hasSp?'<div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:4px;letter-spacing:.04em;width:100%;text-align:center;">tap for chart ↓</div>':""}`
-      + `</div>`;
+      </div>`;
     }).join("");
     const firstWith1y = ETF_LIST.find(e => _etfSparklines[e.symbol]?.["1y"]?.length >= 2);
     if (firstWith1y) { document.getElementById("etfHistPanel").style.display = "block"; document.getElementById("etfHistSelect").value = firstWith1y.symbol; renderHistChart(firstWith1y.symbol); }
