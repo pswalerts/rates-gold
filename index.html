@@ -82,7 +82,7 @@
       --serif: 'Playfair Display', Georgia, serif;
       --accent: var(--gold); --accent-bright: var(--gold-bright); --accent-dim: var(--gold-dim);
       --inr-color: #e8c97a;
-      --usd-color: #22a870;
+      --usd-color: #38bdf8;
       --aed-color: #e07828;
     }
     body.silver-mode { --accent: var(--silver); --accent-bright: var(--silver-bright); --accent-dim: var(--silver-dim); }
@@ -161,7 +161,8 @@
     .dual-rate-formula   { background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:8px; padding:9px 14px; font-family:var(--mono); font-size:12px; color:rgba(255,255,255,0.55); line-height:1.4; margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
     .dual-rate-stale     { background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--yellow); line-height:1.6; margin-top:12px; }
     .dual-rate-unavail   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--muted); line-height:1.6; margin-top:12px; }
-    .section-title { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-top:48px; margin-bottom:18px; font-weight:700; border-left:3px solid var(--gold); padding-left:10px; }
+    .section-title { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-bright); margin-top:48px; margin-bottom:18px; font-weight:700; border-left:3px solid var(--gold-bright); padding-left:10px; }
+    /* ── Retailer / ETF card (ETF uses this for the complex card) ── */
     .retailer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
     .retailer-card { background:linear-gradient(145deg,rgba(212,168,83,0.055) 0%,var(--surface) 55%); border:1px solid rgba(212,168,83,0.20); border-radius:14px; padding:18px 16px; display:flex; flex-direction:column; align-items:center; gap:6px; transition:border-color 0.25s,box-shadow 0.25s; position:relative; overflow:hidden; cursor:default; }
     .retailer-card:hover { border-color:rgba(212,168,83,0.28); box-shadow:0 4px 20px rgba(212,168,83,0.08); }
@@ -176,6 +177,24 @@
     .retailer-card.best-buy .retailer-price { color:var(--green); }
     .retailer-sub   { font-size:11px; color:var(--muted); text-align:center; font-family:var(--mono); line-height:1.5; }
     .retailer-best-badge { position:absolute; top:8px; right:8px; background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3); font-family:var(--mono); font-size:9px; letter-spacing:0.07em; padding:2px 7px; border-radius:999px; text-transform:uppercase; }
+
+    /* ── Price row card — physical gold & digital gold ── */
+    .pr-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .pr-card { display:flex; align-items:center; gap:12px; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,168,83,0.18); background:var(--surface); position:relative; overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
+    .pr-card:hover { border-color:rgba(212,168,83,0.32); box-shadow:0 2px 16px rgba(212,168,83,0.06); }
+    .pr-card.pr-best { border-color:rgba(34,197,94,0.45); background:linear-gradient(135deg,rgba(34,197,94,0.05) 0%,var(--surface) 70%); box-shadow:0 0 20px rgba(34,197,94,0.08); animation:pulse-green 2.5s ease-in-out infinite; }
+    .pr-icon { width:36px; height:36px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+    .pr-info { flex:1; min-width:0; }
+    .pr-name { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:0.01em; }
+    .pr-type { font-size:10px; color:var(--muted); margin-top:1px; letter-spacing:0.03em; }
+    .pr-right { text-align:right; flex-shrink:0; }
+    .pr-price { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--inr-color); white-space:nowrap; }
+    .pr-card.pr-best .pr-price { color:var(--green); }
+    .pr-note { font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:2px; white-space:nowrap; }
+    .pr-badge { position:absolute; top:0; right:0; background:var(--green); color:#000; font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.08em; padding:2px 8px; border-radius:0 10px 0 6px; text-transform:uppercase; }
+    .pr-source { display:inline-block; font-family:var(--mono); font-size:8px; padding:1px 5px; border-radius:4px; margin-top:3px; }
+    .pr-source.live { background:rgba(34,197,94,0.12); color:var(--green); border:1px solid rgba(34,197,94,0.25); }
+    .pr-source.calc { background:rgba(100,116,139,0.1); color:var(--muted); border:1px solid rgba(255,255,255,0.07); }
     .etf-live-badge { display:inline-block; font-size:9px; font-family:var(--mono); background:rgba(34,197,94,0.1); color:var(--green); border:1px solid rgba(34,197,94,0.2); border-radius:999px; padding:2px 7px; letter-spacing:0.06em; margin-top:5px; }
     .etf-calc-badge { display:inline-block; font-size:9px; font-family:var(--mono); background:rgba(100,116,139,0.1); color:var(--muted); border:1px solid rgba(255,255,255,0.07); border-radius:999px; padding:2px 7px; letter-spacing:0.06em; margin-top:5px; }
     .tl-panel { margin-top:18px; background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
@@ -262,7 +281,7 @@
     .fx-bar::-webkit-scrollbar { display:none; }
     .fx-item { display:inline-flex; align-items:baseline; gap:7px; padding:13px 18px; border-right:1px solid var(--border); flex-shrink:0; }
     .fx-item:last-child { border-right:none; }
-    .fx-label { font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); }
+    .fx-label { font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); font-weight:500; }
     .fx-value { font-family:var(--mono); font-size:15px; color:var(--text); font-weight:500; }
     .option-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
     .option-card  { background:linear-gradient(145deg,rgba(212,168,83,0.055) 0%,var(--surface) 55%); border:1px solid rgba(212,168,83,0.20); border-radius:16px; padding:24px 26px; transition:border-color 0.2s; position:relative; overflow:hidden; }
@@ -338,6 +357,7 @@
       .dxb-ol-verdict { font-size:11px; padding-left:4px; }
 
       /* Traffic light */
+      .tl-body { grid-template-columns:repeat(2,1fr); }
       .tl-row { flex-direction:column; align-items:flex-start; }
       .tl-price-right { align-self:stretch; text-align:left; padding-top:6px; }
 
@@ -369,6 +389,9 @@
       .dual-rate-main { font-size:24px; }
       .dual-rate-sub-grid { grid-template-columns:repeat(3,1fr); gap:4px; }
 
+      /* Traffic light — single column on very small screens */
+      .tl-body { grid-template-columns:1fr; }
+
       /* History */
       .hero-hist-body { grid-template-columns:1fr 1fr; }
       .hero-hist-cell { padding:10px 12px; }
@@ -388,6 +411,17 @@
       .dual-rate-main { font-size:22px; }
       .logo-rate, .logo-dot, .logo-gold-word { font-size:20px; }
     }
+    /* ── Traffic light — pill tags replacing <ul><li> ── */
+    .tl-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+    .tl-tag { font-size:10px; font-family:var(--mono); padding:3px 9px; border-radius:5px; background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.09); color:var(--muted); white-space:nowrap; letter-spacing:0.02em; line-height:1.5; }
+    .tl-row.tl-green  .tl-tag { border-color:rgba(34,197,94,0.22);  }
+    .tl-row.tl-orange .tl-tag { border-color:rgba(249,115,22,0.22); }
+    .tl-row.tl-red    .tl-tag { border-color:rgba(239,68,68,0.20);  }
+    /* ── Verdict bullet lines ── */
+    .tl-verdict-lines { display:flex; flex-direction:column; gap:7px; margin-top:6px; }
+    .tl-verdict-line { display:flex; align-items:flex-start; gap:9px; font-size:13.5px; color:var(--text); line-height:1.6; }
+    .tl-vl-dot { color:var(--gold-bright); font-size:14px; flex-shrink:0; line-height:1.65; font-weight:700; }
+
     .disclaimer { margin-top:40px; padding:14px 18px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.07); border-radius:10px; font-size:11px; color:var(--muted); line-height:1.6; }
     .disclaimer strong { color:rgba(255,255,255,0.35); }
   </style>
@@ -516,11 +550,11 @@
 
 
       <!-- 24K Gold Coins & Bars — Physical Buy Rate -->
-      <div class="section-title">24K Gold Coins &amp; Bars — Physical Buy Rate (incl. 3% GST)</div>
-      <div class="retailer-grid" id="physicalRetailers"></div>
+      <div class="section-title">24K Gold Coins &amp; Bars <span style="font-weight:400;color:var(--muted);font-size:11px;letter-spacing:0.04em;text-transform:none;border-left:none;padding-left:0">· 999 purity · all prices incl. 3% GST</span></div>
+      <div class="pr-grid" id="physicalRetailers"></div>
 
-      <div class="section-title" style="margin-top:40px">Digital Gold — Platform Buy Rates (999.9 purity)</div>
-      <div class="retailer-grid" id="digitalPlatforms" style="grid-template-columns:repeat(2,1fr);"></div>
+      <div class="section-title" style="margin-top:40px">Digital Gold <span style="font-weight:400;color:var(--muted);font-size:11px;letter-spacing:0.04em;text-transform:none">· 999.9 purity · incl. GST · prices approx. from IBJA</span></div>
+      <div class="pr-grid" id="digitalPlatforms"></div>
 
       <div class="ad-inline" style="margin-top:32px;margin-bottom:0">Advertisement · 728x50</div>
 
@@ -683,11 +717,11 @@
       </div>
 
       <!-- Silver Buy Options -->
-      <div class="section-title" style="margin-top:40px">Silver Coins &amp; Bars — Physical Buy Rate (incl. 3% GST)</div>
-      <div class="retailer-grid" id="silverPhysical"></div>
+      <div class="section-title" style="margin-top:40px">Silver Coins &amp; Bars <span style="font-weight:400;color:var(--muted);font-size:11px;letter-spacing:0.04em;text-transform:none">· 999 purity · all prices incl. 3% GST</span></div>
+      <div class="pr-grid" id="silverPhysical"></div>
 
-      <div class="section-title" style="margin-top:40px">Digital Silver — Platform Buy Rates</div>
-      <div class="retailer-grid" id="silverDigital" style="grid-template-columns:repeat(2,1fr);"></div>
+      <div class="section-title" style="margin-top:40px">Digital Silver <span style="font-weight:400;color:var(--muted);font-size:11px;letter-spacing:0.04em;text-transform:none">· 999.9 purity · incl. GST</span></div>
+      <div class="pr-grid" id="silverDigital"></div>
 
       <div class="ad-inline">Advertisement · 728x50</div>
 
@@ -708,7 +742,7 @@
       <div class="fx-item"><span class="fx-label">🌐 XAU/USD</span><span class="fx-value" id="fxGold" style="color:var(--usd-color)">--</span></div>
       <div class="fx-item"><span class="fx-label">🌐 XAG/USD</span><span class="fx-value" id="fxSilver" style="color:var(--silver)">--</span></div>
       <div class="fx-item"><span class="fx-label">🇺🇸 USD/INR</span><span class="fx-value" id="fxInr" style="color:var(--inr-color)">--</span></div>
-      <div class="fx-item" title="Sovereign Gold Bond — secondary market only (no new RBI issuances since Feb 2024) · 2.5% p.a. interest · zero GST · trades on NSE/BSE">
+      <div class="fx-item" title="Sovereign Gold Bond — secondary market only (no new RBI issuances since Feb 2024) · 2.5% p.a. interest (taxable) · LTCG 12.5% applies for secondary market buyers · zero GST on purchase">
         <span class="fx-label">🏛️ SGB (Secondary)</span>
         <span class="fx-value" id="fxSgb" style="color:var(--inr-color)">--</span>
         <span style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:1px;">≈ IBJA · 2.5% p.a.</span>
@@ -791,14 +825,17 @@
     const priced = retailers.map(r => ({ ...r, total: base24k * (1 + r.premium) * 1.03 }));
     const minVal = Math.min(...priced.map(r => r.total));
     document.getElementById("physicalRetailers").innerHTML = priced.map(r => `
-      <div class="retailer-card ${r.total === minVal ? "best-buy" : ""}">
-        ${r.total === minVal ? '<div class="retailer-best-badge">Best Price</div>' : ""}
-        <div class="retailer-logo">${r.emoji}</div>
-        <div class="retailer-name">${r.name}</div>
-        <div class="retailer-type">${r.type}</div>
-        <div class="purity-pill">999 · 24K Gold</div>
-        <div class="retailer-price">${fmt(r.total)}</div>
-        <div class="retailer-sub">${r.note}</div>
+      <div class="pr-card ${r.total === minVal ? "pr-best" : ""}">
+        ${r.total === minVal ? '<div class="pr-badge">Best Price</div>' : ""}
+        <div class="pr-icon">${r.emoji}</div>
+        <div class="pr-info">
+          <div class="pr-name">${r.name}</div>
+          <div class="pr-type">${r.type}</div>
+        </div>
+        <div class="pr-right">
+          <div class="pr-price">${fmt(r.total)}</div>
+          <div class="pr-note">${r.note}</div>
+        </div>
       </div>`).join("");
   }
 
@@ -821,21 +858,19 @@
       return { ...p, total, isLive };
     });
     const minVal  = Math.min(...priced.map(p => p.total));
-    const anyLive = priced.some(p => p.isLive);
-    const grid    = document.getElementById("digitalPlatforms");
-    grid.style.gridTemplateColumns = "repeat(2,1fr)";
-    grid.innerHTML = priced.map(p => `
-      <div class="retailer-card ${p.total === minVal ? "best-buy" : ""}">
-        ${p.total === minVal ? '<div class="retailer-best-badge">Best Price</div>' : ""}
-        <div class="retailer-logo">${p.emoji}</div>
-        <div class="retailer-name">${p.name}</div>
-        <div class="retailer-type">${p.type}</div>
-        <div class="purity-pill">999.9 · 24K Gold</div>
-        <div class="retailer-price">${fmt(p.total)}</div>
-        <div style="margin-top:4px">${p.isLive
-          ? '<span class="etf-live-badge">LIVE</span>'
-          : '<span class="etf-calc-badge" title="Price calculated from IBJA rate + platform spread + 3% GST. Live API requires platform partnership.">~ IBJA</span>'}</div>
-        <div class="retailer-sub">${p.note}</div>
+    document.getElementById("digitalPlatforms").innerHTML = priced.map(p => `
+      <div class="pr-card ${p.total === minVal ? "pr-best" : ""}">
+        ${p.total === minVal ? '<div class="pr-badge">Best Price</div>' : ""}
+        <div class="pr-icon">${p.emoji}</div>
+        <div class="pr-info">
+          <div class="pr-name">${p.name}</div>
+          <div class="pr-type">${p.type}</div>
+          <span class="pr-source ${p.isLive ? "live" : "calc"}">${p.isLive ? "LIVE" : "~ IBJA"}</span>
+        </div>
+        <div class="pr-right">
+          <div class="pr-price">${fmt(p.total)}</div>
+          <div class="pr-note">${p.note}</div>
+        </div>
       </div>`).join("");
   }
 
@@ -851,18 +886,20 @@
       { name: "CaratLane",     emoji: "💎", type: "Online · Tata",      premium: 0.015, note: "1.5% premium + 3% GST" },
       { name: "SafeGold",      emoji: "🔒", type: "NSDL backed",        premium: 0.012, note: "1.2% premium + 3% GST" },
     ];
-    // silverGram here is already the India estimated rate (intl × 1.09)
     const priced = retailers.map(r => ({ ...r, total: silverGram * (1 + r.premium) * 1.03 }));
     const minVal = Math.min(...priced.map(r => r.total));
     document.getElementById("silverPhysical").innerHTML = priced.map(r => `
-      <div class="retailer-card ${r.total === minVal ? "best-buy" : ""}">
-        ${r.total === minVal ? '<div class="retailer-best-badge">Best Price</div>' : ""}
-        <div class="retailer-logo">${r.emoji}</div>
-        <div class="retailer-name">${r.name}</div>
-        <div class="retailer-type">${r.type}</div>
-        <div class="purity-pill silver-pill">999 · Fine Silver</div>
-        <div class="retailer-price">${fmt(r.total)}</div>
-        <div class="retailer-sub">${r.note}</div>
+      <div class="pr-card ${r.total === minVal ? "pr-best" : ""}">
+        ${r.total === minVal ? '<div class="pr-badge">Best Price</div>' : ""}
+        <div class="pr-icon">${r.emoji}</div>
+        <div class="pr-info">
+          <div class="pr-name">${r.name}</div>
+          <div class="pr-type">${r.type}</div>
+        </div>
+        <div class="pr-right">
+          <div class="pr-price" style="color:var(--silver-bright)">${fmt(r.total)}</div>
+          <div class="pr-note">${r.note}</div>
+        </div>
       </div>`).join("");
   }
 
@@ -871,24 +908,26 @@
   // -------------------------------------------------------
   function buildSilverDigital(silverGram) {
     const platforms = [
-      { name: "Augmont",    emoji: "⚡", type: "Digital Silver",   spread: 0.012, note: "1.2% buy spread · No GST" },
-      { name: "SafeGold",   emoji: "🔒", type: "NSDL backed",      spread: 0.015, note: "1.5% buy spread · No GST" },
-      { name: "MMTC-PAMP",  emoji: "🏅", type: "Govt. backed",     spread: 0.015, note: "1.5% buy spread · No GST" },
-      { name: "Paytm Gold", emoji: "📱", type: "Digital Silver",   spread: 0.020, note: "2% buy spread · No GST"   },
+      { name: "Augmont",    emoji: "⚡", type: "Digital Silver",   spread: 0.012, note: "1.2% spread · no GST" },
+      { name: "SafeGold",   emoji: "🔒", type: "NSDL backed",      spread: 0.015, note: "1.5% spread · no GST" },
+      { name: "MMTC-PAMP",  emoji: "🏅", type: "Govt. backed",     spread: 0.015, note: "1.5% spread · no GST" },
+      { name: "Paytm Gold", emoji: "📱", type: "Digital Silver",   spread: 0.020, note: "2% spread · no GST"   },
     ];
     const priced = platforms.map(p => ({ ...p, total: silverGram * (1 + p.spread) }));
     const minVal = Math.min(...priced.map(p => p.total));
-    const grid = document.getElementById("silverDigital");
-    grid.style.gridTemplateColumns = "repeat(2,1fr)";
-    grid.innerHTML = priced.map(p => `
-      <div class="retailer-card ${p.total === minVal ? "best-buy" : ""}">
-        ${p.total === minVal ? '<div class="retailer-best-badge">Best Price</div>' : ""}
-        <div class="retailer-logo">${p.emoji}</div>
-        <div class="retailer-name">${p.name}</div>
-        <div class="retailer-type">${p.type}</div>
-        <div class="purity-pill silver-pill">999.9 · Fine Silver</div>
-        <div class="retailer-price">${fmt(p.total)}</div>
-        <div class="retailer-sub">${p.note}</div>
+    document.getElementById("silverDigital").innerHTML = priced.map(p => `
+      <div class="pr-card ${p.total === minVal ? "pr-best" : ""}">
+        ${p.total === minVal ? '<div class="pr-badge">Best Price</div>' : ""}
+        <div class="pr-icon">${p.emoji}</div>
+        <div class="pr-info">
+          <div class="pr-name">${p.name}</div>
+          <div class="pr-type">${p.type}</div>
+          <span class="pr-source calc">~ formula</span>
+        </div>
+        <div class="pr-right">
+          <div class="pr-price" style="color:var(--silver-bright)">${fmt(p.total)}</div>
+          <div class="pr-note">${p.note}</div>
+        </div>
       </div>`).join("");
   }
 
@@ -1143,7 +1182,7 @@
       { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP",  price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  showPrice: true,  desc: ["3% GST on purchase", "0.7–1.5% coin premium over IBJA", "Instant physical possession", "Best for gifts & long-term holding"] },
       { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      showPrice: true,  desc: ["3% GST on purchase", "1–2% buy spread over IBJA", "~0.5% annual storage fee", "₹1 minimum buy · Not SEBI regulated"] },
       { name: "Gold ETF (999 · 24K)",           detail: "GOLDBEES · SETFGOLD · HDFCMFGETF · BSLGOLDETF", price: etfEntry, color: "green", dot: "✓", rank: "Best Entry", showPrice: true,  desc: ["Zero GST · only 0.1% brokerage", "999 purity gold bars in vault", "LTCG 12.5% after 2 years", `Demat account needed · Markets ${mktOpen?"OPEN":"closed"}`] },
-      { name: "SGB — Sovereign Gold Bond",      detail: "Secondary market only · NSE / BSE",         price: sgbPrice, color: "green",  dot: "★", rank: "Best Long-Term", showPrice: true,  desc: ["Zero GST · 0.1% brokerage (secondary mkt)", "2.5% p.a. interest on issue price", "LTCG tax-free at maturity (8 yr)", "No new RBI issuances — buy on NSE/BSE secondary"] },
+      { name: "SGB — Sovereign Gold Bond",      detail: "Secondary market only · NSE / BSE",         price: sgbPrice, color: "green",  dot: "★", rank: "Best Long-Term", showPrice: true,  desc: ["Zero GST · 0.1% brokerage (secondary mkt)", "2.5% p.a. interest on issue price (taxable as income)", "LTCG 12.5% on gains if bought in secondary market", "No new RBI issuances — buy on NSE/BSE · check maturity date"] },
       { name: "EGR — Electronic Gold Receipt",  detail: "NSE EGR segment · launched May 2026",       price: egrPrice, color: "green",  dot: "🆕", rank: "Exchange Gold",  showPrice: false, desc: ["Physical 24K gold (999/995) in SEBI vault", "Tradeable on NSE like shares · T+1 settlement", "Available: 100mg · 1g · 10g · 100g · 1kg", "Can convert to physical delivery · Very new — thin liquidity"] },
     ];
     const savVsPhys = phys24 - etfEntry, savVsPhysPct = ((savVsPhys / phys24) * 100).toFixed(1);
@@ -1156,7 +1195,7 @@
         </div>
         <div class="tl-content">
           <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px;letter-spacing:0.03em;">${opt.detail}</div>
-          <div class="tl-option-desc"><ul style="margin:5px 0 0 14px;padding:0;line-height:1.7;">${opt.desc.map(s=>`<li>${s}</li>`).join("")}</ul></div>
+          <div class="tl-tags">${opt.desc.map(s=>`<span class="tl-tag">${s}</span>`).join("")}</div>
         </div>
         <div class="tl-price-right">
           ${opt.showPrice ? `<div class="tl-price-val">${fmt(opt.price)}</div><div class="tl-price-sub">per gram all-in</div>` : `<div class="tl-price-val" style="font-size:12px;color:var(--muted)">~IBJA</div><div class="tl-price-sub">price discovery live</div>`}
@@ -1164,12 +1203,14 @@
       </div>`).join("") + `
       <div class="tl-verdict">
         <div class="tl-verdict-label">Today's Recommendation</div>
-        <div class="tl-verdict-text"><ul style="margin:4px 0 0 16px;padding:0;line-height:1.7;">
-          <li>Gold ETF saves <strong>${fmt(savVsPhys)}/g (${savVsPhysPct}%) vs physical coin</strong> and <strong>${fmt(savVsDigi)}/g (${savVsDigiPct}%) vs digital gold</strong> at best-case prices.</li>
-          <li>${trackVerdict}</li>
-          <li>SGB is the best long-term hold (2.5% interest + tax-free at maturity) — but buy only on secondary market and check maturity date before buying.</li>
-          <li>EGR (NSE, May 2026) is the newest option — physical gold on exchange, watch for liquidity to build.</li>
-        </ul></div>
+        <div class="tl-verdict-text">
+          <div class="tl-verdict-lines">
+            <div class="tl-verdict-line"><span class="tl-vl-dot">›</span><span>Gold ETF saves <strong>${fmt(savVsPhys)}/g (${savVsPhysPct}%)</strong> vs physical coin and <strong>${fmt(savVsDigi)}/g (${savVsDigiPct}%)</strong> vs digital gold at best-case prices.</span></div>
+            <div class="tl-verdict-line"><span class="tl-vl-dot">›</span><span>${trackVerdict}</span></div>
+            <div class="tl-verdict-line"><span class="tl-vl-dot">›</span><span>SGB is the best long-term hold — 2.5% annual interest, secondary market only, check maturity date before buying.</span></div>
+            <div class="tl-verdict-line"><span class="tl-vl-dot">›</span><span>EGR (NSE, May 2026) is the newest option — physical gold on exchange, watch for liquidity to build.</span></div>
+          </div>
+        </div>
       </div>`;
     document.getElementById("tlUpdated").textContent = "updated " + timeStr(null);
   }
@@ -1332,7 +1373,7 @@
       const india24 = ibja24;
 
       // --- Silver ---
-      const silverUSD  = data.silverPrice || (data.price / 85);
+      const silverUSD  = data.silverPrice || (data.price / 92); // gold/silver ratio ~90-100x
       const silverGram = (silverUSD / TROY) * usdInr;   // international spot Rs./gram
       const indiaSilver = silverGram * 1.09;            // estimated India rate (incl. duty)
 
