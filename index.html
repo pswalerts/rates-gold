@@ -292,40 +292,102 @@
     .silver-hero-label { font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:var(--silver); margin-bottom:10px; font-family:var(--mono); font-weight:600; }
     .gs-ratio-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-family:var(--mono); font-size:12px; background:rgba(168,184,200,0.1); color:var(--silver); border:1px solid rgba(168,184,200,0.2); margin-top:10px; }
     @media (max-width:900px) { .etf-section-wrap { grid-template-columns:1fr; } #etfHistPanel { display:none !important; } }
+
     @media (max-width:768px) {
+      /* Layout */
       .side-col { display:none; }
-      .retailer-grid { grid-template-columns:repeat(2,1fr); }
-      #etfGrid { grid-template-columns:repeat(2,1fr) !important; }
-      .page-wrap { padding:20px 14px 60px; }
-      .header { flex-wrap:wrap; gap:10px; }
-      .header-right { gap:10px; }
-      .logo-domain { font-size:17px; }
-      .toggle-btn { padding:6px 14px; font-size:12px; }
-      .dxb-fx-strip { grid-template-columns:1fr 1fr; }
-      .dubai-card { padding:18px 16px; }
-      .dubai-header { margin:-18px -16px 14px; padding:14px 16px; }
-      .dxb-fx-strip { grid-template-columns:repeat(2,1fr); }
-      .dxb-row-val { font-size:17px; }
-      .tl-body { grid-template-columns:1fr; }
-      .tl-row { flex-direction:column; align-items:flex-start; }
-      .tl-price-right { align-self:stretch; text-align:left; }
-      .hero-hist-body { grid-template-columns:repeat(2,1fr); }
+      .page-wrap { padding:16px 12px 60px; }
+
+      /* Header */
+      .header { flex-wrap:wrap; gap:8px; }
+      .header-right { gap:8px; }
+      .logo-rate, .logo-dot, .logo-gold-word { font-size:22px; }
+      .logo-coin-icon { width:32px; height:32px; font-size:17px; }
+      .toggle-btn { padding:6px 13px; font-size:12px; }
+
+      /* Hero dual-rate box */
       .dual-rate-box { grid-template-columns:1fr; }
       .dual-rate-col:first-child { border-right:none; border-bottom:1px solid var(--border); }
-      .dual-rate-col { padding:16px 18px; }
-      .dual-rate-main { font-size:28px; }
-      .dual-rate-sub-val { font-size:13px; }
-      .dual-rate-sub-grid { gap:6px; }
-      .retailer-grid { grid-template-columns:repeat(2,1fr) !important; }
-    }
-    @media (max-width:480px) {
+      .dual-rate-col { padding:14px 16px; }
+      .dual-rate-main { font-size:26px; }
       .dual-rate-sub-val { font-size:12px; }
-      .retailer-grid { grid-template-columns:1fr 1fr; }
-      #etfGrid { grid-template-columns:1fr 1fr !important; }
-      .dxb-fx-strip { grid-template-columns:1fr; }
-      .hero-hist-body { grid-template-columns:1fr 1fr; }
+      .dual-rate-sub-grid { gap:5px; }
+      .dual-rate-perkg { font-size:14px; }
+
+      /* Section titles */
+      .section-title { margin-top:32px; margin-bottom:12px; }
+
+      /* Retailer / platform grids */
+      .retailer-grid { grid-template-columns:repeat(2,1fr) !important; }
+      #etfGrid { grid-template-columns:repeat(2,1fr) !important; }
+
+      /* Dubai card */
+      .dubai-card { padding:16px 14px; }
+      .dubai-header { margin:-16px -14px 14px; padding:12px 14px; }
+      .dubai-title-arabic { display:none; }          /* hide Arabic on mobile */
+      .dxb-fx-strip { grid-template-columns:repeat(2,1fr); }
+      .dxb-fx-val { font-size:14px; }
+
+      /* Dubai comparison rows — compact on mobile */
+      .dxb-oneliner { padding:7px 10px; flex-wrap:wrap; gap:2px; }
+      .dxb-ol-purity { width:44px; font-size:10px; }
+      .dxb-ol-item { padding:0 5px; gap:3px; }
+      .dxb-ol-lbl { font-size:9px; }
+      .dxb-ol-val { font-size:13px; }
+      .dxb-ol-sep { display:none; }                  /* hide · separator on mobile */
+      .dxb-ol-verdict { font-size:11px; padding-left:4px; }
+
+      /* Traffic light */
+      .tl-row { flex-direction:column; align-items:flex-start; }
+      .tl-price-right { align-self:stretch; text-align:left; padding-top:6px; }
+
+      /* History panel */
+      .hero-hist-body { grid-template-columns:repeat(2,1fr); }
+      .hero-hist-tab { padding:7px 11px; font-size:10px; }
     }
-    @media (max-width:380px) { #statusText { display:none; } #etfGrid { grid-template-columns:1fr !important; } .logo-tagline { display:none; } }
+
+    @media (max-width:480px) {
+      .page-wrap { padding:12px 10px 56px; }
+
+      /* Dubai FX strip: 1 col on very small screens */
+      .dxb-fx-strip { grid-template-columns:repeat(2,1fr); } /* keep 2x2, not 1 col */
+      .dxb-fx-val { font-size:13px; }
+      .dxb-fx-label { font-size:9px; }
+
+      /* Dubai comparison rows — ultra-compact */
+      .dxb-oneliner { padding:6px 8px; }
+      .dxb-ol-purity { width:40px; font-size:9px; }
+      .dxb-ol-val { font-size:12px; }
+      .dxb-ol-verdict { font-size:10px; }
+
+      /* Retailer / ETF grids */
+      .retailer-grid { grid-template-columns:1fr 1fr !important; }
+      #etfGrid { grid-template-columns:1fr 1fr !important; }
+      .retailer-price { font-size:15px; }
+
+      /* Dual rate */
+      .dual-rate-main { font-size:24px; }
+      .dual-rate-sub-grid { grid-template-columns:repeat(3,1fr); gap:4px; }
+
+      /* History */
+      .hero-hist-body { grid-template-columns:1fr 1fr; }
+      .hero-hist-cell { padding:10px 12px; }
+      .hero-hist-cval { font-size:13px; }
+
+      /* FX bar at bottom: allow wrap */
+      .fx-bar { flex-wrap:wrap; border-radius:10px; }
+      .fx-item { border-right:none; border-bottom:1px solid var(--border); flex:1 1 45%; }
+      .fx-item:last-child { border-bottom:none; }
+    }
+
+    @media (max-width:380px) {
+      #statusText { display:none; }
+      .logo-tagline { display:none; }
+      #etfGrid { grid-template-columns:1fr !important; }
+      .dxb-fx-strip { grid-template-columns:1fr 1fr; }
+      .dual-rate-main { font-size:22px; }
+      .logo-rate, .logo-dot, .logo-gold-word { font-size:20px; }
+    }
     .disclaimer { margin-top:40px; padding:14px 18px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.07); border-radius:10px; font-size:11px; color:var(--muted); line-height:1.6; }
     .disclaimer strong { color:rgba(255,255,255,0.35); }
   </style>
@@ -646,7 +708,11 @@
       <div class="fx-item"><span class="fx-label">🌐 XAU/USD</span><span class="fx-value" id="fxGold" style="color:var(--usd-color)">--</span></div>
       <div class="fx-item"><span class="fx-label">🌐 XAG/USD</span><span class="fx-value" id="fxSilver" style="color:var(--silver)">--</span></div>
       <div class="fx-item"><span class="fx-label">🇺🇸 USD/INR</span><span class="fx-value" id="fxInr" style="color:var(--inr-color)">--</span></div>
-      <div class="fx-item"><span class="fx-label">🇦🇪 AED/INR</span><span class="fx-value" id="fxAed" style="color:var(--aed-color)">--</span></div>
+      <div class="fx-item" title="Sovereign Gold Bond — secondary market only (no new RBI issuances since Feb 2024) · 2.5% p.a. interest · zero GST · trades on NSE/BSE">
+        <span class="fx-label">🏛️ SGB (Secondary)</span>
+        <span class="fx-value" id="fxSgb" style="color:var(--inr-color)">--</span>
+        <span style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:1px;">≈ IBJA · 2.5% p.a.</span>
+      </div>
       <div class="fx-item"><span class="fx-label">⚖️ Troy oz</span><span class="fx-value" style="color:var(--gold)">31.1035 g</span></div>
     </div>
     <div class="disclaimer">
@@ -695,11 +761,11 @@
       { name: "Gold 22K", val: fmt(d.india24 * 0.916) },
       { name: "Gold 18K", val: fmt(d.india24 * 0.75) },
       { name: "Silver/g", val: fmt(d.silverGram) },
-      { name: "XAU/USD",  val: fmtUSD(d.price) },
-      { name: "XAG/USD",  val: fmtUSD(d.silverUSD) },
-      { name: "USD/INR",  val: "₹ " + d.usdInr.toFixed(2) },
-      { name: "AED/INR",  val: "₹ " + d.aedInr.toFixed(4) },
+      { name: "XAU/USD",   val: fmtUSD(d.price) },
+      { name: "XAG/USD",   val: fmtUSD(d.silverUSD) },
+      { name: "USD/INR",   val: "₹ " + d.usdInr.toFixed(2) },
       { name: "Dubai 24K", val: fmt(d.dubai24) },
+      { name: "SGB ~",     val: fmt(d.india24) },
     ];
     const all = [...items, ...items];
     document.getElementById("tickerTrack").innerHTML = all.map(i =>
@@ -768,7 +834,7 @@
         <div class="retailer-price">${fmt(p.total)}</div>
         <div style="margin-top:4px">${p.isLive
           ? '<span class="etf-live-badge">LIVE</span>'
-          : '<span class="etf-calc-badge">estimated</span>'}</div>
+          : '<span class="etf-calc-badge" title="Price calculated from IBJA rate + platform spread + 3% GST. Live API requires platform partnership.">~ IBJA</span>'}</div>
         <div class="retailer-sub">${p.note}</div>
       </div>`).join("");
   }
@@ -1069,11 +1135,16 @@
       ? `<strong>${bestEtfName}</strong> is trading at a <span style="color:var(--green)">${Math.abs(bestEtfTrack*100).toFixed(2)}% discount to gold's intraday move</span> — best buy signal today.`
       : `<strong>GOLDBEES or HDFCMFGETF</strong> are the smartest entry points today (tracking data loading…).`;
 
-    // Fixed order: Red (worst) → Orange (middle) → Green (best)
+    // Fixed order: Red (worst) → Orange → Green (best) + info rows for SGB & EGR
+    const sgbPrice  = india24 * 1.001; // secondary market ≈ IBJA + 0.1% brokerage, zero GST
+    const egrPrice  = india24 * 1.001; // exchange-traded physical gold ≈ IBJA + 0.1% brokerage
+
     const opts = [
-      { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP",  price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  desc: ["3% GST on purchase", "0.7–1.5% coin premium over IBJA", "Instant physical possession", "Best for gifts & long-term holding"] },
-      { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      desc: ["3% GST on purchase", "1–2% buy spread over IBJA", "~0.5% annual storage fee", "₹1 minimum buy · Not SEBI regulated"] },
-      { name: "Gold ETF (999 · 24K)",           detail: "GOLDBEES / SETFGOLD / HDFCMFGETF",          price: etfEntry, color: "green",  dot: "✓", rank: "Best Entry",     desc: ["Zero GST · only 0.1% brokerage", "999 purity gold bars in vault", "LTCG 12.5% after 2 years", `Demat account needed · Markets ${mktOpen?"OPEN":"closed"}`] },
+      { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP",  price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  showPrice: true,  desc: ["3% GST on purchase", "0.7–1.5% coin premium over IBJA", "Instant physical possession", "Best for gifts & long-term holding"] },
+      { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      showPrice: true,  desc: ["3% GST on purchase", "1–2% buy spread over IBJA", "~0.5% annual storage fee", "₹1 minimum buy · Not SEBI regulated"] },
+      { name: "Gold ETF (999 · 24K)",           detail: "GOLDBEES · SETFGOLD · HDFCMFGETF · BSLGOLDETF", price: etfEntry, color: "green", dot: "✓", rank: "Best Entry", showPrice: true,  desc: ["Zero GST · only 0.1% brokerage", "999 purity gold bars in vault", "LTCG 12.5% after 2 years", `Demat account needed · Markets ${mktOpen?"OPEN":"closed"}`] },
+      { name: "SGB — Sovereign Gold Bond",      detail: "Secondary market only · NSE / BSE",         price: sgbPrice, color: "green",  dot: "★", rank: "Best Long-Term", showPrice: true,  desc: ["Zero GST · 0.1% brokerage (secondary mkt)", "2.5% p.a. interest on issue price", "LTCG tax-free at maturity (8 yr)", "No new RBI issuances — buy on NSE/BSE secondary"] },
+      { name: "EGR — Electronic Gold Receipt",  detail: "NSE EGR segment · launched May 2026",       price: egrPrice, color: "green",  dot: "🆕", rank: "Exchange Gold",  showPrice: false, desc: ["Physical 24K gold (999/995) in SEBI vault", "Tradeable on NSE like shares · T+1 settlement", "Available: 100mg · 1g · 10g · 100g · 1kg", "Can convert to physical delivery · Very new — thin liquidity"] },
     ];
     const savVsPhys = phys24 - etfEntry, savVsPhysPct = ((savVsPhys / phys24) * 100).toFixed(1);
     const savVsDigi = digi  - etfEntry, savVsDigiPct = ((savVsDigi / digi)  * 100).toFixed(1);
@@ -1087,14 +1158,17 @@
           <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px;letter-spacing:0.03em;">${opt.detail}</div>
           <div class="tl-option-desc"><ul style="margin:5px 0 0 14px;padding:0;line-height:1.7;">${opt.desc.map(s=>`<li>${s}</li>`).join("")}</ul></div>
         </div>
-        <div class="tl-price-right"><div class="tl-price-val">${fmt(opt.price)}</div><div class="tl-price-sub">per gram all-in</div></div>
+        <div class="tl-price-right">
+          ${opt.showPrice ? `<div class="tl-price-val">${fmt(opt.price)}</div><div class="tl-price-sub">per gram all-in</div>` : `<div class="tl-price-val" style="font-size:12px;color:var(--muted)">~IBJA</div><div class="tl-price-sub">price discovery live</div>`}
+        </div>
       </div>`).join("") + `
       <div class="tl-verdict">
         <div class="tl-verdict-label">Today's Recommendation</div>
         <div class="tl-verdict-text"><ul style="margin:4px 0 0 16px;padding:0;line-height:1.7;">
           <li>Gold ETF saves <strong>${fmt(savVsPhys)}/g (${savVsPhysPct}%) vs physical coin</strong> and <strong>${fmt(savVsDigi)}/g (${savVsDigiPct}%) vs digital gold</strong> at best-case prices.</li>
           <li>${trackVerdict}</li>
-          <li>999 purity gold bars in vault · instant NSE/BSE liquidity · zero storage cost.</li>
+          <li>SGB is the best long-term hold (2.5% interest + tax-free at maturity) — but buy only on secondary market and check maturity date before buying.</li>
+          <li>EGR (NSE, May 2026) is the newest option — physical gold on exchange, watch for liquidity to build.</li>
         </ul></div>
       </div>`;
     document.getElementById("tlUpdated").textContent = "updated " + timeStr(null);
@@ -1422,7 +1496,8 @@
       document.getElementById("fxGold").textContent   = fmtUSD(data.price);
       document.getElementById("fxSilver").textContent = fmtUSD(silverUSD);
       document.getElementById("fxInr").textContent    = "₹ " + usdInr.toFixed(2);
-      document.getElementById("fxAed").textContent    = "₹ " + aedInr.toFixed(4);
+      const sgbEl = document.getElementById("fxSgb");
+      if (sgbEl) sgbEl.textContent = fmt(india24); // SGB secondary ≈ IBJA (no premium, no GST)
 
       buildTicker({ price: data.price, india24, dubai24: dubai24Inr, silverGram, silverUSD, usdInr, aedInr });
 
