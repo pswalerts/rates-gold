@@ -201,7 +201,7 @@
     .tl-header { padding:16px 24px; background:rgba(212,168,83,0.05); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
     .tl-header-title { font-size:13px; font-weight:700; color:var(--text); }
     .tl-body { padding:12px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-    .tl-row { display:flex; flex-direction:row; align-items:flex-start; gap:10px; border-radius:10px; padding:11px 12px; transition:border-color 0.3s; overflow:hidden; }
+    .tl-row { display:flex; flex-direction:row; align-items:flex-start; gap:10px; border-radius:10px; padding:11px 12px; transition:border-color 0.3s; }
     .tl-row.tl-green  { border:1px solid rgba(34,197,94,0.4);  background:rgba(34,197,94,0.04); }
     .tl-row.tl-orange { border:1px solid rgba(249,115,22,0.35); background:rgba(249,115,22,0.04); }
     .tl-row.tl-red    { border:1px solid rgba(239,68,68,0.35);  background:rgba(239,68,68,0.04); }
@@ -209,7 +209,7 @@
     .tl-dot.green  { background:rgba(34,197,94,0.2);  color:var(--green);  border:2px solid rgba(34,197,94,0.5);  box-shadow:0 0 12px rgba(34,197,94,0.3); }
     .tl-dot.orange { background:rgba(249,115,22,0.2); color:var(--orange); border:2px solid rgba(249,115,22,0.5); box-shadow:0 0 12px rgba(249,115,22,0.3); }
     .tl-dot.red    { background:rgba(239,68,68,0.2);  color:var(--red);    border:2px solid rgba(239,68,68,0.5);  box-shadow:0 0 12px rgba(239,68,68,0.25); }
-    .tl-content { flex:1; min-width:0; overflow:hidden; }
+    .tl-content { flex:1; min-width:0; }
     .tl-option-name { font-size:12px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .tl-option-name.green  { color:var(--green); }
     .tl-option-name.orange { color:var(--orange); }
@@ -419,7 +419,7 @@
     }
     /* ── Traffic light — pill tags replacing <ul><li> ── */
     .tl-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
-    .tl-tag { font-size:9px; font-family:var(--mono); padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.09); color:var(--muted); white-space:nowrap; letter-spacing:0.02em; line-height:1.5; }
+    .tl-tag { font-size:9px; font-family:var(--mono); padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.09); color:var(--muted); white-space:normal; letter-spacing:0.02em; line-height:1.4; }
     .tl-row.tl-green  .tl-tag { border-color:rgba(34,197,94,0.22);  }
     .tl-row.tl-orange .tl-tag { border-color:rgba(249,115,22,0.22); }
     .tl-row.tl-red    .tl-tag { border-color:rgba(239,68,68,0.20);  }
@@ -571,19 +571,19 @@
             <span style="font-family:var(--mono);font-size:12px;color:var(--muted);animation:blink 1.5s infinite">loading ETF prices...</span>
           </div>
         </div>
-        <div id="etfHistPanel" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:none;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-            <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">52-week price history · tap any card above to switch</div>
-            <select id="etfHistSelect" onchange="renderHistChart(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;">
-              <option value="GOLDBEES">Gold BeES (GOLDBEES)</option><option value="SETFGOLD">SBI Gold (SETFGOLD)</option>
-              <option value="HDFCMFGETF">HDFC Gold (HDFCMFGETF)</option><option value="AXISGOLD">Axis Gold (AXISGOLD)</option>
-              <option value="KOTAKGOLD">Kotak Gold (KOTAKGOLD)</option><option value="ICICIGOLD">ICICI Gold (ICICIGOLD)</option>
-              <option value="BSLGOLDETF">Aditya Birla Gold (BSLGOLDETF)</option><option value="GOLDETF">Mirae Gold (GOLDETF)</option>
-              <option value="GROWWGOLD">Groww Gold (GROWWGOLD)</option>
+        <div id="etfHistPanel" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">52-week NAV</span>
+            <select id="etfHistSelect" onchange="renderHistChart(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:6px;cursor:pointer;">
+              <option value="GOLDBEES">Gold BeES</option><option value="SETFGOLD">SBI Gold</option>
+              <option value="HDFCMFGETF">HDFC Gold</option><option value="AXISGOLD">Axis Gold</option>
+              <option value="KOTAKGOLD">Kotak Gold</option><option value="ICICIGOLD">ICICI Gold</option>
+              <option value="BSLGOLDETF">Aditya Birla Gold</option><option value="GOLDETF">Mirae Gold</option>
+              <option value="GROWWGOLD">Groww Gold</option>
             </select>
           </div>
-          <canvas id="etfHistCanvas" width="800" height="160" style="width:100%;display:block;"></canvas>
-          <div id="etfHistStats" style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
+          <canvas id="etfHistCanvas" width="800" height="120" style="width:100%;display:block;"></canvas>
+          <div id="etfHistStats" style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div>
         </div>
       </div>
 
@@ -1138,11 +1138,11 @@
     const egrPrice  = india24 * 1.001; // exchange-traded physical gold ≈ IBJA + 0.1% brokerage
 
     const opts = [
-      { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG JEWELLERS · MMTC-PAMP",  price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  showPrice: true,  desc: ["3% GST on purchase", "0.7–1.5% coin premium over IBJA", "Instant physical possession", "Best for gifts & long-term holding"] },
-      { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      showPrice: true,  desc: ["3% GST on purchase", "1–2% buy spread over IBJA", "~0.5% annual storage fee", "₹1 minimum buy · Not SEBI regulated"] },
-      { name: "Gold ETF (999 · 24K)",           detail: "GOLDBEES · SETFGOLD · HDFCMFGETF · BSLGOLDETF", price: etfEntry, color: "green", dot: "✓", rank: "Best Entry", showPrice: true,  desc: ["Zero GST · only 0.1% brokerage", "999 purity gold bars in vault", "LTCG 12.5% after 2 years", `Demat account needed · Markets ${mktOpen?"OPEN":"closed"}`] },
-      { name: "SGB — Sovereign Gold Bond",      detail: "Secondary market only · NSE / BSE",         price: sgbPrice, color: "green",  dot: "★", rank: "Best Long-Term", showPrice: true,  desc: ["Zero GST · 0.1% brokerage (secondary mkt)", "2.5% p.a. interest on issue price (taxable as income)", "LTCG 12.5% on gains if bought in secondary market", "No new RBI issuances — buy on NSE/BSE · check maturity date"] },
-      { name: "EGR — Electronic Gold Receipt",  detail: "NSE EGR segment · launched May 2026",       price: egrPrice, color: "green",  dot: "🆕", rank: "Exchange Gold",  showPrice: false, desc: ["Physical 24K gold (999/995) in SEBI vault", "Tradeable on NSE like shares · T+1 settlement", "Available: 100mg · 1g · 10g · 100g · 1kg", "Can convert to physical delivery · Very new — thin liquidity"] },
+      { name: "Physical Gold Coin (999 · 24K)", detail: "MALABAR GOLD · PNG · MMTC-PAMP",            price: phys24,   color: "red",    dot: "×", rank: "Highest Cost",  showPrice: true,  desc: ["3% GST + 0.7–1.5% coin premium", "Instant physical ownership", "Good for gifts & long-term hold"] },
+      { name: "Digital Gold (999.9 · 24K)",     detail: "MMTC-PAMP · AUGMONT · SAFEGOLD",            price: digi,     color: "orange", dot: "~", rank: "Moderate",      showPrice: true,  desc: ["3% GST + 1–2% buy spread", "~0.5% p.a. storage fee", "₹1 min · Not SEBI regulated"] },
+      { name: "Gold ETF (999 · 24K)",           detail: "GOLDBEES · SETFGOLD · BSLGOLDETF",          price: etfEntry, color: "green",  dot: "✓", rank: "Best Entry",    showPrice: true,  desc: ["Zero GST · 0.1% brokerage only", "LTCG 12.5% after 2 yrs", `Demat needed · Mkt ${mktOpen?"OPEN":"CLOSED"}`] },
+      { name: "SGB — Sovereign Gold Bond",      detail: "Secondary market · NSE / BSE",              price: sgbPrice, color: "green",  dot: "★", rank: "Best Long-Term", showPrice: true,  desc: ["Zero GST · 2.5% p.a. interest (taxable)", "LTCG 12.5% for secondary buyers", "No new RBI issues · check maturity date"] },
+      { name: "EGR — Electronic Gold Receipt",  detail: "NSE EGR · launched May 2026",               price: egrPrice, color: "green",  dot: "🆕", rank: "Exchange Gold",  showPrice: false, desc: ["Physical 24K in SEBI vault", "NSE-traded · T+1 settlement", "Very new — thin liquidity"] },
     ];
     const savVsPhys = phys24 - etfEntry, savVsPhysPct = ((savVsPhys / phys24) * 100).toFixed(1);
     const savVsDigi = digi  - etfEntry, savVsDigiPct = ((savVsDigi / digi)  * 100).toFixed(1);
