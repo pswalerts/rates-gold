@@ -200,25 +200,25 @@
     .tl-panel { margin-top:18px; background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
     .tl-header { padding:16px 24px; background:rgba(212,168,83,0.05); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
     .tl-header-title { font-size:13px; font-weight:700; color:var(--text); }
-    .tl-body { padding:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-    .tl-row { display:flex; flex-direction:row; align-items:flex-start; gap:12px; border-radius:12px; padding:13px 14px; transition:border-color 0.3s; }
+    .tl-body { padding:12px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .tl-row { display:flex; flex-direction:row; align-items:flex-start; gap:10px; border-radius:10px; padding:11px 12px; transition:border-color 0.3s; overflow:hidden; }
     .tl-row.tl-green  { border:1px solid rgba(34,197,94,0.4);  background:rgba(34,197,94,0.04); }
     .tl-row.tl-orange { border:1px solid rgba(249,115,22,0.35); background:rgba(249,115,22,0.04); }
     .tl-row.tl-red    { border:1px solid rgba(239,68,68,0.35);  background:rgba(239,68,68,0.04); }
-    .tl-dot { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; }
+    .tl-dot { width:26px; height:26px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
     .tl-dot.green  { background:rgba(34,197,94,0.2);  color:var(--green);  border:2px solid rgba(34,197,94,0.5);  box-shadow:0 0 12px rgba(34,197,94,0.3); }
     .tl-dot.orange { background:rgba(249,115,22,0.2); color:var(--orange); border:2px solid rgba(249,115,22,0.5); box-shadow:0 0 12px rgba(249,115,22,0.3); }
     .tl-dot.red    { background:rgba(239,68,68,0.2);  color:var(--red);    border:2px solid rgba(239,68,68,0.5);  box-shadow:0 0 12px rgba(239,68,68,0.25); }
-    .tl-content { flex:1; min-width:0; }
-    .tl-option-name { font-size:13px; font-weight:700; color:var(--text); }
+    .tl-content { flex:1; min-width:0; overflow:hidden; }
+    .tl-option-name { font-size:12px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .tl-option-name.green  { color:var(--green); }
     .tl-option-name.orange { color:var(--orange); }
     .tl-option-name.red    { color:var(--red); }
     .tl-option-desc { font-size:11px; color:var(--muted); margin-top:2px; line-height:1.5; }
-    .tl-price-right { text-align:right; flex-shrink:0; min-width:76px; }
-    .tl-price-val { font-family:var(--mono); font-size:15px; font-weight:700; color:var(--inr-color); white-space:nowrap; }
-    .tl-price-sub { font-size:9px; color:var(--muted); font-family:var(--mono); margin-top:2px; white-space:nowrap; }
-    .tl-rank { font-size:9px; font-family:var(--mono); letter-spacing:0.06em; padding:2px 7px; border-radius:999px; text-transform:uppercase; font-weight:600; display:inline-block; }
+    .tl-price-right { text-align:right; flex-shrink:0; min-width:68px; max-width:80px; }
+    .tl-price-val { font-family:var(--mono); font-size:13px; font-weight:700; color:var(--inr-color); white-space:nowrap; }
+    .tl-price-sub { font-size:9px; color:var(--muted); font-family:var(--mono); margin-top:1px; white-space:nowrap; }
+    .tl-rank { font-size:8px; font-family:var(--mono); letter-spacing:0.05em; padding:1px 6px; border-radius:999px; text-transform:uppercase; font-weight:600; display:inline-block; white-space:nowrap; }
     .tl-rank.green  { background:rgba(34,197,94,0.15);  color:var(--green);  border:1px solid rgba(34,197,94,0.3); }
     .tl-rank.orange { background:rgba(249,115,22,0.15); color:var(--orange); border:1px solid rgba(249,115,22,0.3); }
     .tl-rank.red    { background:rgba(239,68,68,0.15);  color:var(--red);    border:1px solid rgba(239,68,68,0.3); }
@@ -302,15 +302,16 @@
     .refresh-btn { background:none; border:1px solid var(--border); color:var(--muted); font-family:var(--mono); font-size:12px; padding:6px 14px; border-radius:6px; cursor:pointer; transition:all 0.2s; }
     .refresh-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
     .refreshing { opacity:0.4; pointer-events:none; }
-    .etf-section-wrap { display:grid; grid-template-columns:1fr 320px; gap:18px; align-items:start; }
-    #etfGrid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .etf-section-wrap { display:flex; flex-direction:column; gap:16px; }
+    #etfGrid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    #etfHistPanel { border-radius:14px; }
     .gold-section   { display:block; }
     .silver-section { display:none; }
     body.silver-mode .gold-section   { display:none; }
     body.silver-mode .silver-section { display:block; }
     .silver-hero-label { font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:var(--silver); margin-bottom:10px; font-family:var(--mono); font-weight:600; }
     .gs-ratio-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-family:var(--mono); font-size:12px; background:rgba(168,184,200,0.1); color:var(--silver); border:1px solid rgba(168,184,200,0.2); margin-top:10px; }
-    @media (max-width:900px) { .etf-section-wrap { grid-template-columns:1fr; } #etfHistPanel { display:none !important; } }
+    @media (max-width:900px) { #etfGrid { grid-template-columns:repeat(2,1fr) !important; } }
 
     @media (max-width:768px) {
       /* Layout */
@@ -338,7 +339,7 @@
 
       /* Retailer / platform grids */
       .retailer-grid { grid-template-columns:repeat(2,1fr) !important; }
-      #etfGrid { grid-template-columns:1fr !important; }
+      #etfGrid { grid-template-columns:repeat(2,1fr) !important; }
 
       /* Traffic light — revert to column on tablet */
       .tl-row { flex-direction:column; gap:8px; }
@@ -387,6 +388,7 @@
       /* Retailer / ETF grids */
       .retailer-grid { grid-template-columns:1fr 1fr !important; }
       #etfGrid { grid-template-columns:1fr !important; }
+      .pr-grid { grid-template-columns:1fr !important; }
       .retailer-price { font-size:15px; }
 
       /* Dual rate */
@@ -416,8 +418,8 @@
       .logo-rate, .logo-dot, .logo-gold-word { font-size:20px; }
     }
     /* ── Traffic light — pill tags replacing <ul><li> ── */
-    .tl-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
-    .tl-tag { font-size:10px; font-family:var(--mono); padding:3px 9px; border-radius:5px; background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.09); color:var(--muted); white-space:nowrap; letter-spacing:0.02em; line-height:1.5; }
+    .tl-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+    .tl-tag { font-size:9px; font-family:var(--mono); padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.09); color:var(--muted); white-space:nowrap; letter-spacing:0.02em; line-height:1.5; }
     .tl-row.tl-green  .tl-tag { border-color:rgba(34,197,94,0.22);  }
     .tl-row.tl-orange .tl-tag { border-color:rgba(249,115,22,0.22); }
     .tl-row.tl-red    .tl-tag { border-color:rgba(239,68,68,0.20);  }
@@ -569,19 +571,19 @@
             <span style="font-family:var(--mono);font-size:12px;color:var(--muted);animation:blink 1.5s infinite">loading ETF prices...</span>
           </div>
         </div>
-        <div id="etfHistPanel" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 16px;display:none;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-            <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">52-week history</div>
+        <div id="etfHistPanel" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+            <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">52-week price history · tap any card above to switch</div>
             <select id="etfHistSelect" onchange="renderHistChart(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;">
-              <option value="GOLDBEES">GOLDBEES</option><option value="SETFGOLD">SETFGOLD</option>
-              <option value="HDFCMFGETF">HDFCMFGETF</option><option value="AXISGOLD">AXISGOLD</option>
-              <option value="KOTAKGOLD">KOTAKGOLD</option><option value="ICICIGOLD">ICICIGOLD</option>
-              <option value="BSLGOLDETF">BSLGOLDETF</option><option value="GOLDETF">GOLDETF (Mirae)</option>
-              <option value="GROWWGOLD">GROWWGOLD 🆕</option>
+              <option value="GOLDBEES">Gold BeES (GOLDBEES)</option><option value="SETFGOLD">SBI Gold (SETFGOLD)</option>
+              <option value="HDFCMFGETF">HDFC Gold (HDFCMFGETF)</option><option value="AXISGOLD">Axis Gold (AXISGOLD)</option>
+              <option value="KOTAKGOLD">Kotak Gold (KOTAKGOLD)</option><option value="ICICIGOLD">ICICI Gold (ICICIGOLD)</option>
+              <option value="BSLGOLDETF">Aditya Birla Gold (BSLGOLDETF)</option><option value="GOLDETF">Mirae Gold (GOLDETF)</option>
+              <option value="GROWWGOLD">Groww Gold (GROWWGOLD)</option>
             </select>
           </div>
-          <canvas id="etfHistCanvas" width="288" height="140" style="width:100%;display:block;"></canvas>
-          <div id="etfHistStats" style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+          <canvas id="etfHistCanvas" width="800" height="160" style="width:100%;display:block;"></canvas>
+          <div id="etfHistStats" style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
         </div>
       </div>
 
@@ -1069,41 +1071,33 @@
       const isBest = e.symbol === bestSym;
       const hasSp  = _etfSparklines[e.symbol]?.["1y"]?.length >= 2;
       const navStr  = e.unitNav > 0
-        ? `₹ ${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}`
+        ? `₹ ${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:0})}`
         : "—";
-      const gpuStr  = e.gramsPerUnit ? `${e.gramsPerUnit.toFixed(4)} g` : "—";
+      const gpuStr  = e.gramsPerUnit ? `${e.gramsPerUnit.toFixed(3)} g` : "—";
 
-      // Compact tracking badge
-      let trackBadge = "";
+      // Compact tracking badge (one line)
+      let trackLine = `<span style="color:var(--muted);font-size:9px;">tracking loading…</span>`;
       if (e.trackDev != null) {
         const isDiscount = e.trackDev <= 0;
         const arrow  = isDiscount ? "▼" : "▲";
         const clr    = isDiscount ? "var(--green)" : "var(--orange)";
-        const bg     = isDiscount ? "rgba(34,197,94,0.1)"  : "rgba(249,115,22,0.1)";
-        const bdr    = isDiscount ? "rgba(34,197,94,0.25)" : "rgba(249,115,22,0.25)";
         const absPct = Math.abs(e.trackDev * 100).toFixed(2);
         const label  = isDiscount ? "discount" : "premium";
-        trackBadge = `<span style="font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:4px;background:${bg};color:${clr};border:1px solid ${bdr};white-space:nowrap;">${arrow}&nbsp;${absPct}% ${label}</span>`;
+        trackLine = `<span style="color:${clr};font-size:9px;font-family:var(--mono);">${arrow} ${absPct}% vs gold</span> <span style="color:var(--muted);font-size:9px;">(${label})</span>`;
       }
 
       return `<div class="pr-card ${isBest?"pr-best":""}" style="align-items:flex-start;cursor:${hasSp?"pointer":"default"};" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
         ${isBest?'<div class="pr-badge">Best Buy</div>':""}
-        <div class="pr-icon" style="margin-top:2px;">${e.emoji}</div>
-        <div class="pr-info">
-          <div class="pr-name">${e.name}</div>
-          <div class="pr-type">${e.fund}</div>
-          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;align-items:center;">
-            ${e.live?'<span class="pr-source live">LIVE</span>':'<span class="pr-source calc">est.</span>'}
-            ${trackBadge}
-          </div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:0.03em;">
-            <span style="color:var(--gold);">TER&nbsp;${(e.expense*100).toFixed(2)}%</span>&nbsp;·&nbsp;${e.aum}&nbsp;·&nbsp;${e.symbol}${hasSp?' <span style="opacity:0.4;">↓&nbsp;chart</span>':""}
-          </div>
+        <div class="pr-icon" style="margin-top:2px;flex-shrink:0;">${e.emoji}</div>
+        <div class="pr-info" style="min-width:0;overflow:hidden;">
+          <div class="pr-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.name}</div>
+          <div class="pr-type" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.fund} &nbsp;·&nbsp; <span style="color:var(--gold-bright);font-family:var(--mono);">TER ${(e.expense*100).toFixed(2)}%</span></div>
+          <div style="margin-top:4px;">${trackLine}</div>
         </div>
-        <div class="pr-right">
-          <div class="pr-price">${fmt(e.gramRate)}</div>
-          <div class="pr-note">${navStr}/unit</div>
-          <div class="pr-note">${gpuStr}/unit</div>
+        <div class="pr-right" style="min-width:64px;flex-shrink:0;">
+          <div class="pr-price" style="font-size:14px;">${navStr}</div>
+          <div class="pr-note">per unit${hasSp?' · <span style="opacity:0.5;">↓chart</span>':""}</div>
+          <div class="pr-note">${gpuStr} gold</div>
         </div>
       </div>`;
     }).join("");
@@ -1156,19 +1150,18 @@
       <div class="tl-row tl-${opt.color}">
         <div class="tl-dot ${opt.color}" style="flex-shrink:0;margin-top:1px;">${opt.dot}</div>
         <div class="tl-content">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px;">
-            <div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:4px;">
+            <div style="min-width:0;overflow:hidden;flex:1;">
               <div class="tl-option-name ${opt.color}">${opt.name}</div>
-              <div style="display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;">
-                <span class="tl-rank ${opt.color}">${opt.rank}</span>
-                <span style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.03em;">${opt.detail}</span>
+              <div style="display:flex;align-items:center;gap:5px;margin-top:2px;flex-wrap:nowrap;overflow:hidden;">
+                <span class="tl-rank ${opt.color}" style="flex-shrink:0;">${opt.rank}</span>
               </div>
             </div>
             <div class="tl-price-right">
-              ${opt.showPrice ? `<div class="tl-price-val">${fmt(opt.price)}</div><div class="tl-price-sub">per gram</div>` : `<div class="tl-price-val" style="font-size:11px;color:var(--muted)">~IBJA</div><div class="tl-price-sub">est.</div>`}
+              ${opt.showPrice ? `<div class="tl-price-val">${fmt(opt.price)}</div><div class="tl-price-sub">/gram</div>` : `<div class="tl-price-val" style="font-size:10px;color:var(--muted);">~IBJA</div><div class="tl-price-sub">est.</div>`}
             </div>
           </div>
-          <div class="tl-tags">${opt.desc.map(s=>`<span class="tl-tag">${s}</span>`).join("")}</div>
+          <div class="tl-tags" style="margin-top:5px;">${opt.desc.slice(0,3).map(s=>`<span class="tl-tag">${s}</span>`).join("")}</div>
         </div>
       </div>`).join("") + `
       <div class="tl-verdict">
