@@ -64,7 +64,8 @@
     #btnSilver:not(.active-silver) { color:var(--silver); }
     .status { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
     .dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation:blink 2s infinite; }
-    .dot.error { background:var(--red); animation:none; }
+    .dot.error  { background:var(--red); animation:none; }
+    .dot.yellow { background:var(--yellow); }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     .hero { margin-top:48px; }
     .source-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px; font-family:var(--mono); font-size:10px; letter-spacing:0.07em; text-transform:uppercase; background:rgba(212,168,83,0.08); color:var(--gold); border:1px solid rgba(212,168,83,0.2); margin-left:4px; }
@@ -148,33 +149,26 @@
     .dubai-callout-link:hover { text-decoration:underline; }
     .dubai-card { background:var(--surface); border:1px solid rgba(224,120,40,0.25); border-radius:16px; padding:26px 28px; transition:border-color 0.2s; }
     .dubai-card:hover { border-color:rgba(255,255,255,0.14); }
-    .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px; }
+    .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px; background:rgba(224,120,40,0.06); border-bottom:1px solid rgba(224,120,40,0.15); border-radius:10px 10px 0 0; padding:16px 20px; margin:-26px -28px 18px; }
     .dubai-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--aed-color); font-family:var(--mono); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .dubai-title-arabic { font-size:13px; color:var(--aed-color); opacity:0.85; letter-spacing:0; text-transform:none; font-family:var(--sans); direction:rtl; }
-    .dxb-fx-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:18px; }
-    .dxb-fx-item { display:flex; flex-direction:column; gap:4px; }
+    .dxb-fx-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin-bottom:16px; }
+    .dxb-fx-item { display:flex; flex-direction:column; gap:3px; }
     .dxb-fx-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
-    .dxb-fx-val   { font-family:var(--mono); font-size:22px; font-weight:600; color:var(--text); }
-    .dxb-fx-sub   { font-size:11px; color:var(--muted); }
-    .dxb-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:18px; }
-    .dxb-col  { display:flex; flex-direction:column; padding:16px 18px; gap:14px; }
-    .dxb-col:not(:last-child) { border-right:1px solid var(--border); }
-    .dxb-col-head { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); padding-bottom:10px; border-bottom:1px solid var(--border); }
-    .dxb-col-head.aed-head { color:var(--aed-color); }
-    .dxb-price-item { display:flex; flex-direction:column; gap:2px; }
-    .dxb-price-label { font-size:10px; color:var(--muted); letter-spacing:0.04em; }
-    .dxb-price-val   { font-family:var(--mono); font-size:23px; font-weight:600; }
-    .dxb-price-val.aed { color:var(--aed-color); }
-    .dxb-price-val.inr { color:var(--inr-color); }
-    .dxb-price-sub { font-size:10px; color:var(--muted); }
-    .dxb-spread-item { display:flex; flex-direction:column; gap:3px; }
-    .dxb-spread-label { font-size:10px; color:var(--muted); letter-spacing:0.04em; }
-    .dxb-spread-val   { font-family:var(--mono); font-size:22px; font-weight:600; }
-    .dxb-spread-val.pos { color:var(--green); }
-    .dxb-spread-val.neg { color:var(--red); }
-    .dxb-spread-val.dim { color:var(--text); }
-    .dubai-note { margin-top:14px; font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }
-    .dubai-header { background:rgba(224,120,40,0.06); border-bottom:1px solid rgba(224,120,40,0.15); border-radius:10px 10px 0 0; padding:16px 20px; margin:-26px -28px 18px; }
+    .dxb-fx-val   { font-family:var(--mono); font-size:18px; font-weight:600; color:var(--text); }
+    /* New 3-row comparison table */
+    .dxb-compare { border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:14px; }
+    .dxb-cmp-row { display:grid; grid-template-columns:160px 140px 160px 1fr; align-items:center; padding:11px 16px; gap:8px; }
+    .dxb-cmp-head { background:rgba(255,255,255,0.025); border-bottom:1px solid var(--border); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); padding:7px 16px; }
+    .dxb-cmp-row:not(.dxb-cmp-head):not(:last-child) { border-bottom:1px solid var(--border); }
+    .dxb-cmp-diff { background:rgba(255,255,255,0.015); }
+    .dxb-cmp-c1 { font-size:13px; font-weight:500; color:var(--text); display:flex; align-items:center; gap:6px; }
+    .dxb-cmp-c2, .dxb-cmp-c3 { font-family:var(--mono); font-size:17px; font-weight:700; white-space:nowrap; }
+    .dxb-cmp-c4 { font-size:11px; color:var(--muted); font-family:var(--mono); }
+    /* Reference strip */
+    .dxb-ref-strip { display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:9px 14px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px; font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:14px; }
+    .dxb-ref-dot { opacity:0.25; }
+    .dubai-note { font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }
     .hero-hist-panel { margin-top:20px; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
     .hero-hist-tabs { display:flex; border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
     .hero-hist-tabs::-webkit-scrollbar { display:none; }
@@ -242,8 +236,9 @@
       .dxb-fx-strip { grid-template-columns:1fr 1fr; }
       .dubai-card { padding:18px 16px; }
       .dubai-header { margin:-18px -16px 14px; padding:14px 16px; }
-      .dxb-3col { grid-template-columns:1fr; }
-      .dxb-col:not(:last-child) { border-right:none; border-bottom:1px solid var(--border); }
+      .dxb-cmp-row { grid-template-columns:120px 110px 130px; }
+      .dxb-cmp-c4 { display:none; }
+      .dxb-fx-strip { grid-template-columns:repeat(3,1fr); gap:8px; }
       .tl-body { grid-template-columns:1fr; }
       .tl-row { flex-direction:column; align-items:flex-start; }
       .tl-price-right { align-self:stretch; text-align:left; }
@@ -408,34 +403,63 @@
 
       <div class="dubai-card" id="dubai-section" style="margin-top:44px">
         <div class="dubai-header">
-          <div class="dubai-title" style="font-size:16px;font-weight:700;">Dubai · Live Gold Prices <span class="dubai-title-arabic">اسعار الذهب · دبي</span></div>
+          <div class="dubai-title">Dubai · Gold Comparison <span class="dubai-title-arabic">اسعار الذهب · دبي</span></div>
           <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">--</div>
         </div>
+
+        <!-- FX strip -->
         <div class="dxb-fx-strip">
-          <div class="dxb-fx-item"><div class="dxb-fx-label">🇺🇸 <span style="color:var(--usd-color)">USD</span> <span style="opacity:.5">/</span> <span style="color:var(--inr-color)">INR</span></div><div class="dxb-fx-val" id="dxb-usd-inr" style="color:var(--usd-color)">--</div><div class="dxb-fx-sub">live rate</div></div>
-          <div class="dxb-fx-item"><div class="dxb-fx-label">🇦🇪 <span style="color:var(--aed-color)">AED</span> <span style="opacity:.5">/</span> <span style="color:var(--inr-color)">INR</span></div><div class="dxb-fx-val" id="dxb-aed-inr-strip" style="color:var(--aed-color)">--</div><div class="dxb-fx-sub">USD peg 3.6725</div></div>
-          <div class="dxb-fx-item"><div class="dxb-fx-label">🌐 <span style="color:var(--gold-bright)">XAU</span> <span style="opacity:.5">/</span> <span style="color:var(--usd-color)">USD</span></div><div class="dxb-fx-val" id="dxb-xau-usd" style="color:var(--gold-bright)">--</div><div class="dxb-fx-sub">international spot</div></div>
-        </div>
-        <div class="dxb-3col">
-          <div class="dxb-col">
-            <div class="dxb-col-head aed-head">Dubai Rates (AED)</div>
-            <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val aed" id="dxb-24k-aed">--</div><div class="dxb-price-sub">local price</div></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val aed" id="dxb-22k-aed">--</div><div class="dxb-price-sub">local price</div></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">18K · per gram</div><div class="dxb-price-val aed" id="dxb-18k-aed">--</div><div class="dxb-price-sub">local price</div></div>
+          <div class="dxb-fx-item">
+            <div class="dxb-fx-label">🇺🇸 USD / INR</div>
+            <div class="dxb-fx-val" id="dxb-usd-inr" style="color:var(--usd-color)">--</div>
           </div>
-          <div class="dxb-col">
-            <div class="dxb-col-head" style="color:var(--inr-color)">INR Equivalent</div>
-            <div class="dxb-price-item"><div class="dxb-price-label">24K · per gram</div><div class="dxb-price-val inr" id="dxb-24k-inr">--</div><div class="dxb-price-sub">at live AED/INR</div></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">22K · per gram</div><div class="dxb-price-val inr" id="dxb-22k-inr">--</div><div class="dxb-price-sub">at live AED/INR</div></div>
-            <div class="dxb-price-item"><div class="dxb-price-label">AED / INR rate</div><div class="dxb-price-val inr" style="font-size:15px;" id="dxb-aed-inr">--</div><div class="dxb-price-sub">live exchange rate</div></div>
+          <div class="dxb-fx-item">
+            <div class="dxb-fx-label">🇦🇪 AED / INR</div>
+            <div class="dxb-fx-val" id="dxb-aed-inr-strip" style="color:var(--aed-color)">--</div>
           </div>
-          <div class="dxb-col">
-            <div class="dxb-col-head"><span style="color:var(--inr-color)">India</span> <span style="color:var(--muted);font-size:9px">vs</span> <span style="color:var(--aed-color)">Dubai</span></div>
-            <div class="dxb-spread-item"><div class="dxb-spread-label">India 24K</div><div class="dxb-spread-val dim" id="ds-india">--</div><div class="dxb-price-sub">IBJA / calculated</div></div>
-            <div class="dxb-spread-item"><div class="dxb-spread-label">Dubai 24K (INR)</div><div class="dxb-spread-val dim" id="ds-dubai">--</div><div class="dxb-price-sub">converted at live rate</div></div>
-            <div class="dxb-spread-item"><div class="dxb-spread-label">Spread</div><div class="dxb-spread-val" id="ds-spread">--</div><div class="dxb-price-sub" id="ds-spreadpct">--</div></div>
+          <div class="dxb-fx-item">
+            <div class="dxb-fx-label">🌐 XAU / USD</div>
+            <div class="dxb-fx-val" id="dxb-xau-usd" style="color:var(--gold-bright)">--</div>
           </div>
         </div>
+
+        <!-- 3-row comparison: Dubai vs India (24K 999) -->
+        <div class="dxb-compare">
+          <div class="dxb-cmp-row dxb-cmp-head">
+            <div class="dxb-cmp-c1"></div>
+            <div class="dxb-cmp-c2" style="color:var(--aed-color)">AED / gram</div>
+            <div class="dxb-cmp-c3" style="color:var(--inr-color)">₹ / gram</div>
+            <div class="dxb-cmp-c4">Note</div>
+          </div>
+          <div class="dxb-cmp-row">
+            <div class="dxb-cmp-c1">🇦🇪 Dubai 24K</div>
+            <div class="dxb-cmp-c2" style="color:var(--aed-color)" id="dxb-24k-aed">--</div>
+            <div class="dxb-cmp-c3" style="color:var(--inr-color)" id="dxb-24k-inr">--</div>
+            <div class="dxb-cmp-c4">no import duty</div>
+          </div>
+          <div class="dxb-cmp-row">
+            <div class="dxb-cmp-c1">🇮🇳 India 24K</div>
+            <div class="dxb-cmp-c2" style="color:var(--muted)">—</div>
+            <div class="dxb-cmp-c3" style="color:var(--inr-color)" id="ds-india">--</div>
+            <div class="dxb-cmp-c4">incl. 6% duty + GST</div>
+          </div>
+          <div class="dxb-cmp-row dxb-cmp-diff">
+            <div class="dxb-cmp-c1" style="color:var(--muted);font-size:12px">Difference</div>
+            <div class="dxb-cmp-c2" style="color:var(--muted)">—</div>
+            <div class="dxb-cmp-c3" id="ds-spread">--</div>
+            <div class="dxb-cmp-c4" id="ds-spreadpct" style="color:var(--muted)">--</div>
+          </div>
+        </div>
+
+        <!-- Reference: 22K / 18K / AED rate -->
+        <div class="dxb-ref-strip">
+          <span>22K · <span id="dxb-22k-aed" style="color:var(--aed-color)">--</span> AED · <span id="dxb-22k-inr" style="color:var(--inr-color)">--</span></span>
+          <span class="dxb-ref-dot">·</span>
+          <span>18K · <span id="dxb-18k-aed" style="color:var(--aed-color)">--</span> AED · <span id="dxb-18k-inr" style="color:var(--inr-color)">--</span></span>
+          <span class="dxb-ref-dot">·</span>
+          <span>AED/INR <span id="dxb-aed-inr" style="color:var(--muted)">--</span></span>
+        </div>
+
         <div class="dubai-note">Dubai gold has no import duty locally. India levies 6% customs duty + 3% IGST on international spot (post July 2024 Union Budget). Buying in Dubai only makes financial sense within personal allowance limits (20g duty-free for women, 10g for men).</div>
       </div>
       <div class="ad-inline">Advertisement · 728x50</div>
@@ -1100,11 +1124,18 @@
   // -------------------------------------------------------
   // MAIN LOAD
   // -------------------------------------------------------
-  async function loadPrice() {
+  async function loadPrice(prefetchedData = null) {
     try {
-      const res = await fetch("/api/price");
-      if (!res.ok) throw new Error("API error " + res.status);
-      const data = await res.json();
+      let data;
+      if (prefetchedData) {
+        data = prefetchedData;
+      } else {
+        const res = await fetch("/api/price");
+        if (!res.ok) throw new Error("API error " + res.status);
+        data = await res.json();
+        // Cache for instant next load
+        try { localStorage.setItem("rateof_price_v2", JSON.stringify({ ...data, _cached: Date.now() })); } catch (_) {}
+      }
 
       const usdInr  = data.usdInr  || 85.0;
       const aedInr  = data.aedInr  || (usdInr / 3.6725);
@@ -1197,23 +1228,23 @@
       buildHeroHistPanel(calc24k, india24, data.goldHistory);
 
       // --- Dubai ---
-      document.getElementById("dxb-usd-inr").textContent       = "₹ " + usdInr.toFixed(2);
-      document.getElementById("dxb-aed-inr-strip").textContent  = "₹ " + aedInr.toFixed(4);
+      document.getElementById("dxb-usd-inr").textContent       = usdInr.toFixed(2);
+      document.getElementById("dxb-aed-inr-strip").textContent  = aedInr.toFixed(4);
       document.getElementById("dxb-xau-usd").textContent        = fmtUSD(data.price);
       document.getElementById("dxb-24k-aed").textContent = fmtAED(dubai24Aed);
       document.getElementById("dxb-24k-inr").textContent = fmt(dubai24Inr);
       document.getElementById("dxb-22k-aed").textContent = fmtAED(dubai22Aed);
       document.getElementById("dxb-22k-inr").textContent = fmt(dubai22Inr);
       document.getElementById("dxb-18k-aed").textContent = fmtAED(dubai18Aed);
-      document.getElementById("dxb-aed-inr").textContent = "₹ " + aedInr.toFixed(4);
+      document.getElementById("dxb-18k-inr").textContent = fmt(dubai18Aed * aedInr);
+      document.getElementById("dxb-aed-inr").textContent = aedInr.toFixed(4);
       document.getElementById("dubaiUpdated").textContent = "updated " + timeStr(data.timestamp);
       document.getElementById("ds-india").textContent = fmt(india24);
-      document.getElementById("ds-dubai").textContent = fmt(dubai24Inr);
       const spreadEl = document.getElementById("ds-spread");
-      spreadEl.textContent = (spread >= 0 ? "+" : "-") + fmt(Math.abs(spread));
-      spreadEl.className   = "dxb-spread-val " + (spread >= 0 ? "pos" : "neg");
-      const spreadDir = spread >= 0 ? "India" : "Dubai";
-      document.getElementById("ds-spreadpct").textContent = spreadDir + " rate higher by " + fmt(Math.abs(spread)) + "/g · " + Math.abs(spreadPct) + "%";
+      const spreadColor = spread >= 0 ? "var(--orange)" : "var(--green)";
+      spreadEl.style.color = spreadColor;
+      spreadEl.textContent = (spread >= 0 ? "+" : "") + fmt(spread);
+      document.getElementById("ds-spreadpct").textContent = (spread >= 0 ? "India " : "Dubai ") + Math.abs(spreadPct) + "% higher";
 
       // --- Dubai callout strip (inside hero, between price boxes and history) ---
       const callout = document.getElementById("dubaiCallout");
@@ -1277,9 +1308,11 @@
 
       buildTicker({ price: data.price, india24, dubai24: dubai24Inr, silverGram, silverUSD, usdInr, aedInr });
 
-      document.getElementById("statusDot").className    = "dot";
-      document.getElementById("statusText").textContent = "live";
-      document.getElementById("footerNote").textContent = "Auto-refreshes every 60 min · last: " + timeStr(data.timestamp);
+      if (!prefetchedData) {
+        document.getElementById("statusDot").className    = "dot";
+        document.getElementById("statusText").textContent = "live";
+        document.getElementById("footerNote").textContent = "Auto-refreshes every 60 min · last: " + timeStr(data.timestamp);
+      }
     } catch(e) {
       document.getElementById("statusDot").className    = "dot error";
       document.getElementById("statusText").textContent = "error";
@@ -1294,7 +1327,21 @@
     loadPrice().finally(() => { btn.classList.remove("refreshing"); btn.textContent = "refresh now"; });
   }
 
-  loadPrice();
+  // Show cached data instantly, then fetch fresh in background
+  (function preloadFromCache() {
+    try {
+      const raw = localStorage.getItem("rateof_price_v2");
+      if (!raw) return;
+      const cached = JSON.parse(raw);
+      const ageMs = Date.now() - (cached._cached || 0);
+      if (ageMs > 4 * 60 * 60 * 1000) return; // ignore if >4h old
+      loadPrice(cached); // render immediately from cache
+      document.getElementById("statusDot").className    = "dot yellow";
+      document.getElementById("statusText").textContent = "refreshing…";
+    } catch (_) {}
+  })();
+
+  loadPrice(); // fresh fetch
   setInterval(loadPrice, 60 * 60 * 1000);
 </script>
 </body>
