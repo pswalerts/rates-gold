@@ -43,82 +43,107 @@ export default async function handler(req, res) {
     const METAL_PRICE_API_KEY = process.env.METAL_PRICE_API_KEY;
     const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 
-    function tout(p, ms = 8000) {
+    // Reduced default timeout: 5s (was 8s) — most real sources respond in <2s
+    function tout(p, ms = 5000) {
       return Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error("timeout")), ms))]);
     }
 
-    // =========================================================
-    // STEP 1: USD / INR  (fallback = 85.0)
-    // =========================================================
-    let usdInr = null;
-    const fxSources = [
-      () => tout(fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"))
-              .then(r => r.ok ? r.json() : null).then(d => d?.usd?.inr),
-      () => tout(fetch("https://latest.currency-api.pages.dev/v1/currencies/usd.json"))
-              .then(r => r.ok ? r.json() : null).then(d => d?.usd?.inr),
-      () => tout(fetch("https://api.frankfurter.app/latest?from=USD&to=INR"))
-              .then(r => r.ok ? r.json() : null).then(d => d?.rates?.INR),
-      () => tout(fetch("https://open.er-api.com/v6/latest/USD"))
-              .then(r => r.ok ? r.json() : null).then(d => d?.rates?.INR),
-      () => tout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/USDINR%3DX?interval=1d&range=1d", { headers: { "User-Agent": UA } }))
-              .then(r => r.ok ? r.json() : null).then(d => d?.chart?.result?.[0]?.meta?.regularMarketPrice),
-    ];
-    for (const fn of fxSources) {
-      try { const v = await fn(); if (v && v > 75 && v < 130) { usdInr = v; break; } } catch (_) {}
+    // Race helper: try all fns simultaneously, resolve with first value that passes validate()
+    function raceFirst(fns, validate) {
+      return new Promise(resolve => {
+        let done = false;
+        const settle = v => { if (!done && validate(v)) { done = true; resolve(v); } };
+        Promise.allSettled(fns.map(fn => Promise.resolve().then(fn).then(settle).catch(() => {})))
+          .then(() => { if (!done) resolve(null); });
+      });
     }
-    if (!usdInr) { usdInr = 85.0; console.log("USD/INR: fallback 85.0"); }
-    else { console.log(`USD/INR: ${usdInr.toFixed(4)} (live)`); }
 
+    // =========================================================
+    // STEP 1+2+3: FX, Gold USD, Silver USD — all in parallel
+    // (completely independent — no reason to run sequentially)
+    // =========================================================
+    const [fxRes, goldRes, silverRes] = await Promise.all([
+      // FX: race all sources simultaneously
+      raceFirst([
+        () => tout(fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"), 4000)
+                .then(r => r.ok ? r.json() : null).then(d => d?.usd?.inr),
+        () => tout(fetch("https://latest.currency-api.pages.dev/v1/currencies/usd.json"), 4000)
+                .then(r => r.ok ? r.json() : null).then(d => d?.usd?.inr),
+        () => tout(fetch("https://api.frankfurter.app/latest?from=USD&to=INR"), 4000)
+                .then(r => r.ok ? r.json() : null).then(d => d?.rates?.INR),
+        () => tout(fetch("https://open.er-api.com/v6/latest/USD"), 4000)
+                .then(r => r.ok ? r.json() : null).then(d => d?.rates?.INR),
+        () => tout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/USDINR%3DX?interval=1d&range=1d", { headers: { "User-Agent": UA } }), 5000)
+                .then(r => r.ok ? r.json() : null).then(d => d?.chart?.result?.[0]?.meta?.regularMarketPrice),
+      ], v => v && v > 75 && v < 130),
+
+      // Gold USD: race all sources simultaneously
+      raceFirst([
+        () => tout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } }), 4000)
+                .then(r => r.json()).then(d => ({ v: d?.items?.[0]?.xauPrice, src: "goldprice.org", silver: d?.items?.[0]?.xagPrice })),
+        () => tout(fetch("https://gold-api.com/price/XAU"), 4000)
+                .then(r => r.json()).then(d => ({ v: d?.price, src: "gold-api.com" })),
+        () => tout(fetch("https://metals.live/api/spot"), 4000)
+                .then(r => r.json()).then(d => { const i = Array.isArray(d) ? d[0] : d; return { v: i?.gold ?? i?.XAU, src: "metals.live", silver: i?.silver ?? i?.XAG }; }),
+        () => tout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d", { headers: { "User-Agent": UA } }), 5000)
+                .then(r => r.json()).then(d => ({ v: d?.chart?.result?.[0]?.meta?.regularMarketPrice, src: "yahoo-gc" })),
+        () => GOLD_API_KEY ? tout(fetch("https://www.goldapi.io/api/XAU/USD", { headers: { "x-access-token": GOLD_API_KEY } }), 5000)
+                .then(r => r.json()).then(d => ({ v: d?.price, src: "goldapi.io" })) : Promise.resolve(null),
+        () => METAL_PRICE_API_KEY ? tout(fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${METAL_PRICE_API_KEY}&base=XAU&currencies=USD`), 5000)
+                .then(r => r.json()).then(d => ({ v: d?.rates?.USD, src: "metalpriceapi" })) : Promise.resolve(null),
+      ], obj => obj?.v && obj.v > 1000),
+
+      // Silver USD: race all sources (may also come bundled with gold result above)
+      raceFirst([
+        () => tout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } }), 4000)
+                .then(r => r.json()).then(d => d?.items?.[0]?.xagPrice),
+        () => tout(fetch("https://gold-api.com/price/XAG"), 4000)
+                .then(r => r.json()).then(d => d?.price),
+        () => tout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/SI%3DF?interval=1d&range=1d", { headers: { "User-Agent": UA } }), 5000)
+                .then(r => r.json()).then(d => d?.chart?.result?.[0]?.meta?.regularMarketPrice),
+      ], v => v > 0),
+    ]);
+
+    // Unpack parallel results
+    let usdInr = fxRes || 85.0;
+    if (!fxRes) console.log("USD/INR: fallback 85.0"); else console.log(`USD/INR: ${usdInr.toFixed(4)} (live)`);
     const aedInr = usdInr / 3.6725;
 
-    // =========================================================
-    // STEP 2: XAU / USD
-    // =========================================================
-    let goldUSD = null, goldSrc = "?";
-    const goldSources = [
-      ["goldprice.org", async () => {
-        const r = await tout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } }));
-        const d = await r.json(); return d?.items?.[0]?.xauPrice;
-      }],
-      ["gold-api.com", async () => {
-        const r = await tout(fetch("https://gold-api.com/price/XAU"));
-        const d = await r.json(); return d?.price;
-      }],
-      ["metals.live", async () => {
-        const r = await tout(fetch("https://metals.live/api/spot"));
-        const d = await r.json(); const i = Array.isArray(d) ? d[0] : d; return i?.gold ?? i?.XAU;
-      }],
-      ["yahoo-gc", async () => {
-        const r = await tout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d", { headers: { "User-Agent": UA } }));
-        const d = await r.json(); return d?.chart?.result?.[0]?.meta?.regularMarketPrice;
-      }],
-      ["goldapi.io", async () => {
-        if (!GOLD_API_KEY) return null;
-        const r = await tout(fetch("https://www.goldapi.io/api/XAU/USD", { headers: { "x-access-token": GOLD_API_KEY } }));
-        const d = await r.json(); return d?.price;
-      }],
-      ["metalpriceapi", async () => {
-        if (!METAL_PRICE_API_KEY) return null;
-        const r = await tout(fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${METAL_PRICE_API_KEY}&base=XAU&currencies=USD`));
-        const d = await r.json(); return d?.rates?.USD;
-      }],
-    ];
-    for (const [name, fn] of goldSources) {
-      try { const v = await fn(); if (v && v > 1000) { goldUSD = v; goldSrc = name; break; } } catch (_) {}
-    }
+    let goldUSD = goldRes?.v || null;
+    let goldSrc = goldRes?.src || "?";
     if (!goldUSD) throw new Error("All XAU/USD sources failed");
+
+    // Silver: use dedicated silver race; if that failed, check if gold source bundled it
+    let silverUSD = silverRes || goldRes?.silver || null;
+    if (!silverUSD) silverUSD = goldUSD / 85;
 
     const calc24k = (goldUSD / TROY) * usdInr;
     console.log(`XAU/USD $${goldUSD.toFixed(2)} [${goldSrc}] | USD/INR ${usdInr.toFixed(2)} | calc24k Rs.${calc24k.toFixed(2)}/g`);
 
+    // Range definitions (shared by sparklines + history)
+    const RANGES = [
+      { key: "1d",  range: "5d",  iv: "5m"  },
+      { key: "1w",  range: "5d",  iv: "1h"  },
+      { key: "1m",  range: "1mo", iv: "1d"  },
+      { key: "3m",  range: "3mo", iv: "1d"  },
+      { key: "6m",  range: "6mo", iv: "1wk" },
+      { key: "1y",  range: "1y",  iv: "1wk" },
+      { key: "3y",  range: "3y",  iv: "1mo" },
+      { key: "5y",  range: "5y",  iv: "1mo" },
+      { key: "ytd", range: "ytd", iv: "1d"  },
+    ];
+    const _goldSyms   = ["GC%3DF",  "XAUUSD%3DX"];
+    const _silverSyms = ["SI%3DF",  "XAGUSD%3DX"];
+
     // =========================================================
-    // STEP 3: XAG / USD
+    // KICK OFF HISTORY FETCH IN BACKGROUND — runs in parallel with IBJA chain
+    // History only needs usdInr + goldUSD, both already resolved above.
+    // fetchMetalHist is a function declaration — hoisted — so calling it here is safe.
     // =========================================================
-    let silverUSD = null;
-    try { const r = await tout(fetch("https://data-asg.goldprice.org/dbXRates/USD", { headers: { Origin: "https://goldprice.org", Referer: "https://goldprice.org/" } })); if (r.ok) { const d = await r.json(); const v = d?.items?.[0]?.xagPrice; if (v > 0) silverUSD = v; } } catch (_) {}
-    try { if (!silverUSD) { const r = await tout(fetch("https://gold-api.com/price/XAG")); if (r.ok) { const d = await r.json(); if (d?.price > 0) silverUSD = d.price; } } } catch (_) {}
-    try { if (!silverUSD) { const r = await tout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/SI%3DF?interval=1d&range=1d", { headers: { "User-Agent": UA } })); if (r.ok) { const d = await r.json(); const v = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (v > 0) silverUSD = v; } } } catch (_) {}
-    if (!silverUSD) silverUSD = goldUSD / 85;
+    const historyPromise = Promise.all([
+      Promise.allSettled(RANGES.map(({ range, iv }) => fetchMetalHist(range, iv, _goldSyms))),
+      Promise.allSettled(RANGES.map(({ range, iv }) => fetchMetalHist(range, iv, _silverSyms))),
+    ]);
 
     // =========================================================
     // STEP 4: IBJA India gold rate (Rs./gram, 999 purity)
@@ -170,7 +195,7 @@ export default async function handler(req, res) {
               "Referer": "https://www.google.com/search?q=ibja+gold+rate+today",
               "Cache-Control": "no-cache",
             }
-          }), 12000);
+          }), 7000);
           if (!r.ok) { console.log(`ibja.co [${url}]: HTTP ${r.status}`); continue; }
           const html = await r.text();
           console.log(`ibja.co [${url}]: HTTP ${r.status}, ${html.length} bytes`);
@@ -216,7 +241,7 @@ export default async function handler(req, res) {
             "Cache-Control": "no-cache",
             "Referer": "https://www.google.com/search?q=ibja+gold+rate+today",
           }
-        }), 12000);
+        }), 7000);
         if (r.ok) {
           const html = await r.text();
           console.log(`ibjarates.com: HTTP ${r.status}, ${html.length} bytes`);
@@ -281,7 +306,7 @@ export default async function handler(req, res) {
       try {
         const r = await tout(fetch("https://www.livemint.com/market/commodities/gold-rate-today", {
           headers: { "User-Agent": UA, "Accept": "text/html", "Referer": "https://www.google.com/" }
-        }), 10000);
+        }), 6000);
         if (r.ok) {
           const html = await r.text();
           console.log(`livemint: HTTP ${r.status}, ${html.length} bytes`);
@@ -305,7 +330,7 @@ export default async function handler(req, res) {
       try {
         const r = await tout(fetch("https://goldrate24.in/", {
           headers: { "User-Agent": UA, "Accept": "text/html", "Referer": "https://www.google.com/search?q=ibja+gold+rate+today" }
-        }), 10000);
+        }), 6000);
         if (r.ok) {
           const html = await r.text();
           console.log(`goldrate24.in: HTTP ${r.status}, ${html.length} bytes`);
@@ -336,7 +361,7 @@ export default async function handler(req, res) {
       try {
         const r = await tout(fetch("https://economictimes.indiatimes.com/markets/gold/gold-rate-in-india", {
           headers: { "User-Agent": UA, "Accept": "text/html", "Referer": "https://www.google.com/" }
-        }), 10000);
+        }), 6000);
         if (r.ok) {
           const html = await r.text();
           console.log(`economictimes: HTTP ${r.status}, ${html.length} bytes`);
@@ -360,7 +385,7 @@ export default async function handler(req, res) {
       try {
         const r = await tout(fetch("https://www.goodreturns.in/gold-rates/", {
           headers: { "User-Agent": UA, "Referer": "https://www.google.com/" }
-        }), 10000);
+        }), 6000);
         if (r.ok) {
           const html = await r.text();
           console.log(`goodreturns: HTTP ${r.status}, ${html.length} bytes`);
@@ -383,7 +408,7 @@ export default async function handler(req, res) {
       try {
         const r = await tout(fetch("https://24carat.in/frame.php?q=gold_rate_today", {
           headers: { "User-Agent": UA, "Referer": "https://www.google.com/" }
-        }), 10000);
+        }), 6000);
         if (r.ok) {
           const html = await r.text();
           console.log(`24carat.in: HTTP ${r.status}, ${html.length} bytes`);
@@ -532,7 +557,7 @@ export default async function handler(req, res) {
       } catch (_) {}
       // S6: AMFI India official NAV (T-1 close, but reliable — better than no data)
       try {
-        const r = await tout(fetch("https://www.amfiindia.com/spages/NAVAll.txt", { headers: { "User-Agent": UA } }), 12000);
+        const r = await tout(fetch("https://www.amfiindia.com/spages/NAVAll.txt", { headers: { "User-Agent": UA } }), 7000);
         if (r.ok) {
           const txt = await r.text();
           const term = AMFI_NAMES[sym];
@@ -563,7 +588,7 @@ export default async function handler(req, res) {
           const r = await tout(fetch(
             `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${nseSymbols}`,
             { headers: { "User-Agent": UA, "Accept": "application/json" } }
-          ), 10000);
+          ), 6000);
           if (r.ok) {
             const d = await r.json();
             const quotes = d?.quoteResponse?.result || [];
@@ -585,7 +610,7 @@ export default async function handler(req, res) {
     // Fill any missing ETFs with individual fetches
     const missingSyms = ETF_SYMS.filter(s => !etfRaw[s]);
     if (missingSyms.length > 0) {
-      const etfResults = await Promise.allSettled(missingSyms.map(s => tout(fetchETFIndividual(s), 12000)));
+      const etfResults = await Promise.allSettled(missingSyms.map(s => tout(fetchETFIndividual(s), 7000)));
       missingSyms.forEach((sym, i) => {
         const res = etfResults[i];
         if (res.status === "fulfilled" && res.value?.nav > 0) {
@@ -598,7 +623,7 @@ export default async function handler(req, res) {
     // (Yahoo bulk v7 sometimes omits regularMarketPreviousClose for lower-volume ETFs like HDFC/ICICI)
     const missingPrev = ETF_SYMS.filter(s => etfRaw[s] > 0 && !etfPrevRaw[s]);
     if (missingPrev.length > 0) {
-      const prevResults = await Promise.allSettled(missingPrev.map(s => tout(fetchETFIndividual(s), 12000)));
+      const prevResults = await Promise.allSettled(missingPrev.map(s => tout(fetchETFIndividual(s), 7000)));
       missingPrev.forEach((sym, i) => {
         const res = prevResults[i];
         if (res.status === "fulfilled" && res.value?.prevClose > 0) {
@@ -623,18 +648,7 @@ export default async function handler(req, res) {
 
     // =========================================================
     // STEP 6: ETF Sparklines (for the ETF 52-week chart panel)
-    // =========================================================
-    const RANGES = [
-      { key: "1d",  range: "5d",  iv: "5m"  },
-      { key: "1w",  range: "5d",  iv: "1h"  },
-      { key: "1m",  range: "1mo", iv: "1d"  },
-      { key: "3m",  range: "3mo", iv: "1d"  },
-      { key: "6m",  range: "6mo", iv: "1wk" },
-      { key: "1y",  range: "1y",  iv: "1wk" },
-      { key: "3y",  range: "3y",  iv: "1mo" },
-      { key: "5y",  range: "5y",  iv: "1mo" },
-      { key: "ytd", range: "ytd", iv: "1d"  },
-    ];
+    // (RANGES already defined above — shared with history)
 
     async function fetchSpark(sym, range, iv) {
       for (const host of ["query1", "query2"]) {
@@ -804,11 +818,16 @@ export default async function handler(req, res) {
       return live;
     }
 
-    const digitalGoldPrices = await fetchDigitalGoldPrices(ibja24k);
+    // Run digital gold + history in parallel (history was already kicked off above)
+    const [digitalGoldPrices, [ghResults, shResults]] = await Promise.all([
+      fetchDigitalGoldPrices(ibja24k),
+      historyPromise,
+    ]);
 
     // =========================================================
     // STEP 7: Gold price history -> Rs./gram (hero history panel)
     // Uses XAU/USD spot/futures converted to Rs./gram via USD/INR.
+    // (historyPromise was started in background during IBJA chain — already resolved)
     // =========================================================
     async function fetchMetalHist(range, iv, syms) {
       for (const sym of syms) {
@@ -831,14 +850,6 @@ export default async function handler(req, res) {
       }
       return null;
     }
-
-    const goldSyms   = ["GC%3DF",  "XAUUSD%3DX"];
-    const silverSyms = ["SI%3DF",  "XAGUSD%3DX"];
-
-    const [ghResults, shResults] = await Promise.all([
-      Promise.allSettled(RANGES.map(({ range, iv }) => fetchMetalHist(range, iv, goldSyms))),
-      Promise.allSettled(RANGES.map(({ range, iv }) => fetchMetalHist(range, iv, silverSyms))),
-    ]);
 
     const goldHistory = {}, silverHistory = {};
     ghResults.forEach((r, i) => { if (r.status === "fulfilled" && r.value?.length >= 2) goldHistory[RANGES[i].key] = r.value; });
