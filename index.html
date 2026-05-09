@@ -152,23 +152,24 @@
     .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px; background:rgba(224,120,40,0.06); border-bottom:1px solid rgba(224,120,40,0.15); border-radius:10px 10px 0 0; padding:16px 20px; margin:-26px -28px 18px; }
     .dubai-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--aed-color); font-family:var(--mono); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .dubai-title-arabic { font-size:13px; color:var(--aed-color); opacity:0.85; letter-spacing:0; text-transform:none; font-family:var(--sans); direction:rtl; }
-    .dxb-fx-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin-bottom:16px; }
-    .dxb-fx-item { display:flex; flex-direction:column; gap:3px; }
-    .dxb-fx-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
-    .dxb-fx-val   { font-family:var(--mono); font-size:18px; font-weight:600; color:var(--text); }
-    /* New 3-row comparison table */
-    .dxb-compare { border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:14px; }
-    .dxb-cmp-row { display:grid; grid-template-columns:160px 140px 160px 1fr; align-items:center; padding:11px 16px; gap:8px; }
-    .dxb-cmp-head { background:rgba(255,255,255,0.025); border-bottom:1px solid var(--border); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); padding:7px 16px; }
-    .dxb-cmp-row:not(.dxb-cmp-head):not(:last-child) { border-bottom:1px solid var(--border); }
-    .dxb-cmp-diff { background:rgba(255,255,255,0.015); }
-    .dxb-cmp-c1 { font-size:13px; font-weight:500; color:var(--text); display:flex; align-items:center; gap:6px; }
-    .dxb-cmp-c2, .dxb-cmp-c3 { font-family:var(--mono); font-size:17px; font-weight:700; white-space:nowrap; }
-    .dxb-cmp-c4 { font-size:11px; color:var(--muted); font-family:var(--mono); }
-    /* Reference strip */
-    .dxb-ref-strip { display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:9px 14px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px; font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:14px; }
+    /* FX strip — 4 items: USD/INR, AED/INR, XAU/USD, AED/gram */
+    .dxb-fx-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:0; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:16px; }
+    .dxb-fx-item { display:flex; flex-direction:column; gap:2px; padding:10px 14px; }
+    .dxb-fx-item:not(:last-child) { border-right:1px solid var(--border); }
+    .dxb-fx-label { font-size:10px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
+    .dxb-fx-val   { font-family:var(--mono); font-size:16px; font-weight:600; }
+    /* 3-row comparison: label + ₹/gram only */
+    .dxb-compare { border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:12px; }
+    .dxb-row { display:flex; align-items:center; padding:12px 18px; gap:12px; }
+    .dxb-row:not(:last-child) { border-bottom:1px solid var(--border); }
+    .dxb-row-diff { background:rgba(255,255,255,0.015); }
+    .dxb-row-label { width:130px; font-size:13px; color:var(--text); flex-shrink:0; }
+    .dxb-row-val { flex:1; font-family:var(--mono); font-size:20px; font-weight:700; white-space:nowrap; }
+    .dxb-row-sub { font-size:12px; color:var(--muted); font-family:var(--mono); }
+    /* Reference strip: 22K / 18K */
+    .dxb-ref-strip { display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:8px 14px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px; font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:12px; }
     .dxb-ref-dot { opacity:0.25; }
-    .dubai-note { font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }
+    .dubai-note { font-size:11px; color:var(--muted); font-style:italic; line-height:1.6; }
     .hero-hist-panel { margin-top:20px; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
     .hero-hist-tabs { display:flex; border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
     .hero-hist-tabs::-webkit-scrollbar { display:none; }
@@ -236,9 +237,8 @@
       .dxb-fx-strip { grid-template-columns:1fr 1fr; }
       .dubai-card { padding:18px 16px; }
       .dubai-header { margin:-18px -16px 14px; padding:14px 16px; }
-      .dxb-cmp-row { grid-template-columns:120px 110px 130px; }
-      .dxb-cmp-c4 { display:none; }
-      .dxb-fx-strip { grid-template-columns:repeat(3,1fr); gap:8px; }
+      .dxb-fx-strip { grid-template-columns:repeat(2,1fr); }
+      .dxb-row-val { font-size:17px; }
       .tl-body { grid-template-columns:1fr; }
       .tl-row { flex-direction:column; align-items:flex-start; }
       .tl-price-right { align-self:stretch; text-align:left; }
@@ -407,51 +407,46 @@
           <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">--</div>
         </div>
 
-        <!-- FX strip -->
+        <!-- FX strip: 4 items — USD/INR, AED/INR, XAU/USD, AED/gram (Dubai 24K) -->
         <div class="dxb-fx-strip">
           <div class="dxb-fx-item">
-            <div class="dxb-fx-label">🇺🇸 USD / INR</div>
+            <div class="dxb-fx-label">USD / INR</div>
             <div class="dxb-fx-val" id="dxb-usd-inr" style="color:var(--usd-color)">--</div>
           </div>
           <div class="dxb-fx-item">
-            <div class="dxb-fx-label">🇦🇪 AED / INR</div>
+            <div class="dxb-fx-label">AED / INR</div>
             <div class="dxb-fx-val" id="dxb-aed-inr-strip" style="color:var(--aed-color)">--</div>
           </div>
           <div class="dxb-fx-item">
-            <div class="dxb-fx-label">🌐 XAU / USD</div>
+            <div class="dxb-fx-label">XAU / USD</div>
             <div class="dxb-fx-val" id="dxb-xau-usd" style="color:var(--gold-bright)">--</div>
           </div>
+          <div class="dxb-fx-item">
+            <div class="dxb-fx-label">Dubai 24K · AED/g</div>
+            <div class="dxb-fx-val" id="dxb-24k-aed" style="color:var(--aed-color)">--</div>
+          </div>
         </div>
 
-        <!-- 3-row comparison: Dubai vs India (24K 999) -->
+        <!-- 3-row comparison: ₹/gram only -->
         <div class="dxb-compare">
-          <div class="dxb-cmp-row dxb-cmp-head">
-            <div class="dxb-cmp-c1"></div>
-            <div class="dxb-cmp-c2" style="color:var(--aed-color)">AED / gram</div>
-            <div class="dxb-cmp-c3" style="color:var(--inr-color)">₹ / gram</div>
-            <div class="dxb-cmp-c4">Note</div>
+          <div class="dxb-row">
+            <div class="dxb-row-label">🇦🇪 Dubai 24K</div>
+            <div class="dxb-row-val" style="color:var(--inr-color)" id="dxb-24k-inr">--</div>
           </div>
-          <div class="dxb-cmp-row">
-            <div class="dxb-cmp-c1">🇦🇪 Dubai 24K</div>
-            <div class="dxb-cmp-c2" style="color:var(--aed-color)" id="dxb-24k-aed">--</div>
-            <div class="dxb-cmp-c3" style="color:var(--inr-color)" id="dxb-24k-inr">--</div>
-            <div class="dxb-cmp-c4">no import duty</div>
+          <div class="dxb-row">
+            <div class="dxb-row-label">🇮🇳 India 24K</div>
+            <div class="dxb-row-val" style="color:var(--inr-color)" id="ds-india">--</div>
           </div>
-          <div class="dxb-cmp-row">
-            <div class="dxb-cmp-c1">🇮🇳 India 24K</div>
-            <div class="dxb-cmp-c2" style="color:var(--muted)">—</div>
-            <div class="dxb-cmp-c3" style="color:var(--inr-color)" id="ds-india">--</div>
-            <div class="dxb-cmp-c4">incl. 6% duty + GST</div>
-          </div>
-          <div class="dxb-cmp-row dxb-cmp-diff">
-            <div class="dxb-cmp-c1" style="color:var(--muted);font-size:12px">Difference</div>
-            <div class="dxb-cmp-c2" style="color:var(--muted)">—</div>
-            <div class="dxb-cmp-c3" id="ds-spread">--</div>
-            <div class="dxb-cmp-c4" id="ds-spreadpct" style="color:var(--muted)">--</div>
+          <div class="dxb-row dxb-row-diff">
+            <div class="dxb-row-label" style="color:var(--muted);font-size:12px">Difference</div>
+            <div style="display:flex;align-items:baseline;gap:10px;flex:1;">
+              <span class="dxb-row-val" id="ds-spread">--</span>
+              <span class="dxb-row-sub" id="ds-spreadpct">--</span>
+            </div>
           </div>
         </div>
 
-        <!-- Reference: 22K / 18K / AED rate -->
+        <!-- 22K / 18K reference -->
         <div class="dxb-ref-strip">
           <span>22K · <span id="dxb-22k-aed" style="color:var(--aed-color)">--</span> AED · <span id="dxb-22k-inr" style="color:var(--inr-color)">--</span></span>
           <span class="dxb-ref-dot">·</span>
@@ -460,7 +455,7 @@
           <span>AED/INR <span id="dxb-aed-inr" style="color:var(--muted)">--</span></span>
         </div>
 
-        <div class="dubai-note">Dubai gold has no import duty locally. India levies 6% customs duty + 3% IGST on international spot (post July 2024 Union Budget). Buying in Dubai only makes financial sense within personal allowance limits (20g duty-free for women, 10g for men).</div>
+        <div class="dubai-note">* Dubai: no import duty locally &nbsp;·&nbsp; * India: 6% customs + 3% IGST (post July 2024 budget) &nbsp;·&nbsp; Personal allowance: 20g duty-free (women), 10g (men)</div>
       </div>
       <div class="ad-inline">Advertisement · 728x50</div>
     </div><!-- /gold-section -->
