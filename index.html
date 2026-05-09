@@ -77,7 +77,7 @@
       --silver: #a8b8c8; --silver-bright: #d0dce8; --silver-dim: rgba(168,184,200,0.12);
       --green: #22c55e; --yellow: #eab308; --red: #ef4444; --orange: #f97316;
       --bg: #111214; --surface: #1a1b1e; --surface2: #21232a;
-      --border: rgba(255,255,255,0.10); --text: #e2e8f0; --muted: #64748b;
+      --border: rgba(255,255,255,0.10); --text: #e2e8f0; --muted: #94a3b8;
       --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
       --serif: 'Playfair Display', Georgia, serif;
       --accent: var(--gold); --accent-bright: var(--gold-bright); --accent-dim: var(--gold-dim);
@@ -87,6 +87,8 @@
     }
     body.silver-mode { --accent: var(--silver); --accent-bright: var(--silver-bright); --accent-dim: var(--silver-dim); }
     body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       background-color: var(--bg);
       background-image:
         radial-gradient(ellipse 140% 55% at 50% 0%, rgba(212,168,83,0.09) 0%, transparent 60%),
@@ -474,6 +476,8 @@
               <option value="GOLDBEES">GOLDBEES</option><option value="SETFGOLD">SETFGOLD</option>
               <option value="HDFCMFGETF">HDFCMFGETF</option><option value="AXISGOLD">AXISGOLD</option>
               <option value="KOTAKGOLD">KOTAKGOLD</option><option value="ICICIGOLD">ICICIGOLD</option>
+              <option value="BSLGOLDETF">BSLGOLDETF</option><option value="GOLDETF">GOLDETF (Mirae)</option>
+              <option value="GROWWGOLD">GROWWGOLD 🆕</option>
             </select>
           </div>
           <canvas id="etfHistCanvas" width="288" height="140" style="width:100%;display:block;"></canvas>
@@ -519,21 +523,21 @@
         <div class="dxb-rows">
           <div class="dxb-oneliner">
             <span class="dxb-ol-purity">24K 999</span>
-            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-24k-inr" style="color:var(--aed-color)">--</span></span>
+            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-24k-inr" style="color:var(--inr-color)">--</span></span>
             <span class="dxb-ol-sep">·</span>
             <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india" style="color:var(--inr-color)">--</span></span>
             <span class="dxb-ol-verdict" id="dxb-verdict-24">--</span>
           </div>
           <div class="dxb-oneliner">
             <span class="dxb-ol-purity">22K 916</span>
-            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-22k-inr" style="color:var(--aed-color)">--</span></span>
+            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-22k-inr" style="color:var(--inr-color)">--</span></span>
             <span class="dxb-ol-sep">·</span>
             <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india-22" style="color:var(--inr-color)">--</span></span>
             <span class="dxb-ol-verdict" id="dxb-verdict-22">--</span>
           </div>
           <div class="dxb-oneliner">
             <span class="dxb-ol-purity">18K 750</span>
-            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-18k-inr" style="color:var(--aed-color)">--</span></span>
+            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-18k-inr" style="color:var(--inr-color)">--</span></span>
             <span class="dxb-ol-sep">·</span>
             <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india-18" style="color:var(--inr-color)">--</span></span>
             <span class="dxb-ol-verdict" id="dxb-verdict-18">--</span>
@@ -865,12 +869,15 @@
   // GOLD ETFs
   // -------------------------------------------------------
   const ETF_LIST = [
-    { symbol: "GOLDBEES",   name: "Nippon Gold ETF", fund: "Nippon India MF",  expense: 0.0051, aum: "Rs.9,800Cr+", emoji: "🟡" },
-    { symbol: "SETFGOLD",    name: "SBI Gold ETF",    fund: "SBI Mutual Fund",  expense: 0.0065, aum: "Rs.2,100Cr+", emoji: "🔵" },
-    { symbol: "HDFCMFGETF", name: "HDFC Gold ETF",   fund: "HDFC AMC",         expense: 0.0059, aum: "Rs.3,200Cr+", emoji: "🔴" },
-    { symbol: "AXISGOLD",   name: "Axis Gold ETF",   fund: "Axis AMC",         expense: 0.0060, aum: "Rs.900Cr+",   emoji: "🟣" },
-    { symbol: "KOTAKGOLD",  name: "Kotak Gold ETF",  fund: "Kotak AMC",        expense: 0.0055, aum: "Rs.3,500Cr+", emoji: "🟠" },
-    { symbol: "ICICIGOLD",  name: "ICICI Pru Gold",  fund: "ICICI Prudential", expense: 0.0050, aum: "Rs.4,100Cr+", emoji: "🟤" },
+    { symbol: "GOLDBEES",   name: "Gold BeES",             fund: "Nippon India MF",        expense: 0.0051, aum: "Rs.9,800Cr+", emoji: "🟡" },
+    { symbol: "SETFGOLD",   name: "SBI Gold ETF",       fund: "SBI Mutual Fund",        expense: 0.0065, aum: "Rs.2,100Cr+", emoji: "🔵" },
+    { symbol: "HDFCMFGETF", name: "HDFC Gold ETF",      fund: "HDFC AMC",               expense: 0.0059, aum: "Rs.3,200Cr+", emoji: "🔴" },
+    { symbol: "AXISGOLD",   name: "Axis Gold ETF",      fund: "Axis AMC",               expense: 0.0060, aum: "Rs.900Cr+",   emoji: "🟣" },
+    { symbol: "KOTAKGOLD",  name: "Kotak Gold ETF",     fund: "Kotak AMC",              expense: 0.0055, aum: "Rs.3,500Cr+", emoji: "🟠" },
+    { symbol: "ICICIGOLD",  name: "ICICI Pru Gold",     fund: "ICICI Prudential",       expense: 0.0050, aum: "Rs.4,100Cr+", emoji: "🟤" },
+    { symbol: "BSLGOLDETF", name: "Aditya Birla Gold",  fund: "Aditya Birla Sun Life",  expense: 0.0035, aum: "Rs.2,070Cr+", emoji: "⭐" },
+    { symbol: "GOLDETF",    name: "Mirae Asset Gold",   fund: "Mirae Asset MF",         expense: 0.0035, aum: "Rs.2,060Cr+", emoji: "🌟" },
+    { symbol: "GROWWGOLD",  name: "Groww Gold ETF",     fund: "Groww MF",               expense: 0.0051, aum: "Rs.200Cr+",   emoji: "🆕" },
   ];
   let _etfSparklines = {};
 
@@ -905,10 +912,10 @@
     const cur = data[data.length-1], ya = data[0];
     const yp = ((cur-ya)/ya*100).toFixed(1), yc = parseFloat(yp) >= 0 ? "#22c55e" : "#ef4444";
     statsEl.innerHTML = `
-      <div><div style="font-size:10px;color:#64748b;font-family:monospace;letter-spacing:.06em;text-transform:uppercase">52W High</div><div style="font-family:monospace;font-size:13px;color:#22c55e;margin-top:2px">${fmt(max52)}</div></div>
-      <div><div style="font-size:10px;color:#64748b;font-family:monospace;letter-spacing:.06em;text-transform:uppercase">52W Low</div><div style="font-family:monospace;font-size:13px;color:#ef4444;margin-top:2px">${fmt(min52)}</div></div>
-      <div><div style="font-size:10px;color:#64748b;font-family:monospace;letter-spacing:.06em;text-transform:uppercase">1Y Return</div><div style="font-family:monospace;font-size:13px;color:${yc};margin-top:2px">${parseFloat(yp) >= 0 ? "+" : ""}${yp}%</div></div>
-      <div><div style="font-size:10px;color:#64748b;font-family:monospace;letter-spacing:.06em;text-transform:uppercase">Current</div><div style="font-family:monospace;font-size:13px;color:#f1f5f9;margin-top:2px">${fmt(cur)}</div></div>`;
+      <div><div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">52W High</div><div style="font-family:monospace;font-size:13px;color:#22c55e;margin-top:2px">${fmt(max52)}</div></div>
+      <div><div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">52W Low</div><div style="font-family:monospace;font-size:13px;color:#ef4444;margin-top:2px">${fmt(min52)}</div></div>
+      <div><div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">1Y Return</div><div style="font-family:monospace;font-size:13px;color:${yc};margin-top:2px">${parseFloat(yp) >= 0 ? "+" : ""}${yp}%</div></div>
+      <div><div style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">Current</div><div style="font-family:monospace;font-size:13px;color:#f1f5f9;margin-top:2px">${fmt(cur)}</div></div>`;
   }
 
   function selectEtfHistory(symbol) { const sel = document.getElementById("etfHistSelect"); if (sel) sel.value = symbol; renderHistChart(symbol); }
@@ -930,18 +937,26 @@
       return { ...etf, unitNav, gramsPerUnit, gramRate, dutyPremium, dutyPct, trackDev, live: !!(navRaw?.[etf.symbol] > 0) };
     });
 
+    // Only show ETFs where a live NAV was successfully fetched — drop the rest cleanly
+    const liveResults = results.filter(e => e.live);
+
     // BEST VALUE logic: ETF with most negative tracking deviation = biggest discount to gold's move = best buy
     // Fall back to lowest TER if no tracking data available
-    const tracked = results.filter(e => e.trackDev != null);
+    const tracked = liveResults.filter(e => e.trackDev != null);
     let bestSym;
     if (tracked.length > 0) {
       bestSym = tracked.reduce((best, e) => e.trackDev < best.trackDev ? e : best, tracked[0]).symbol;
     } else {
-      const minExpense = Math.min(...results.map(e => e.expense));
-      bestSym = results.find(e => e.expense === minExpense)?.symbol;
+      const minExpense = Math.min(...liveResults.map(e => e.expense));
+      bestSym = liveResults.find(e => e.expense === minExpense)?.symbol;
     }
 
-    grid.innerHTML = results.map(e => {
+    if (liveResults.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);padding:24px;">NAV data loading…</div>`;
+      return {};
+    }
+
+    grid.innerHTML = liveResults.map(e => {
       const isBest = e.symbol === bestSym;
       const hasSp  = _etfSparklines[e.symbol]?.["1y"]?.length >= 2;
       const navStr  = e.unitNav > 0
@@ -1022,9 +1037,9 @@
         </div>
       </div>`;
     }).join("");
-    const firstWith1y = ETF_LIST.find(e => _etfSparklines[e.symbol]?.["1y"]?.length >= 2);
+    const firstWith1y = liveResults.find(e => _etfSparklines[e.symbol]?.["1y"]?.length >= 2);
     if (firstWith1y) { document.getElementById("etfHistPanel").style.display = "block"; document.getElementById("etfHistSelect").value = firstWith1y.symbol; renderHistChart(firstWith1y.symbol); }
-    const navs = {}; results.forEach(e => navs[e.symbol] = e.gramRate); return navs;
+    const navs = {}; liveResults.forEach(e => navs[e.symbol] = e.gramRate); return navs;
   }
 
   // -------------------------------------------------------
