@@ -116,7 +116,7 @@ export default async function handler(req, res) {
     let silverUSD = (_silverBundled > 0) ? _silverBundled : null;
     try { if (!silverUSD) { const r = await tout(fetch("https://gold-api.com/price/XAG"), 4000); if (r.ok) { const d = await r.json(); if (d?.price > 0) silverUSD = d.price; } } } catch (_) {}
     try { if (!silverUSD) { const r = await tout(fetch("https://query1.finance.yahoo.com/v8/finance/chart/SI%3DF?interval=1d&range=1d", { headers: { "User-Agent": UA } }), 5000); if (r.ok) { const d = await r.json(); const v = d?.chart?.result?.[0]?.meta?.regularMarketPrice; if (v > 0) silverUSD = v; } } } catch (_) {}
-    if (!silverUSD) silverUSD = goldUSD / 85;
+    if (!silverUSD) silverUSD = goldUSD / 92; // gold/silver ratio ~90–100x; 92 is a reasonable mid estimate
 
     const calc24k = (goldUSD / TROY) * usdInr;
     console.log(`XAU/USD $${goldUSD.toFixed(2)} [${goldSrc}] | USD/INR ${usdInr.toFixed(2)} | calc24k Rs.${calc24k.toFixed(2)}/g`);
@@ -458,12 +458,14 @@ export default async function handler(req, res) {
     // NOTE: All symbols are NSE symbols (Yahoo Finance uses .NS = NSE)
     // SBI Gold ETF is SETFGOLD on NSE; SBIGETS is the old BSE-only symbol.
     // Kotak Gold ETF trades as GOLD1 on NSE (KOTAKGOLD is a legacy/alternate symbol).
-    const ETF_SYMS = ["GOLDBEES", "SETFGOLD", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD"];
+    const ETF_SYMS = ["GOLDBEES", "SETFGOLD", "HDFCMFGETF", "AXISGOLD", "KOTAKGOLD", "ICICIGOLD", "BSLGOLDETF", "GOLDETF", "GROWWGOLD"];
     // NSE ticker overrides: logical key → actual NSE symbol for Yahoo Finance
     const NSE_OVERRIDES = { KOTAKGOLD: "GOLD1" };
     const BSE_CODES = {
-      GOLDBEES: "590096", SETFGOLD: "590091", HDFCMFGETF: "590094",
-      AXISGOLD: "590102", KOTAKGOLD: "590103", ICICIGOLD: "590100",
+      GOLDBEES:   "590096", SETFGOLD:  "590091", HDFCMFGETF: "590094",
+      AXISGOLD:   "590102", KOTAKGOLD: "590103", ICICIGOLD:  "590100",
+      BSLGOLDETF: "590099",                                             // Aditya Birla Sun Life Gold ETF
+      // GOLDETF (Mirae) and GROWWGOLD: BSE codes not yet confirmed — Yahoo/AMFI used as primary
     };
     // AMFI name fragments for fallback NAV lookup
     const AMFI_NAMES = {
@@ -473,6 +475,9 @@ export default async function handler(req, res) {
       AXISGOLD:   "Axis Gold ETF",
       KOTAKGOLD:  "Kotak Gold ETF",
       ICICIGOLD:  "ICICI Prudential Gold ETF",
+      BSLGOLDETF: "Aditya Birla Sun Life Gold ETF",
+      GOLDETF:    "Mirae Asset Gold ETF",
+      GROWWGOLD:  "Groww Gold ETF",
     };
 
     async function fetchETFIndividual(sym) {
