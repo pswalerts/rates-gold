@@ -158,13 +158,16 @@
     .dxb-fx-item:not(:last-child) { border-right:1px solid var(--border); }
     .dxb-fx-label { font-size:10px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
     .dxb-fx-val   { font-family:var(--mono); font-size:16px; font-weight:600; }
-    /* Single-line Dubai vs India comparison */
-    .dxb-oneliner { display:flex; align-items:center; flex-wrap:wrap; gap:0; padding:11px 16px; background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:10px; margin-bottom:12px; font-family:var(--mono); }
-    .dxb-ol-item { display:flex; align-items:baseline; gap:6px; padding:0 10px; }
-    .dxb-ol-lbl { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
-    .dxb-ol-val { font-size:18px; font-weight:700; white-space:nowrap; }
-    .dxb-ol-sep { color:var(--border); font-size:16px; }
-    .dxb-ol-verdict { display:flex; align-items:center; gap:6px; padding:0 10px; font-size:13px; font-weight:600; white-space:nowrap; }
+    /* Dubai vs India comparison rows */
+    .dxb-rows { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:12px; }
+    .dxb-oneliner { display:flex; align-items:center; gap:0; padding:9px 14px; font-family:var(--mono); }
+    .dxb-oneliner:not(:last-child) { border-bottom:1px solid var(--border); }
+    .dxb-ol-purity { width:60px; flex-shrink:0; font-size:11px; font-weight:700; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+    .dxb-ol-item { display:flex; align-items:baseline; gap:5px; padding:0 10px; }
+    .dxb-ol-lbl { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
+    .dxb-ol-val { font-size:16px; font-weight:700; white-space:nowrap; }
+    .dxb-ol-sep { color:rgba(255,255,255,0.15); padding:0 2px; }
+    .dxb-ol-verdict { display:flex; align-items:center; gap:5px; margin-left:auto; font-size:12px; font-weight:700; white-space:nowrap; padding-left:8px; }
     /* Reference strip: 22K / 18K */
     .dxb-ref-strip { display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:8px 14px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px; font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:12px; }
     .dxb-ref-dot { opacity:0.25; }
@@ -402,7 +405,7 @@
 
       <div class="dubai-card" id="dubai-section" style="margin-top:44px">
         <div class="dubai-header">
-          <div class="dubai-title">Dubai · Gold Comparison <span class="dubai-title-arabic">اسعار الذهب · دبي</span></div>
+          <div class="dubai-title">Dubai · India Rate Comparison <span class="dubai-title-arabic">اسعار الذهب · دبي</span></div>
           <div style="font-size:12px;color:var(--muted);font-family:var(--mono);" id="dubaiUpdated">--</div>
         </div>
 
@@ -426,29 +429,40 @@
           </div>
         </div>
 
-        <!-- Single-line comparison -->
-        <div class="dxb-oneliner" id="dxb-oneliner">
-          <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">Dubai</span> <span class="dxb-ol-val" id="dxb-24k-inr" style="color:var(--aed-color)">--</span></span>
-          <span class="dxb-ol-sep">·</span>
-          <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">India</span> <span class="dxb-ol-val" id="ds-india" style="color:var(--inr-color)">--</span></span>
-          <span class="dxb-ol-sep">·</span>
-          <span class="dxb-ol-verdict" id="dxb-verdict">--</span>
-        </div>
-
-        <!-- 22K / 18K reference -->
-        <div class="dxb-ref-strip">
-          <span>22K · <span id="dxb-22k-aed" style="color:var(--aed-color)">--</span> AED · <span id="dxb-22k-inr" style="color:var(--inr-color)">--</span></span>
-          <span class="dxb-ref-dot">·</span>
-          <span>18K · <span id="dxb-18k-aed" style="color:var(--aed-color)">--</span> AED · <span id="dxb-18k-inr" style="color:var(--inr-color)">--</span></span>
-          <span class="dxb-ref-dot">·</span>
-          <span id="dxb-aed-inr" style="color:var(--muted)">--</span>
+        <!-- 24K / 22K / 18K comparison rows -->
+        <div class="dxb-rows">
+          <div class="dxb-oneliner">
+            <span class="dxb-ol-purity">24K 999</span>
+            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-24k-inr" style="color:var(--aed-color)">--</span></span>
+            <span class="dxb-ol-sep">·</span>
+            <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india" style="color:var(--inr-color)">--</span></span>
+            <span class="dxb-ol-verdict" id="dxb-verdict-24">--</span>
+          </div>
+          <div class="dxb-oneliner">
+            <span class="dxb-ol-purity">22K 916</span>
+            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-22k-inr" style="color:var(--aed-color)">--</span></span>
+            <span class="dxb-ol-sep">·</span>
+            <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india-22" style="color:var(--inr-color)">--</span></span>
+            <span class="dxb-ol-verdict" id="dxb-verdict-22">--</span>
+          </div>
+          <div class="dxb-oneliner">
+            <span class="dxb-ol-purity">18K 750</span>
+            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-18k-inr" style="color:var(--aed-color)">--</span></span>
+            <span class="dxb-ol-sep">·</span>
+            <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india-18" style="color:var(--inr-color)">--</span></span>
+            <span class="dxb-ol-verdict" id="dxb-verdict-18">--</span>
+          </div>
         </div>
 
         <!-- hidden IDs kept for JS compatibility -->
+        <span id="dxb-22k-aed" style="display:none"></span>
+        <span id="dxb-18k-aed" style="display:none"></span>
+        <span id="dxb-aed-inr" style="display:none"></span>
         <span id="ds-spread" style="display:none"></span>
         <span id="ds-spreadpct" style="display:none"></span>
+        <span id="dxb-verdict" style="display:none"></span>
 
-        <div class="dubai-note">Dubai: no duty &nbsp;·&nbsp; India: 6% customs + 3% IGST &nbsp;·&nbsp; Duty-free allowance: 20g (women) / 10g (men)</div>
+        <div class="dubai-note">Dubai: no import duty &nbsp;·&nbsp; India: 6% customs + 3% IGST &nbsp;·&nbsp; Personal allowance: 20g (women) / 10g (men) duty-free</div>
       </div>
       <div class="ad-inline">Advertisement · 728x50</div>
     </div><!-- /gold-section -->
@@ -1228,16 +1242,26 @@
       document.getElementById("dxb-aed-inr").textContent        = "AED/INR " + aedInr.toFixed(4);
       document.getElementById("dubaiUpdated").textContent       = "updated " + timeStr(data.timestamp);
       document.getElementById("ds-india").textContent           = fmt(india24);
-      // Verdict: arrow + who is cheaper + ₹/g + %
-      const verdictEl = document.getElementById("dxb-verdict");
-      if (verdictEl && dubai24Inr > 0 && india24 > 0) {
-        const indiaCheaper = india24 < dubai24Inr;
-        const arrow  = spread >= 0 ? "▲" : "▼";
-        const who    = spread >= 0 ? "India" : "Dubai";
-        const color  = spread >= 0 ? "var(--orange)" : "var(--green)";
-        verdictEl.style.color = color;
-        verdictEl.innerHTML = `<span style="font-size:16px">${arrow}</span> ${who} ${fmt(Math.abs(spread))}/g &nbsp;<span style="opacity:0.7;font-size:12px">(${Math.abs(spreadPct)}% ${spread >= 0 ? "costlier" : "cheaper"})</span>`;
+      document.getElementById("ds-india-22").textContent        = fmt(ibja22);
+      document.getElementById("ds-india-18").textContent        = fmt(ibja24 * 0.75);
+
+      // Verdict helper: red = India costlier, green = Dubai costlier
+      function renderVerdict(elId, dubaiInr, indiaInr) {
+        const el = document.getElementById(elId);
+        if (!el || !(dubaiInr > 0) || !(indiaInr > 0)) return;
+        const diff    = indiaInr - dubaiInr;   // +ve = India more expensive
+        const diffAbs = Math.abs(diff);
+        const pct     = (diffAbs / indiaInr * 100).toFixed(1);
+        const indiaMore = diff >= 0;
+        const arrow   = indiaMore ? "▲" : "▼";
+        const label   = indiaMore ? "India" : "Dubai";
+        const color   = indiaMore ? "var(--red)" : "var(--green)";
+        el.style.color = color;
+        el.innerHTML = `<span style="font-size:15px;line-height:1">${arrow}</span>&nbsp;${label}&nbsp;${fmt(diffAbs)}/g&nbsp;<span style="opacity:0.65;font-size:11px">(${pct}%)</span>`;
       }
+      renderVerdict("dxb-verdict-24", dubai24Inr,          india24);
+      renderVerdict("dxb-verdict-22", dubai22Inr,          ibja22);
+      renderVerdict("dxb-verdict-18", dubai18Aed * aedInr, ibja24 * 0.75);
 
       // --- Dubai callout strip (inside hero, between price boxes and history) ---
       const callout = document.getElementById("dubaiCallout");
