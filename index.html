@@ -172,7 +172,11 @@
 
     /* ── Price row card — physical gold & digital gold ── */
     .pr-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .pr-card { display:flex; align-items:center; gap:12px; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,168,83,0.18); background:var(--surface); position:relative; overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
+    .pr-card { display:flex; align-items:center; gap:12px; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,168,83,0.18); background:var(--surface); position:relative; transition:border-color 0.2s, box-shadow 0.2s; }
+    /* Signal-coloured variants for Best Buy cards */
+    .pr-card.bc-green  { border-color:rgba(34,197,94,0.35);  background:rgba(34,197,94,0.03); }
+    .pr-card.bc-orange { border-color:rgba(249,115,22,0.30); background:rgba(249,115,22,0.03); }
+    .pr-card.bc-red    { border-color:rgba(239,68,68,0.30);  background:rgba(239,68,68,0.03); }
     .pr-card:hover { border-color:rgba(212,168,83,0.32); box-shadow:0 2px 16px rgba(212,168,83,0.06); }
     .pr-card.pr-best { border-color:rgba(34,197,94,0.45); background:linear-gradient(135deg,rgba(34,197,94,0.05) 0%,var(--surface) 70%); box-shadow:0 0 20px rgba(34,197,94,0.08); animation:pulse-green 2.5s ease-in-out infinite; }
     .pr-icon { width:36px; height:36px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
@@ -193,29 +197,15 @@
     .tl-header { padding:14px 20px; background:rgba(212,168,83,0.05); border-bottom:1px solid var(--border); border-radius:16px 16px 0 0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
     .tl-header-title { font-size:13px; font-weight:700; color:var(--text); letter-spacing:0.01em; }
     .tl-body { padding:12px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-    /* Card: flex-column so header row and tags row never compete for width */
-    .tl-row { display:flex; flex-direction:column; gap:8px; border-radius:10px; padding:12px; transition:border-color 0.25s, box-shadow 0.25s; }
-    .tl-row.tl-green  { border:1px solid rgba(34,197,94,0.35);  background:rgba(34,197,94,0.03); }
-    .tl-row.tl-orange { border:1px solid rgba(249,115,22,0.30); background:rgba(249,115,22,0.03); }
-    .tl-row.tl-red    { border:1px solid rgba(239,68,68,0.30);  background:rgba(239,68,68,0.03); }
-    /* Header row inside each card: dot · info · price */
-    .tl-row-head { display:flex; align-items:flex-start; gap:9px; }
-    .tl-dot { width:26px; height:26px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; margin-top:1px; }
+    /* Best Buy cards reuse .pr-card — only signal dot needs its own style */
+    .tl-dot { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
     .tl-dot.green  { background:rgba(34,197,94,0.15);  color:var(--green);  border:1.5px solid rgba(34,197,94,0.45); }
     .tl-dot.orange { background:rgba(249,115,22,0.15); color:var(--orange); border:1.5px solid rgba(249,115,22,0.45); }
     .tl-dot.red    { background:rgba(239,68,68,0.15);  color:var(--red);    border:1.5px solid rgba(239,68,68,0.45); }
-    .tl-info { flex:1; min-width:0; }
-    .tl-option-name { font-size:11.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:0.01em; line-height:1.3; }
-    .tl-option-name.green  { color:#4ade80; }
-    .tl-option-name.orange { color:#fb923c; }
-    .tl-option-name.red    { color:#f87171; }
-    .tl-price-right { text-align:right; flex-shrink:0; padding-left:6px; }
-    .tl-price-val { font-family:var(--mono); font-size:13px; font-weight:700; color:var(--inr-color); white-space:nowrap; line-height:1.2; }
-    .tl-price-sub { font-size:9px; color:var(--muted); font-family:var(--mono); margin-top:2px; white-space:nowrap; }
-    .tl-rank { font-size:8px; font-family:var(--mono); letter-spacing:0.06em; padding:2px 6px; border-radius:999px; text-transform:uppercase; font-weight:600; display:inline-block; white-space:nowrap; margin-top:4px; }
-    .tl-rank.green  { background:rgba(34,197,94,0.12);  color:#4ade80;  border:1px solid rgba(34,197,94,0.28); }
-    .tl-rank.orange { background:rgba(249,115,22,0.12); color:#fb923c;  border:1px solid rgba(249,115,22,0.28); }
-    .tl-rank.red    { background:rgba(239,68,68,0.12);  color:#f87171;  border:1px solid rgba(239,68,68,0.28); }
+    .tl-rank { font-size:8px; font-family:var(--mono); letter-spacing:0.06em; padding:2px 6px; border-radius:999px; text-transform:uppercase; font-weight:600; display:inline-block; white-space:nowrap; margin-top:3px; }
+    .tl-rank.green  { background:rgba(34,197,94,0.12);  color:var(--green);  border:1px solid rgba(34,197,94,0.28); }
+    .tl-rank.orange { background:rgba(249,115,22,0.12); color:var(--orange); border:1px solid rgba(249,115,22,0.28); }
+    .tl-rank.red    { background:rgba(239,68,68,0.12);  color:var(--red);    border:1px solid rgba(239,68,68,0.28); }
     .tl-verdict { grid-column:1/-1; background:rgba(212,168,83,0.06); border:1px solid rgba(212,168,83,0.2); border-radius:10px; padding:14px 18px; }
     .tl-verdict-label { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-family:var(--mono); font-weight:700; margin-bottom:8px; }
     .tl-verdict-text { font-size:15px; color:var(--text); line-height:1.65; font-weight:500; }
@@ -409,9 +399,9 @@
     /* ── Traffic light — pill tags replacing <ul><li> ── */
     .tl-tags { display:flex; flex-wrap:wrap; gap:4px; }
     .tl-tag { font-size:9px; font-family:var(--mono); padding:2px 8px; border-radius:4px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.10); color:var(--muted); white-space:normal; letter-spacing:0.02em; line-height:1.5; max-width:100%; overflow-wrap:break-word; word-break:break-word; }
-    .tl-row.tl-green  .tl-tag { background:rgba(34,197,94,0.06);  border-color:rgba(34,197,94,0.20); }
-    .tl-row.tl-orange .tl-tag { background:rgba(249,115,22,0.06); border-color:rgba(249,115,22,0.20); }
-    .tl-row.tl-red    .tl-tag { background:rgba(239,68,68,0.06);  border-color:rgba(239,68,68,0.18); }
+    .tl-tag.tl-tag-green  { background:rgba(34,197,94,0.06);  border-color:rgba(34,197,94,0.22); }
+    .tl-tag.tl-tag-orange { background:rgba(249,115,22,0.06); border-color:rgba(249,115,22,0.22); }
+    .tl-tag.tl-tag-red    { background:rgba(239,68,68,0.06);  border-color:rgba(239,68,68,0.20); }
     /* ── Verdict bullet lines ── */
     .tl-verdict-lines { display:flex; flex-direction:column; gap:7px; margin-top:6px; }
     .tl-verdict-line { display:flex; align-items:flex-start; gap:9px; font-size:13.5px; color:var(--text); line-height:1.6; }
@@ -1071,15 +1061,15 @@
         trackLine = `<span style="color:${clr};font-size:9px;font-family:var(--mono);">${arrow} ${absPct}% vs gold</span> <span style="color:var(--muted);font-size:9px;">(${label})</span>`;
       }
 
-      return `<div class="pr-card ${isBest?"pr-best":""}" style="align-items:flex-start;cursor:${hasSp?"pointer":"default"};" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
+      return `<div class="pr-card ${isBest?"pr-best":""}" style="cursor:${hasSp?"pointer":"default"};" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
         ${isBest?'<div class="pr-badge">Best Buy</div>':""}
-        <div class="pr-icon" style="margin-top:2px;flex-shrink:0;">${e.emoji}</div>
-        <div class="pr-info" style="min-width:0;overflow:hidden;">
-          <div class="pr-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.name}</div>
-          <div class="pr-type" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.fund} &nbsp;·&nbsp; <span style="color:var(--gold-bright);font-family:var(--mono);">TER ${(e.expense*100).toFixed(2)}%</span></div>
-          <div style="margin-top:4px;">${trackLine}</div>
+        <div class="pr-icon">${e.emoji}</div>
+        <div class="pr-info">
+          <div class="pr-name">${e.name}</div>
+          <div class="pr-type">${e.fund} &nbsp;·&nbsp; <span style="color:var(--gold-bright);font-family:var(--mono);">TER ${(e.expense*100).toFixed(2)}%</span></div>
+          <div style="margin-top:3px;">${trackLine}</div>
         </div>
-        <div class="pr-right" style="min-width:64px;flex-shrink:0;">
+        <div class="pr-right">
           <div class="pr-price" style="font-size:14px;">${navStr}</div>
           <div class="pr-note">per unit${hasSp?' · <span style="opacity:0.5;">↓chart</span>':""}</div>
           <div class="pr-note">${gpuStr} gold</div>
@@ -1132,20 +1122,19 @@
     const savVsPhys = phys24 - etfEntry, savVsPhysPct = ((savVsPhys / phys24) * 100).toFixed(1);
     const savVsDigi = digi  - etfEntry, savVsDigiPct = ((savVsDigi / digi)  * 100).toFixed(1);
     document.getElementById("tlBody").innerHTML = opts.map(opt => `
-      <div class="tl-row tl-${opt.color}">
-        <div class="tl-row-head">
-          <div class="tl-dot ${opt.color}">${opt.dot}</div>
-          <div class="tl-info">
-            <div class="tl-option-name ${opt.color}">${opt.name}</div>
-            <span class="tl-rank ${opt.color}">${opt.rank}</span>
-          </div>
-          <div class="tl-price-right">
-            ${opt.showPrice
-              ? `<div class="tl-price-val">${fmt(opt.price)}</div><div class="tl-price-sub">/gram</div>`
-              : `<div class="tl-price-val" style="font-size:10px;color:var(--muted);">~IBJA</div><div class="tl-price-sub">est.</div>`}
-          </div>
+      <div class="pr-card bc-${opt.color}" style="align-items:flex-start;">
+        <div class="tl-dot ${opt.color}" style="margin-top:1px;">${opt.dot}</div>
+        <div class="pr-info">
+          <div class="pr-name">${opt.name}</div>
+          <div class="pr-type">${opt.detail}</div>
+          <span class="tl-rank ${opt.color}">${opt.rank}</span>
+          <div class="tl-tags" style="margin-top:6px;">${opt.desc.slice(0,3).map(s=>`<span class="tl-tag tl-tag-${opt.color}">${s}</span>`).join("")}</div>
         </div>
-        <div class="tl-tags">${opt.desc.slice(0,3).map(s=>`<span class="tl-tag">${s}</span>`).join("")}</div>
+        <div class="pr-right">
+          ${opt.showPrice
+            ? `<div class="pr-price" style="font-size:13px;">${fmt(opt.price)}</div><div class="pr-note">/gram</div>`
+            : `<div class="pr-price" style="font-size:10px;color:var(--muted);">~IBJA</div><div class="pr-note">est.</div>`}
+        </div>
       </div>`).join("") + `
       <div class="tl-verdict">
         <div class="tl-verdict-label">Today's Recommendation</div>
