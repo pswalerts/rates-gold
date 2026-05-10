@@ -172,7 +172,7 @@
 
     /* ── Price row card — physical gold & digital gold ── */
     .pr-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .pr-card { display:flex; align-items:center; gap:12px; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,168,83,0.18); background:var(--surface); position:relative; transition:border-color 0.2s, box-shadow 0.2s; }
+    .pr-card { display:flex; align-items:center; gap:12px; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,168,83,0.18); background:var(--surface); position:relative; overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
     /* Signal-coloured variants for Best Buy cards */
     .pr-card.bc-green  { border-color:rgba(34,197,94,0.35);  background:rgba(34,197,94,0.03); }
     .pr-card.bc-orange { border-color:rgba(249,115,22,0.30); background:rgba(249,115,22,0.03); }
@@ -182,7 +182,7 @@
     .pr-icon { width:36px; height:36px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
     .pr-info { flex:1; min-width:0; }
     .pr-name { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:0.01em; }
-    .pr-type { font-size:10px; color:var(--muted); margin-top:1px; letter-spacing:0.03em; }
+    .pr-type { font-size:10px; color:var(--muted); margin-top:1px; letter-spacing:0.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .pr-right { text-align:right; flex-shrink:0; }
     .pr-price { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--inr-color); white-space:nowrap; }
     .pr-card.pr-best .pr-price { color:var(--green); }
@@ -196,7 +196,7 @@
     .tl-panel { margin-top:18px; background:var(--surface); border:1px solid var(--border); border-radius:16px; }
     .tl-header { padding:14px 20px; background:rgba(212,168,83,0.05); border-bottom:1px solid var(--border); border-radius:16px 16px 0 0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
     .tl-header-title { font-size:13px; font-weight:700; color:var(--text); letter-spacing:0.01em; }
-    .tl-body { padding:12px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .tl-body { padding:12px; display:flex; flex-direction:column; gap:8px; }
     /* Best Buy cards reuse .pr-card — only signal dot needs its own style */
     .tl-dot { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
     .tl-dot.green  { background:rgba(34,197,94,0.15);  color:var(--green);  border:1.5px solid rgba(34,197,94,0.45); }
@@ -285,7 +285,7 @@
     .refresh-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
     .refreshing { opacity:0.4; pointer-events:none; }
     .etf-section-wrap { display:flex; flex-direction:column; gap:16px; }
-    #etfGrid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    #etfGrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     #etfHistPanel { border-radius:14px; }
     .gold-section   { display:block; }
     .silver-section { display:none; }
@@ -293,7 +293,7 @@
     body.silver-mode .silver-section { display:block; }
     .silver-hero-label { font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:var(--silver); margin-bottom:10px; font-family:var(--mono); font-weight:600; }
     .gs-ratio-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-family:var(--mono); font-size:12px; background:rgba(168,184,200,0.1); color:var(--silver); border:1px solid rgba(168,184,200,0.2); margin-top:10px; }
-    @media (max-width:900px) { #etfGrid { grid-template-columns:repeat(2,1fr) !important; } }
+    @media (max-width:900px) { #etfGrid { grid-template-columns:1fr 1fr !important; } }
 
     @media (max-width:768px) {
       /* Layout */
@@ -323,8 +323,6 @@
       .retailer-grid { grid-template-columns:repeat(2,1fr) !important; }
       #etfGrid { grid-template-columns:repeat(2,1fr) !important; }
 
-      /* Traffic light — tighter on tablet */
-      .tl-body { grid-template-columns:repeat(2,1fr); }
 
       /* Dubai card */
       .dubai-card { padding:16px 14px; }
@@ -372,8 +370,6 @@
       .dual-rate-main { font-size:24px; }
       .dual-rate-sub-grid { grid-template-columns:repeat(3,1fr); gap:4px; }
 
-      /* Traffic light — single column on very small screens */
-      .tl-body { grid-template-columns:1fr; }
 
       /* History */
       .hero-hist-body { grid-template-columns:1fr 1fr; }
