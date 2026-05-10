@@ -73,17 +73,18 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --gold: #c9993d; --gold-bright: #e8b84b; --gold-dim: rgba(200,150,60,0.12);
-      --silver: #a8b8c8; --silver-bright: #d0dce8; --silver-dim: rgba(168,184,200,0.12);
-      --green: #22c55e; --yellow: #eab308; --red: #ef4444; --orange: #f97316;
-      --bg: #0e0f11; --surface: #16181c; --surface2: #1e2028;
-      --border: rgba(255,255,255,0.08); --text: #e8edf2; --muted: #8a9bb0;
+      --gold: #c8943a; --gold-bright: #e5b245; --gold-dim: rgba(200,148,58,0.11);
+      --silver: #a2b4c6; --silver-bright: #ccdae8; --silver-dim: rgba(162,180,198,0.11);
+      --green: #1fba57; --yellow: #e0aa06; --red: #e84040; --orange: #f56818;
+      --bg: #0a0b0d; --surface: #131417; --surface2: #1a1c22;
+      --border: rgba(200,148,58,0.11); --text: #e6ecf2; --muted: #8a8070;
       --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
       --serif: 'Playfair Display', Georgia, serif;
       --accent: var(--gold); --accent-bright: var(--gold-bright); --accent-dim: var(--gold-dim);
-      --inr-color: #ddb96a;
-      --usd-color: #38bdf8;
-      --aed-color: #e07828;
+      --inr-color: #d4a85e;
+      --usd-color: #5ab4e8;
+      --aed-color: #dc7020;
+      --card-highlight: rgba(255,248,220,0.025);
     }
     body.silver-mode { --accent: var(--silver); --accent-bright: var(--silver-bright); --accent-dim: var(--silver-dim); }
     body {
@@ -91,11 +92,12 @@
       -moz-osx-font-smoothing: grayscale;
       background-color: var(--bg);
       background-image:
-        radial-gradient(ellipse 140% 55% at 50% 0%, rgba(212,168,83,0.09) 0%, transparent 60%),
-        radial-gradient(ellipse 80% 40% at 80% 80%, rgba(212,168,83,0.04) 0%, transparent 50%);
+        radial-gradient(ellipse 160% 50% at 50% -5%, rgba(200,148,58,0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 30% at 85% 90%, rgba(200,148,58,0.04) 0%, transparent 55%);
       color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden;
     }
-    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(212,168,83,0.03) 1px,transparent 1px), linear-gradient(90deg,rgba(212,168,83,0.03) 1px,transparent 1px); background-size: 48px 48px; pointer-events: none; z-index: 0; }
+    /* Subtle vignette — replaces grid overlay for a more premium feel */
+    body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 100% 100% at 50% 50%, transparent 60%, rgba(0,0,0,0.35) 100%); pointer-events: none; z-index: 0; }
     .ad-banner { width:100%; background:rgba(212,168,83,0.04); border-bottom:1px solid rgba(212,168,83,0.10); display:flex; align-items:center; justify-content:center; padding:10px 24px; min-height:60px; }
     .ad-placeholder { width:100%; max-width:728px; height:40px; background:rgba(200,152,56,0.05); border:1px solid rgba(200,152,56,0.10); border-radius:6px; }
     .ad-side { width:160px; background:rgba(200,152,56,0.04); border:1px solid rgba(200,152,56,0.09); border-radius:8px; min-height:240px; }
@@ -129,7 +131,7 @@
     .source-badge.live-src  { background:rgba(34,197,94,0.08);  color:var(--green);  border-color:rgba(34,197,94,0.2); }
     .source-badge.stale-src { background:rgba(234,179,8,0.08);  color:var(--yellow); border-color:rgba(234,179,8,0.2); }
     .source-badge.calc-src  { background:rgba(100,116,139,0.1); color:var(--muted);  border-color:rgba(255,255,255,0.08); }
-    .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-top:20px; border:1px solid rgba(212,168,83,0.22); border-radius:16px; overflow:hidden; background:linear-gradient(145deg,rgba(212,168,83,0.06) 0%,var(--surface) 60%); box-shadow:0 4px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(212,168,83,0.06); }
+    .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-top:20px; border:1px solid rgba(200,148,58,0.20); border-radius:16px; overflow:hidden; background:linear-gradient(165deg,rgba(200,148,58,0.07) 0%,var(--surface) 55%); box-shadow:0 8px 48px rgba(0,0,0,0.55),0 1px 0 rgba(255,248,200,0.04) inset,0 0 0 1px rgba(200,148,58,0.05); }
     .dual-rate-col { padding:22px 26px; }
     .dual-rate-col:first-child { border-right:1px solid rgba(255,255,255,0.07); }
     .dual-rate-col-header { display:flex; align-items:center; justify-content:center; flex-direction:column; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:6px; }
@@ -138,7 +140,7 @@
     .fx-usd-hero { color:var(--usd-color); font-size:16px; font-weight:700; }
     .fx-inr-hero { color:var(--inr-color); font-size:16px; font-weight:700; }
     .fx-sep-hero { font-size:11px; color:var(--muted); }
-    .dual-rate-main { font-family:var(--mono); font-size:36px; font-weight:700; color:var(--gold-bright); line-height:1.1; }
+    .dual-rate-main { font-family:var(--mono); font-size:38px; font-weight:700; color:var(--gold-bright); line-height:1.05; letter-spacing:-0.02em; }
     .dual-rate-main.ibja-val { color:var(--inr-color); }
     .dual-rate-main.silver-val { color:var(--silver-bright, #d0dce8); }
     .dual-rate-perkg { font-family:var(--mono); font-size:17px; font-weight:500; color:var(--inr-color); opacity:0.6; margin-top:5px; }
@@ -153,11 +155,13 @@
     .dual-rate-formula   { background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:8px; padding:9px 14px; font-family:var(--mono); font-size:12px; color:rgba(255,255,255,0.55); line-height:1.4; margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
     .dual-rate-stale     { background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--yellow); line-height:1.6; margin-top:12px; }
     .dual-rate-unavail   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--muted); line-height:1.6; margin-top:12px; }
-    .section-title { font-size:11px; letter-spacing:0.13em; text-transform:uppercase; color:var(--gold-bright); margin-top:48px; margin-bottom:16px; font-weight:700; font-family:var(--mono); border-left:3px solid var(--gold-bright); padding-left:10px; opacity:0.9; }
+    .section-title { font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-top:52px; margin-bottom:18px; font-weight:500; font-family:var(--mono); display:flex; align-items:center; gap:10px; opacity:1; }
+    .section-title::before { content:''; display:inline-block; width:16px; height:1px; background:var(--gold); opacity:0.6; flex-shrink:0; }
+    .section-title::after  { content:''; display:block; flex:1; height:1px; background:linear-gradient(90deg,rgba(200,148,58,0.18),transparent); }
     /* ── Retailer / ETF card (ETF uses this for the complex card) ── */
     .retailer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-    .retailer-card { background:linear-gradient(145deg,rgba(212,168,83,0.055) 0%,var(--surface) 55%); border:1px solid rgba(212,168,83,0.20); border-radius:14px; padding:18px 16px; display:flex; flex-direction:column; align-items:center; gap:6px; transition:border-color 0.25s,box-shadow 0.25s; position:relative; overflow:hidden; cursor:default; }
-    .retailer-card:hover { border-color:rgba(212,168,83,0.28); box-shadow:0 4px 20px rgba(212,168,83,0.08); }
+    .retailer-card { background:linear-gradient(165deg,rgba(200,148,58,0.06) 0%,var(--surface) 55%); border:1px solid rgba(200,148,58,0.16); border-radius:14px; padding:18px 16px; display:flex; flex-direction:column; align-items:center; gap:6px; transition:border-color 0.25s,box-shadow 0.25s; position:relative; overflow:hidden; cursor:default; box-shadow:0 2px 0 rgba(255,248,200,0.02) inset; }
+    .retailer-card:hover { border-color:rgba(200,148,58,0.28); box-shadow:0 6px 24px rgba(0,0,0,0.3),0 2px 0 rgba(255,248,200,0.03) inset; }
     .retailer-card.best-buy { border-color:rgba(34,197,94,0.45); box-shadow:0 0 28px rgba(34,197,94,0.1),inset 0 0 24px rgba(34,197,94,0.05); animation:pulse-green 2s ease-in-out infinite; }
     @keyframes pulse-green { 0%,100%{box-shadow:0 0 24px rgba(34,197,94,0.08),inset 0 0 20px rgba(34,197,94,0.04)} 50%{box-shadow:0 0 36px rgba(34,197,94,0.18),inset 0 0 32px rgba(34,197,94,0.08)} }
     .retailer-logo { width:44px; height:44px; border-radius:10px; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; font-family:var(--mono); color:var(--accent); flex-shrink:0; overflow:hidden; }
@@ -172,8 +176,8 @@
 
     /* ── Price row card — physical gold & digital gold ── */
     .pr-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .pr-card { display:flex; align-items:center; gap:12px; padding:12px 15px; border-radius:10px; border:1px solid rgba(200,152,56,0.15); background:var(--surface); position:relative; overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
-    .pr-card:hover { border-color:rgba(200,152,56,0.28); box-shadow:0 2px 14px rgba(200,152,56,0.06); }
+    .pr-card { display:flex; align-items:center; gap:12px; padding:12px 15px; border-radius:10px; border:1px solid rgba(200,148,58,0.14); background:var(--surface); background-image:linear-gradient(180deg,var(--card-highlight) 0%,transparent 60%); position:relative; overflow:hidden; transition:border-color 0.25s, box-shadow 0.25s; }
+    .pr-card:hover { border-color:rgba(200,148,58,0.26); box-shadow:0 4px 18px rgba(0,0,0,0.25),0 0 0 1px rgba(200,148,58,0.08); }
     .pr-card.pr-best { border-color:rgba(34,197,94,0.42); background:linear-gradient(135deg,rgba(34,197,94,0.04) 0%,var(--surface) 70%); box-shadow:0 0 18px rgba(34,197,94,0.07); animation:pulse-green 2.5s ease-in-out infinite; }
     /* Best Buy signal variants — top-align since cards are taller with tags */
     .pr-card.bc-green  { border-color:rgba(34,197,94,0.32);  background:rgba(34,197,94,0.025); align-items:flex-start; }
@@ -184,17 +188,26 @@
     .pr-name { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:0.01em; line-height:1.3; }
     .pr-type { font-size:10px; color:var(--muted); margin-top:2px; letter-spacing:0.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .pr-right { text-align:right; flex-shrink:0; }
-    .pr-price { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--inr-color); white-space:nowrap; line-height:1.2; }
+    .pr-price { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--inr-color); white-space:nowrap; line-height:1.2; letter-spacing:-0.01em; }
     .pr-card.pr-best .pr-price { color:var(--green); }
     .pr-note { font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:2px; white-space:nowrap; }
-    .pr-badge { position:absolute; top:0; right:0; background:var(--green); color:#000; font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.08em; padding:2px 8px; border-radius:0 10px 0 6px; text-transform:uppercase; }
+    .pr-badge { position:absolute; top:0; right:0; background:var(--green); color:#000; font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.06em; padding:3px 9px; border-radius:0 10px 0 6px; text-transform:uppercase; white-space:nowrap; }
+    .pr-badge.badge-discount { background:rgba(31,186,87,0.18); color:var(--green); border:1px solid rgba(31,186,87,0.35); border-top:none; border-right:none; }
+    .pr-badge.badge-premium  { background:rgba(245,104,24,0.16); color:var(--orange); border:1px solid rgba(245,104,24,0.32); border-top:none; border-right:none; }
     .pr-source { display:inline-block; font-family:var(--mono); font-size:8px; padding:1px 5px; border-radius:4px; margin-top:3px; }
     .pr-source.live { background:rgba(34,197,94,0.12); color:var(--green); border:1px solid rgba(34,197,94,0.25); }
     .pr-source.calc { background:rgba(100,116,139,0.1); color:var(--muted); border:1px solid rgba(255,255,255,0.07); }
     .etf-live-badge { display:inline-block; font-size:9px; font-family:var(--mono); background:rgba(34,197,94,0.1); color:var(--green); border:1px solid rgba(34,197,94,0.2); border-radius:999px; padding:2px 7px; letter-spacing:0.06em; margin-top:5px; }
     .etf-calc-badge { display:inline-block; font-size:9px; font-family:var(--mono); background:rgba(100,116,139,0.1); color:var(--muted); border:1px solid rgba(255,255,255,0.07); border-radius:999px; padding:2px 7px; letter-spacing:0.06em; margin-top:5px; }
-    .tl-panel { margin-top:18px; background:var(--surface); border:1px solid var(--border); border-radius:16px; }
-    .tl-header { padding:14px 20px; background:rgba(212,168,83,0.05); border-bottom:1px solid var(--border); border-radius:16px 16px 0 0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+    /* ETF mini stat row — chips below the fund name */
+    .etf-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+    .etf-chip { font-size:9px; font-family:var(--mono); padding:2px 7px; border-radius:4px; white-space:nowrap; letter-spacing:0.03em; }
+    .etf-chip-gold   { background:rgba(200,148,58,0.10); color:var(--gold-bright); border:1px solid rgba(200,148,58,0.22); }
+    .etf-chip-muted  { background:rgba(255,255,255,0.04); color:var(--muted); border:1px solid rgba(255,255,255,0.09); }
+    .etf-chip-green  { background:rgba(31,186,87,0.10);  color:var(--green); border:1px solid rgba(31,186,87,0.25); }
+    .etf-chip-orange { background:rgba(245,104,24,0.10); color:var(--orange); border:1px solid rgba(245,104,24,0.25); }
+    .tl-panel { margin-top:18px; background:var(--surface); border:1px solid rgba(200,148,58,0.14); border-radius:14px; box-shadow:0 4px 24px rgba(0,0,0,0.3),0 1px 0 rgba(255,248,200,0.025) inset; }
+    .tl-header { padding:14px 20px; background:rgba(200,148,58,0.05); border-bottom:1px solid rgba(200,148,58,0.11); border-radius:14px 14px 0 0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
     .tl-header-title { font-size:13px; font-weight:700; color:var(--text); letter-spacing:0.01em; }
     .tl-body { padding:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     @media (max-width:560px) { .tl-body { grid-template-columns:1fr; } }
@@ -203,19 +216,21 @@
     .tl-dot.green  { background:rgba(34,197,94,0.15);  color:var(--green);  border:1.5px solid rgba(34,197,94,0.45); }
     .tl-dot.orange { background:rgba(249,115,22,0.15); color:var(--orange); border:1.5px solid rgba(249,115,22,0.45); }
     .tl-dot.red    { background:rgba(239,68,68,0.15);  color:var(--red);    border:1.5px solid rgba(239,68,68,0.45); }
-    .tl-rank { font-size:8px; font-family:var(--mono); letter-spacing:0.06em; padding:2px 6px; border-radius:999px; text-transform:uppercase; font-weight:600; display:inline-block; white-space:nowrap; margin-top:3px; }
-    .tl-rank.green  { background:rgba(34,197,94,0.12);  color:var(--green);  border:1px solid rgba(34,197,94,0.28); }
-    .tl-rank.orange { background:rgba(249,115,22,0.12); color:var(--orange); border:1px solid rgba(249,115,22,0.28); }
-    .tl-rank.red    { background:rgba(239,68,68,0.12);  color:var(--red);    border:1px solid rgba(239,68,68,0.28); }
-    .tl-verdict { background:rgba(212,168,83,0.06); border:1px solid rgba(212,168,83,0.18); border-radius:10px; padding:14px 18px; }
-    .tl-verdict-label { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-family:var(--mono); font-weight:700; margin-bottom:10px; }
+    .tl-dot.muted  { background:rgba(138,128,112,0.12); color:var(--muted);  border:1.5px solid rgba(138,128,112,0.28); font-size:10px; }
+    .tl-rank { font-size:8px; font-family:var(--mono); letter-spacing:0.06em; padding:2px 6px; border-radius:999px; text-transform:uppercase; font-weight:600; display:inline-block; white-space:nowrap; margin-top:3px; border:1px solid transparent; background:rgba(138,128,112,0.10); color:var(--muted); border-color:rgba(138,128,112,0.22); }
+    .tl-rank.green  { background:rgba(34,197,94,0.12);  color:var(--green);  border-color:rgba(34,197,94,0.28); }
+    .tl-rank.orange { background:rgba(249,115,22,0.12); color:var(--orange); border-color:rgba(249,115,22,0.28); }
+    .tl-rank.red    { background:rgba(239,68,68,0.12);  color:var(--red);    border-color:rgba(239,68,68,0.28); }
+    .tl-verdict { background:linear-gradient(160deg,rgba(200,148,58,0.13) 0%,rgba(200,148,58,0.04) 60%,var(--surface) 100%); border:1px solid rgba(200,148,58,0.30); border-top:2px solid rgba(200,148,58,0.50); border-radius:10px; padding:20px 22px 18px; box-shadow:0 4px 24px rgba(0,0,0,0.3),0 1px 0 rgba(255,248,200,0.04) inset; }
+    .tl-verdict-label { font-family:var(--serif); font-size:18px; font-weight:700; color:var(--gold-bright); margin-bottom:14px; letter-spacing:0; text-transform:none; line-height:1.2; display:flex; align-items:center; gap:10px; }
+    .tl-verdict-label::after { content:''; display:block; flex:1; height:1px; background:linear-gradient(90deg,rgba(200,148,58,0.35),transparent); margin-left:6px; }
     .dubai-callout { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:rgba(224,120,40,0.08); border:1px solid rgba(224,120,40,0.22); border-radius:10px; padding:10px 16px; margin-top:14px; font-size:13px; font-family:var(--mono); }
     .dubai-callout-flag { font-size:18px; flex-shrink:0; }
     .dubai-callout-text { color:var(--text); flex:1; min-width:200px; }
     .dubai-callout-link { color:var(--aed-color); text-decoration:none; white-space:nowrap; font-size:12px; flex-shrink:0; }
     .dubai-callout-link:hover { text-decoration:underline; }
-    .dubai-card { background:var(--surface); border:1px solid rgba(224,120,40,0.25); border-radius:16px; padding:26px 28px; transition:border-color 0.2s; }
-    .dubai-card:hover { border-color:rgba(255,255,255,0.14); }
+    .dubai-card { background:var(--surface); border:1px solid rgba(210,112,32,0.22); border-radius:14px; padding:26px 28px; transition:border-color 0.25s,box-shadow 0.25s; box-shadow:0 4px 28px rgba(0,0,0,0.35),0 2px 0 rgba(255,220,160,0.02) inset; }
+    .dubai-card:hover { border-color:rgba(210,112,32,0.32); box-shadow:0 8px 36px rgba(0,0,0,0.4),0 2px 0 rgba(255,220,160,0.03) inset; }
     .dubai-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px; background:rgba(224,120,40,0.06); border-bottom:1px solid rgba(224,120,40,0.15); border-radius:10px 10px 0 0; padding:16px 20px; margin:-26px -28px 18px; }
     .dubai-title { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--aed-color); font-family:var(--mono); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .dubai-title-arabic { font-size:13px; color:var(--aed-color); opacity:0.85; letter-spacing:0; text-transform:none; font-family:var(--sans); direction:rtl; }
@@ -239,7 +254,7 @@
     .dxb-ref-strip { display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:8px 14px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px; font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:12px; }
     .dxb-ref-dot { opacity:0.25; }
     .dubai-note { font-size:11px; color:var(--muted); font-style:italic; line-height:1.6; }
-    .hero-hist-panel { margin-top:20px; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+    .hero-hist-panel { margin-top:20px; background:var(--surface); border:1px solid rgba(200,148,58,0.13); border-radius:14px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.3); }
     .hero-hist-tabs { display:flex; border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
     .hero-hist-tabs::-webkit-scrollbar { display:none; }
     .hero-hist-tab { flex-shrink:0; padding:9px 16px; font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; transition:all 0.2s; }
@@ -267,16 +282,16 @@
     .fx-label { font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); font-weight:500; }
     .fx-value { font-family:var(--mono); font-size:15px; color:var(--text); font-weight:500; }
     .option-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
-    .option-card  { background:linear-gradient(145deg,rgba(212,168,83,0.055) 0%,var(--surface) 55%); border:1px solid rgba(212,168,83,0.20); border-radius:16px; padding:24px 26px; transition:border-color 0.2s; position:relative; overflow:hidden; }
-    .option-card:hover { border-color:rgba(212,168,83,0.28); }
+    .option-card  { background:linear-gradient(165deg,rgba(200,148,58,0.06) 0%,var(--surface) 55%); background-image:linear-gradient(165deg,rgba(200,148,58,0.06) 0%,var(--surface) 55%); border:1px solid rgba(200,148,58,0.16); border-radius:14px; padding:22px 24px; transition:border-color 0.25s,box-shadow 0.25s; position:relative; overflow:hidden; box-shadow:0 2px 0 rgba(255,248,200,0.02) inset; }
+    .option-card:hover { border-color:rgba(200,148,58,0.28); box-shadow:0 6px 24px rgba(0,0,0,0.3),0 2px 0 rgba(255,248,200,0.03) inset; }
     .option-label { font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
     .option-value { font-family:var(--mono); font-size:28px; font-weight:500; color:#f1f5f9; margin-top:12px; }
     .option-sub   { font-size:12px; color:var(--muted); margin-top:6px; }
     .option-card.best-buy { border-color:rgba(34,197,94,0.4); box-shadow:0 0 24px rgba(34,197,94,0.08),inset 0 0 24px rgba(34,197,94,0.04); animation:pulse-green 2s ease-in-out infinite; }
     .option-card.best-buy .option-value { color:var(--green); }
     .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; margin-top:16px; }
-    .card  { background:linear-gradient(145deg,rgba(212,168,83,0.055) 0%,var(--surface) 55%); border:1px solid rgba(212,168,83,0.20); border-radius:16px; padding:24px; transition:border-color 0.2s; }
-    .card:hover { border-color:rgba(212,168,83,0.28); }
+    .card  { background:linear-gradient(165deg,rgba(200,148,58,0.06) 0%,var(--surface) 55%); border:1px solid rgba(200,148,58,0.16); border-radius:14px; padding:22px; transition:border-color 0.25s,box-shadow 0.25s; box-shadow:0 2px 0 rgba(255,248,200,0.02) inset; }
+    .card:hover { border-color:rgba(200,148,58,0.28); box-shadow:0 6px 24px rgba(0,0,0,0.28),0 2px 0 rgba(255,248,200,0.03) inset; }
     .card-label { font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
     .card-value { font-family:var(--mono); font-size:26px; font-weight:500; color:#f1f5f9; margin-top:12px; }
     .card-sub   { font-size:13px; color:var(--muted); margin-top:7px; }
@@ -393,14 +408,15 @@
     }
     /* ── Traffic light — pill tags replacing <ul><li> ── */
     .tl-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
-    .tl-tag { font-size:9px; font-family:var(--mono); padding:2px 8px; border-radius:4px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.10); color:var(--muted); white-space:normal; letter-spacing:0.02em; line-height:1.5; max-width:100%; overflow-wrap:break-word; word-break:break-word; }
+    .tl-tag { font-size:9px; font-family:var(--mono); padding:2px 8px; border-radius:4px; background:rgba(200,148,58,0.05); border:1px solid rgba(200,148,58,0.14); color:var(--muted); white-space:normal; letter-spacing:0.02em; line-height:1.5; max-width:100%; overflow-wrap:break-word; word-break:break-word; }
     .tl-tag.tl-tag-green  { background:rgba(34,197,94,0.06);  border-color:rgba(34,197,94,0.22); }
     .tl-tag.tl-tag-orange { background:rgba(249,115,22,0.06); border-color:rgba(249,115,22,0.22); }
     .tl-tag.tl-tag-red    { background:rgba(239,68,68,0.06);  border-color:rgba(239,68,68,0.20); }
     /* ── Verdict bullet lines ── */
-    .tl-verdict-lines { display:flex; flex-direction:column; gap:7px; margin-top:6px; }
-    .tl-verdict-line { display:flex; align-items:flex-start; gap:9px; font-size:13.5px; color:var(--text); line-height:1.6; }
-    .tl-vl-dot { color:var(--gold-bright); font-size:14px; flex-shrink:0; line-height:1.65; font-weight:700; }
+    .tl-verdict-lines { display:flex; flex-direction:column; gap:0; margin-top:2px; }
+    .tl-verdict-line { display:flex; align-items:flex-start; gap:12px; font-size:13px; color:rgba(230,236,242,0.90); line-height:1.7; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .tl-verdict-line:last-child { border-bottom:none; padding-bottom:0; }
+    .tl-vl-dot { width:22px; height:22px; border-radius:50%; background:rgba(200,148,58,0.14); border:1px solid rgba(200,148,58,0.30); display:flex; align-items:center; justify-content:center; color:var(--gold-bright); font-size:11px; flex-shrink:0; margin-top:3px; font-weight:700; font-family:var(--mono); }
 
     .disclaimer { margin-top:40px; padding:14px 18px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.07); border-radius:10px; font-size:11px; color:var(--muted); line-height:1.6; }
     .disclaimer strong { color:rgba(255,255,255,0.35); }
@@ -563,7 +579,7 @@
           <span class="source-badge live-src" id="tlUpdated">--</span>
         </div>
         <div class="tl-body" id="tlBody"><div style="font-size:13px;color:var(--muted);font-family:var(--mono);">Analyzing live rates...</div></div>
-        <div id="tlVerdict" style="padding:0 12px 12px;"></div>
+        <div id="tlVerdict" style="padding:0 12px 14px;"></div>
       </div>
 
       <div class="dubai-card" id="dubai-section" style="margin-top:44px">
@@ -700,16 +716,35 @@
       <div class="section-title" style="margin-top:40px">Digital Silver <span style="font-weight:400;color:var(--muted);font-size:11px;letter-spacing:0.04em;text-transform:none">· 999.9 purity · incl. GST</span></div>
       <div class="pr-grid" id="silverDigital"></div>
 
-      <div class="ad-inline"></div>
+      <div class="ad-inline" style="margin-top:32px;margin-bottom:0"></div>
 
-      <div class="section-title" style="margin-top:0">Silver ETFs — Live NAV</div>
-      <div class="retailer-grid" id="silverEtfGrid" style="grid-template-columns:repeat(3,1fr);"></div>
+      <!-- Silver Best Buy Today -->
+      <div class="tl-panel" style="margin-top:32px;">
+        <div class="tl-header">
+          <div class="tl-header-title">Best Buy Today — Silver Comparison</div>
+          <span class="source-badge live-src" id="silverTlUpdated">--</span>
+        </div>
+        <div class="tl-body" id="silverTlBody"><div style="font-size:13px;color:var(--muted);font-family:var(--mono);">Analyzing live rates...</div></div>
+        <div id="silverTlVerdict" style="padding:0 12px 14px;"></div>
+      </div>
 
-      <div class="section-title" style="margin-top:40px">Market Data</div>
-      <div class="cards">
-        <div class="card"><div class="card-label">Silver per kg</div><div class="card-value" id="silverKg">--</div><div class="card-sub">India estimated rate</div></div>
-        <div class="card"><div class="card-label">Gold/Silver Ratio</div><div class="card-value" id="gsRatioSilver">--</div><div class="card-sub">oz of silver per oz of gold</div></div>
-        <div class="card"><div class="card-label">XAG/USD Spot</div><div class="card-value" id="silverUSDCard">--</div><div class="card-sub">international spot / troy oz</div></div>
+      <div class="section-title" style="margin-top:44px">Silver ETFs — Estimated NAV <span style="font-weight:400;color:var(--muted);font-size:11px;letter-spacing:0.04em;text-transform:none">· 999 purity · NSE/BSE</span></div>
+      <div class="pr-grid" id="silverEtfGrid"></div>
+
+      <div class="section-title" style="margin-top:44px">Market Data</div>
+      <div class="dual-rate-sub-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+        <div class="dual-rate-sub-box" style="padding:14px 16px;">
+          <div class="dual-rate-sub-label">Silver / kg · India</div>
+          <div class="dual-rate-sub-val" style="font-size:20px;margin-top:6px;" id="silverKg">--</div>
+        </div>
+        <div class="dual-rate-sub-box" style="padding:14px 16px;">
+          <div class="dual-rate-sub-label">Gold / Silver Ratio</div>
+          <div class="dual-rate-sub-val" style="font-size:20px;margin-top:6px;color:var(--silver-bright);" id="gsRatioSilver">--</div>
+        </div>
+        <div class="dual-rate-sub-box" style="padding:14px 16px;">
+          <div class="dual-rate-sub-label">XAG/USD Spot</div>
+          <div class="dual-rate-sub-val" style="font-size:20px;margin-top:6px;color:var(--usd-color);" id="silverUSDCard">--</div>
+        </div>
       </div>
       <div class="ad-inline"></div>
     </div><!-- /silver-section -->
@@ -882,39 +917,102 @@
   // SILVER ETFs
   // -------------------------------------------------------
   const SILVER_ETF_LIST = [
-    { symbol: "SILVERBEES", name: "Nippon Silver ETF", fund: "Nippon India MF", expense: 0.0049, emoji: "⚪" },
-    { symbol: "SILVRETF",   name: "SBI Silver ETF",    fund: "SBI Mutual Fund", expense: 0.0050, emoji: "🔘" },
-    { symbol: "LICSILVER",  name: "LIC Silver ETF",    fund: "LIC MF",          expense: 0.0055, emoji: "⬜" },
-    { symbol: "MIASILVER",  name: "Mirae Silver ETF",  fund: "Mirae Asset",     expense: 0.0045, emoji: "🔵" },
-    { symbol: "DSPSILVER",  name: "DSP Silver ETF",    fund: "DSP Mutual Fund", expense: 0.0049, emoji: "🟣" },
-    { symbol: "KOTAKSILV",  name: "Kotak Silver ETF",  fund: "Kotak AMC",       expense: 0.0051, emoji: "🟤" },
+    { symbol: "SILVERBEES", name: "Nippon Silver ETF", fund: "Nippon India MF", expense: 0.0049, aum: "Rs.3,200Cr+" },
+    { symbol: "MIASILVER",  name: "Mirae Silver ETF",  fund: "Mirae Asset",     expense: 0.0045, aum: "Rs.1,100Cr+" },
+    { symbol: "DSPSILVER",  name: "DSP Silver ETF",    fund: "DSP Mutual Fund", expense: 0.0049, aum: "Rs.800Cr+"   },
+    { symbol: "SILVRETF",   name: "SBI Silver ETF",    fund: "SBI Mutual Fund", expense: 0.0050, aum: "Rs.600Cr+"   },
+    { symbol: "KOTAKSILV",  name: "Kotak Silver ETF",  fund: "Kotak AMC",       expense: 0.0051, aum: "Rs.500Cr+"   },
+    { symbol: "LICSILVER",  name: "LIC Silver ETF",    fund: "LIC MF",          expense: 0.0055, aum: "Rs.200Cr+"   },
   ];
 
   function buildSilverETFs(silverGram) {
-    // Show estimated NAV (silver spot per gram × grams per unit ≈ 1g/unit for silver ETFs)
     const grid = document.getElementById("silverEtfGrid");
     if (!grid) return;
     const results = SILVER_ETF_LIST.map(etf => ({
       ...etf,
-      // Silver ETFs hold ~1g of silver per unit (unlike gold ETFs which hold fractional grams)
-      // Estimate: base silver rate × 1g × (1 + expense ratio)
+      // Silver ETFs hold ~1g of silver per unit; estimate: base rate × (1 + TER)
       gramRate: silverGram * (1 + etf.expense),
-      live: false,
     }));
-    const minGram = Math.min(...results.map(e => e.gramRate));
+    const minTER = Math.min(...results.map(e => e.expense));
+
     grid.innerHTML = results.map(e => {
-      const isBest = e.gramRate === minGram;
-      return `<div class="retailer-card ${isBest?"best-buy":""}">
-        ${isBest?'<div class="retailer-best-badge">Best Value</div>':""}
-        <div class="retailer-logo">${e.emoji}</div>
-        <div class="retailer-name">${e.name}</div>
-        <div class="retailer-type">${e.fund}</div>
-        <div class="purity-pill silver-pill">999 · NSE/BSE</div>
-        <div class="retailer-price">${fmt(e.gramRate)}</div>
-        <div class="retailer-sub">${e.symbol} · ${(e.expense*100).toFixed(2)}% p.a.</div>
-        <div style="margin-top:4px"><span class="etf-calc-badge">estimated</span></div>
+      const isBest   = e.expense === minTER;
+      const navStr   = fmt(e.gramRate);
+      // ~1g per unit for all silver ETFs
+      const cardColor  = isBest ? "green" : "muted";
+      const cardBcClass = isBest ? "bc-green" : "";
+      const dotChar    = isBest ? "✓" : "·";
+      const cornerBadge = isBest
+        ? `<div class="pr-badge">Best TER</div>`
+        : `<div class="pr-badge badge-discount" style="background:rgba(138,128,112,0.10);color:var(--muted);border-color:rgba(138,128,112,0.22);">est. NAV</div>`;
+
+      return `<div class="pr-card ${cardBcClass}" style="align-items:flex-start;">
+        ${cornerBadge}
+        <div class="tl-dot ${cardColor}" style="margin-top:2px;">${dotChar}</div>
+        <div class="pr-info">
+          <div class="pr-name">${e.name}</div>
+          <div class="pr-type">${e.fund}</div>
+        </div>
+        <div class="pr-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+          <div class="pr-price" style="font-size:13px;">${navStr}</div>
+          <div class="pr-note">est./unit</div>
+          <div class="tl-tags" style="justify-content:flex-end;margin-top:4px;">
+            <span class="tl-tag">TER ${(e.expense*100).toFixed(2)}%</span>
+            <span class="tl-tag">AUM ${e.aum}</span>
+            <span class="tl-tag">~1g silver</span>
+          </div>
+        </div>
       </div>`;
     }).join("");
+  }
+
+  function buildSilverTrafficLight(indiaSilver) {
+    const etfEntry  = indiaSilver * 1.001;           // 0.1% brokerage, zero GST
+    const digi      = indiaSilver * 1.01 * 1.03;     // 1% spread + 3% GST
+    const physSilv  = indiaSilver * 1.015 * 1.03;    // 1.5% coin premium + 3% GST
+    const savVsPhys = physSilv - etfEntry;
+    const savVsPhysPct = ((savVsPhys / physSilv) * 100).toFixed(1);
+    const savVsDigi = digi - etfEntry;
+    const savVsDigiPct = ((savVsDigi / digi) * 100).toFixed(1);
+
+    const opts = [
+      { name: "Physical Silver Coin (999)", detail: "MMTC · PNG · MALABAR GOLD",   price: physSilv, color: "red",    dot: "×", rank: "Highest Cost",  desc: ["3% GST + 1–2% coin premium",  "Instant physical ownership",      "Good for long-term stacking"] },
+      { name: "Digital Silver (999.9)",     detail: "MMTC-PAMP · AUGMONT",          price: digi,     color: "orange", dot: "~", rank: "Moderate",      desc: ["3% GST + 1–2% buy spread",    "~0.5% p.a. storage fee",          "Not SEBI regulated"] },
+      { name: "Silver ETF (999)",           detail: "SILVERBEES · MIASILVER",        price: etfEntry, color: "green",  dot: "✓", rank: "Best Entry",    desc: ["Zero GST · 0.1% brokerage",   "LTCG 12.5% after 2 yrs",          "Demat needed · NSE/BSE"] },
+    ];
+
+    const tlBody = document.getElementById("silverTlBody");
+    if (tlBody) {
+      tlBody.innerHTML = opts.map(opt => `
+        <div class="pr-card bc-${opt.color}">
+          <div class="tl-dot ${opt.color}">${opt.dot}</div>
+          <div class="pr-info">
+            <div class="pr-name">${opt.name}</div>
+            <div class="pr-type">${opt.detail}</div>
+          </div>
+          <div class="pr-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+            <div class="pr-price" style="font-size:13px;">${fmt(opt.price)}</div>
+            <div class="pr-note">/gram</div>
+            <span class="tl-rank ${opt.color}">${opt.rank}</span>
+            <div class="tl-tags" style="justify-content:flex-end;">${opt.desc.slice(0,3).map(s=>`<span class="tl-tag tl-tag-${opt.color}">${s}</span>`).join("")}</div>
+          </div>
+        </div>`).join("");
+    }
+
+    const tlVerdict = document.getElementById("silverTlVerdict");
+    if (tlVerdict) {
+      tlVerdict.innerHTML = `
+        <div class="tl-verdict">
+          <div class="tl-verdict-label">Today's Recommendation</div>
+          <div class="tl-verdict-lines">
+            <div class="tl-verdict-line"><span class="tl-vl-dot">1</span><span>Silver ETF is the cheapest entry — saves <strong style="color:var(--green)">${fmt(savVsPhys)}/g (${savVsPhysPct}%)</strong> vs physical coin and <strong style="color:var(--green)">${fmt(savVsDigi)}/g (${savVsDigiPct}%)</strong> vs digital silver. Zero GST, 0.1% brokerage only.</span></div>
+            <div class="tl-verdict-line"><span class="tl-vl-dot">2</span><span><strong>Digital silver</strong> suits small, flexible buys — no demat needed, starts at ₹1. Watch the spread and platform storage fees before committing.</span></div>
+            <div class="tl-verdict-line"><span class="tl-vl-dot">3</span><span><strong>Physical coins/bars</strong> carry the highest all-in cost but give you direct ownership. Best for large quantities where you want deliverable metal.</span></div>
+          </div>
+        </div>`;
+    }
+    const updated = document.getElementById("silverTlUpdated");
+    if (updated) updated.textContent = "updated " + timeStr(null);
   }
 
   // -------------------------------------------------------
@@ -936,8 +1034,16 @@
   function renderHistChart(symbol) {
     const canvas = document.getElementById("etfHistCanvas");
     const statsEl = document.getElementById("etfHistStats");
+    // Always clear canvas first so switching ETFs never shows stale chart
+    if (canvas) {
+      const ctx0 = canvas.getContext("2d");
+      ctx0.clearRect(0, 0, canvas.width, canvas.height);
+    }
     const raw = _etfSparklines?.[symbol]?.["1y"];
-    if (!canvas || !raw || raw.length < 4) return;
+    if (!canvas || !raw || raw.length < 4) {
+      if (statsEl) statsEl.innerHTML = `<div style="color:var(--muted);font-size:11px;grid-column:1/-1;text-align:center;padding:8px 0;">Chart data unavailable for this ETF</div>`;
+      return;
+    }
     const data = raw.map(p => p.v);
     const W = canvas.width, H = canvas.height, ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, W, H);
@@ -1016,29 +1122,39 @@
         : "—";
       const gpuStr  = e.gramsPerUnit ? `${e.gramsPerUnit.toFixed(3)} g` : "—";
 
-      // Compact tracking badge (one line)
-      let trackLine = `<span style="color:var(--muted);font-size:9px;">tracking loading…</span>`;
-      if (e.trackDev != null) {
-        const isDiscount = e.trackDev <= 0;
-        const arrow  = isDiscount ? "▼" : "▲";
-        const clr    = isDiscount ? "var(--green)" : "var(--orange)";
-        const absPct = Math.abs(e.trackDev * 100).toFixed(2);
-        const label  = isDiscount ? "discount" : "premium";
-        trackLine = `<span style="color:${clr};font-size:9px;font-family:var(--mono);">${arrow} ${absPct}% vs gold</span> <span style="color:var(--muted);font-size:9px;">(${label})</span>`;
+      // Mirror Best Buy card pattern: dot colour → card tint → corner badge → tags
+      const isDiscount  = e.trackDev != null && e.trackDev <= 0;
+      const isPremium   = e.trackDev != null && e.trackDev >  0;
+      const cardColor   = isBest ? "green" : (isDiscount ? "green" : (isPremium ? "orange" : "muted"));
+      const cardBcClass = (cardColor === "muted") ? "" : `bc-${cardColor}`;
+      const dotChar     = isBest ? "✓" : (isDiscount ? "▼" : (isPremium ? "▲" : "·"));
+
+      // Corner badge — same position as "Best Price" on physical/digital cards
+      let cornerBadge = "";
+      if (isBest) {
+        cornerBadge = `<div class="pr-badge">Best Buy</div>`;
+      } else if (isDiscount) {
+        cornerBadge = `<div class="pr-badge badge-discount">▼ ${Math.abs(e.trackDev*100).toFixed(2)}% discount</div>`;
+      } else if (isPremium) {
+        cornerBadge = `<div class="pr-badge badge-premium">▲ ${(e.trackDev*100).toFixed(2)}% premium</div>`;
       }
 
-      return `<div class="pr-card ${isBest?"pr-best":""}" style="cursor:${hasSp?"pointer":"default"};" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
-        ${isBest?'<div class="pr-badge">Best Buy</div>':""}
-        <div class="pr-icon">${e.emoji}</div>
+      return `<div class="pr-card ${cardBcClass}" style="align-items:flex-start;cursor:${hasSp?"pointer":"default"};" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
+        ${cornerBadge}
+        <div class="tl-dot ${cardColor}" style="margin-top:2px;">${dotChar}</div>
         <div class="pr-info">
           <div class="pr-name">${e.name}</div>
-          <div class="pr-type">${e.fund} &nbsp;·&nbsp; <span style="color:var(--gold-bright);font-family:var(--mono);">TER ${(e.expense*100).toFixed(2)}%</span></div>
-          <div style="margin-top:3px;">${trackLine}</div>
+          <div class="pr-type">${e.fund}</div>
         </div>
-        <div class="pr-right">
-          <div class="pr-price" style="font-size:14px;">${navStr}</div>
-          <div class="pr-note">per unit${hasSp?' · <span style="opacity:0.5;">↓chart</span>':""}</div>
-          <div class="pr-note">${gpuStr} gold</div>
+        <div class="pr-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+          <div class="pr-price" style="font-size:13px;">${navStr}</div>
+          <div class="pr-note">per unit</div>
+          <div class="tl-tags" style="justify-content:flex-end;margin-top:4px;">
+            <span class="tl-tag">TER ${(e.expense*100).toFixed(2)}%</span>
+            <span class="tl-tag">AUM ${e.aum}</span>
+            <span class="tl-tag">${gpuStr}</span>
+            ${hasSp?`<span class="tl-tag" style="color:var(--gold-bright);border-color:rgba(200,148,58,0.25);">↓ chart</span>`:""}
+          </div>
         </div>
       </div>`;
     }).join("");
@@ -1093,13 +1209,13 @@
         <div class="pr-info">
           <div class="pr-name">${opt.name}</div>
           <div class="pr-type">${opt.detail}</div>
-          <span class="tl-rank ${opt.color}">${opt.rank}</span>
-          <div class="tl-tags">${opt.desc.slice(0,3).map(s=>`<span class="tl-tag tl-tag-${opt.color}">${s}</span>`).join("")}</div>
         </div>
-        <div class="pr-right">
+        <div class="pr-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
           ${opt.showPrice
             ? `<div class="pr-price" style="font-size:13px;">${fmt(opt.price)}</div><div class="pr-note">/gram</div>`
             : `<div class="pr-price" style="font-size:10px;color:var(--muted);">~IBJA</div><div class="pr-note">est.</div>`}
+          <span class="tl-rank ${opt.color}">${opt.rank}</span>
+          <div class="tl-tags" style="justify-content:flex-end;">${opt.desc.slice(0,3).map(s=>`<span class="tl-tag tl-tag-${opt.color}">${s}</span>`).join("")}</div>
         </div>
       </div>`).join("");
 
@@ -1107,10 +1223,10 @@
       <div class="tl-verdict">
         <div class="tl-verdict-label">Today's Recommendation</div>
         <div class="tl-verdict-lines">
-          <div class="tl-verdict-line"><span class="tl-vl-dot">›</span><span>Gold ETF saves <strong>${fmt(savVsPhys)}/g (${savVsPhysPct}%)</strong> vs physical coin and <strong>${fmt(savVsDigi)}/g (${savVsDigiPct}%)</strong> vs digital gold at best-case prices.</span></div>
-          <div class="tl-verdict-line"><span class="tl-vl-dot">›</span><span>${trackVerdict}</span></div>
-          <div class="tl-verdict-line"><span class="tl-vl-dot">›</span><span>SGB is the best long-term hold — 2.5% annual interest, secondary market only, check maturity date before buying.</span></div>
-          <div class="tl-verdict-line"><span class="tl-vl-dot">›</span><span>EGR (NSE, May 2026) is the newest option — physical gold on exchange, watch for liquidity to build.</span></div>
+          <div class="tl-verdict-line"><span class="tl-vl-dot">1</span><span>Gold ETF is the cheapest entry — saves <strong style="color:var(--green)">${fmt(savVsPhys)}/g (${savVsPhysPct}%)</strong> vs physical coin and <strong style="color:var(--green)">${fmt(savVsDigi)}/g (${savVsDigiPct}%)</strong> vs digital gold. Zero GST, 0.1% brokerage only.</span></div>
+          <div class="tl-verdict-line"><span class="tl-vl-dot">2</span><span>${trackVerdict}</span></div>
+          <div class="tl-verdict-line"><span class="tl-vl-dot">3</span><span><strong>SGB</strong> is the best long-term hold — earns <strong style="color:var(--gold-bright)">2.5% annual interest</strong> on top of gold appreciation. Secondary market only; check maturity date before buying.</span></div>
+          <div class="tl-verdict-line"><span class="tl-vl-dot">4</span><span><strong>EGR</strong> (NSE, launched May 2026) — physical gold on exchange, SEBI-regulated vault. Newest option; watch for liquidity to build before entering.</span></div>
         </div>
       </div>`;
 
@@ -1432,6 +1548,7 @@
 
       buildSilverPhysical(indiaSilver);
       buildSilverDigital(indiaSilver);
+      buildSilverTrafficLight(indiaSilver);
       buildSilverETFs(indiaSilver);
       buildSilverHistPanel(indiaSilver, data.silverHistory);
 
@@ -1452,8 +1569,25 @@
 
   function manualRefresh() {
     const btn = document.getElementById("refreshBtn");
-    btn.classList.add("refreshing"); btn.textContent = "refreshing...";
-    loadPrice().finally(() => { btn.classList.remove("refreshing"); btn.textContent = "refresh now"; });
+    if (btn.classList.contains("refreshing")) return;
+    btn.classList.add("refreshing"); btn.textContent = "refreshing…";
+    const t0 = Date.now();
+    loadPrice()
+      .then(() => {
+        btn.classList.remove("refreshing");
+        btn.textContent = "✓ updated";
+        btn.style.color = "#22c55e";
+        btn.style.borderColor = "rgba(34,197,94,0.4)";
+        setTimeout(() => { btn.textContent = "refresh now"; btn.style.color = ""; btn.style.borderColor = ""; }, 2500);
+      })
+      .catch(err => {
+        btn.classList.remove("refreshing");
+        btn.textContent = "retry";
+        btn.style.color = "#ef4444";
+        btn.style.borderColor = "rgba(239,68,68,0.4)";
+        setTimeout(() => { btn.textContent = "refresh now"; btn.style.color = ""; btn.style.borderColor = ""; }, 3000);
+        console.warn("manualRefresh error:", err);
+      });
   }
 
   // Show cached data instantly, then fetch fresh in background
