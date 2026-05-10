@@ -759,33 +759,14 @@
       document.getElementById("btnGold").className = "toggle-btn";
       document.getElementById("btnSilver").className = "toggle-btn active-silver";
       if (tld) { tld.style.background="linear-gradient(135deg,#8a9baa,#a8b8c8,#d0dce8)"; tld.style.webkitBackgroundClip="text"; tld.style.webkitTextFillColor="transparent"; tld.textContent = "silver"; }
-      document.getElementById("tickerLabel").style.color = "var(--silver)";
     } else {
       document.body.classList.remove("silver-mode");
       document.getElementById("btnGold").className = "toggle-btn active-gold";
       document.getElementById("btnSilver").className = "toggle-btn";
       if (tld) { tld.style.background="linear-gradient(135deg,#b8860b,#d4a853,#f0c060,#d4a853)"; tld.style.webkitBackgroundClip="text"; tld.style.webkitTextFillColor="transparent"; tld.textContent = "gold"; }
-      document.getElementById("tickerLabel").style.color = "var(--gold)";
     }
   }
 
-  function buildTicker(d) {
-    const items = [
-      { name: "Gold 24K", val: fmt(d.india24) },
-      { name: "Gold 22K", val: fmt(d.india24 * 0.916) },
-      { name: "Gold 18K", val: fmt(d.india24 * 0.75) },
-      { name: "Silver/g", val: fmt(d.silverGram) },
-      { name: "XAU/USD",   val: fmtUSD(d.price) },
-      { name: "XAG/USD",   val: fmtUSD(d.silverUSD) },
-      { name: "USD/INR",   val: "₹ " + d.usdInr.toFixed(2) },
-      { name: "Dubai 24K", val: fmt(d.dubai24) },
-      { name: "SGB ~",     val: fmt(d.india24) },
-    ];
-    const all = [...items, ...items];
-    document.getElementById("tickerTrack").innerHTML = all.map(i =>
-      `<span class="ticker-item"><span class="t-name">${i.name}</span><span class="t-val">${i.val}</span></span>`
-    ).join("");
-  }
 
   // -------------------------------------------------------
   // PHYSICAL GOLD: 24K Gold Coins & Bars
@@ -1475,7 +1456,6 @@
       const sgbEl = document.getElementById("fxSgb");
       if (sgbEl) sgbEl.textContent = fmt(india24); // SGB secondary ≈ IBJA (no premium, no GST)
 
-      buildTicker({ price: data.price, india24, dubai24: dubai24Inr, silverGram, silverUSD, usdInr, aedInr });
 
       if (!prefetchedData) {
         document.getElementById("statusDot").className    = "dot";
