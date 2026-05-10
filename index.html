@@ -73,15 +73,15 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --gold: #d4a853; --gold-bright: #f0c060; --gold-dim: rgba(212,168,83,0.12);
+      --gold: #c9993d; --gold-bright: #e8b84b; --gold-dim: rgba(200,150,60,0.12);
       --silver: #a8b8c8; --silver-bright: #d0dce8; --silver-dim: rgba(168,184,200,0.12);
       --green: #22c55e; --yellow: #eab308; --red: #ef4444; --orange: #f97316;
-      --bg: #111214; --surface: #1a1b1e; --surface2: #21232a;
-      --border: rgba(255,255,255,0.10); --text: #e2e8f0; --muted: #94a3b8;
+      --bg: #0e0f11; --surface: #16181c; --surface2: #1e2028;
+      --border: rgba(255,255,255,0.08); --text: #e8edf2; --muted: #8a9bb0;
       --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
       --serif: 'Playfair Display', Georgia, serif;
       --accent: var(--gold); --accent-bright: var(--gold-bright); --accent-dim: var(--gold-dim);
-      --inr-color: #e8c97a;
+      --inr-color: #ddb96a;
       --usd-color: #38bdf8;
       --aed-color: #e07828;
     }
@@ -153,7 +153,7 @@
     .dual-rate-formula   { background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:8px; padding:9px 14px; font-family:var(--mono); font-size:12px; color:rgba(255,255,255,0.55); line-height:1.4; margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
     .dual-rate-stale     { background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--yellow); line-height:1.6; margin-top:12px; }
     .dual-rate-unavail   { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--muted); line-height:1.6; margin-top:12px; }
-    .section-title { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-bright); margin-top:48px; margin-bottom:18px; font-weight:700; border-left:3px solid var(--gold-bright); padding-left:10px; }
+    .section-title { font-size:11px; letter-spacing:0.13em; text-transform:uppercase; color:var(--gold-bright); margin-top:48px; margin-bottom:16px; font-weight:700; font-family:var(--mono); border-left:3px solid var(--gold-bright); padding-left:10px; opacity:0.9; }
     /* ── Retailer / ETF card (ETF uses this for the complex card) ── */
     .retailer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
     .retailer-card { background:linear-gradient(145deg,rgba(212,168,83,0.055) 0%,var(--surface) 55%); border:1px solid rgba(212,168,83,0.20); border-radius:14px; padding:18px 16px; display:flex; flex-direction:column; align-items:center; gap:6px; transition:border-color 0.25s,box-shadow 0.25s; position:relative; overflow:hidden; cursor:default; }
@@ -172,19 +172,19 @@
 
     /* ── Price row card — physical gold & digital gold ── */
     .pr-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .pr-card { display:flex; align-items:center; gap:12px; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,168,83,0.18); background:var(--surface); position:relative; overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
-    /* Signal-coloured variants for Best Buy cards */
-    .pr-card.bc-green  { border-color:rgba(34,197,94,0.35);  background:rgba(34,197,94,0.03); }
-    .pr-card.bc-orange { border-color:rgba(249,115,22,0.30); background:rgba(249,115,22,0.03); }
-    .pr-card.bc-red    { border-color:rgba(239,68,68,0.30);  background:rgba(239,68,68,0.03); }
-    .pr-card:hover { border-color:rgba(212,168,83,0.32); box-shadow:0 2px 16px rgba(212,168,83,0.06); }
-    .pr-card.pr-best { border-color:rgba(34,197,94,0.45); background:linear-gradient(135deg,rgba(34,197,94,0.05) 0%,var(--surface) 70%); box-shadow:0 0 20px rgba(34,197,94,0.08); animation:pulse-green 2.5s ease-in-out infinite; }
+    .pr-card { display:flex; align-items:center; gap:12px; padding:12px 15px; border-radius:10px; border:1px solid rgba(200,152,56,0.15); background:var(--surface); position:relative; overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
+    .pr-card:hover { border-color:rgba(200,152,56,0.28); box-shadow:0 2px 14px rgba(200,152,56,0.06); }
+    .pr-card.pr-best { border-color:rgba(34,197,94,0.42); background:linear-gradient(135deg,rgba(34,197,94,0.04) 0%,var(--surface) 70%); box-shadow:0 0 18px rgba(34,197,94,0.07); animation:pulse-green 2.5s ease-in-out infinite; }
+    /* Best Buy signal variants — top-align since cards are taller with tags */
+    .pr-card.bc-green  { border-color:rgba(34,197,94,0.32);  background:rgba(34,197,94,0.025); align-items:flex-start; }
+    .pr-card.bc-orange { border-color:rgba(249,115,22,0.28); background:rgba(249,115,22,0.025); align-items:flex-start; }
+    .pr-card.bc-red    { border-color:rgba(239,68,68,0.28);  background:rgba(239,68,68,0.025);  align-items:flex-start; }
     .pr-icon { width:36px; height:36px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
     .pr-info { flex:1; min-width:0; }
-    .pr-name { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:0.01em; }
-    .pr-type { font-size:10px; color:var(--muted); margin-top:1px; letter-spacing:0.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pr-name { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:0.01em; line-height:1.3; }
+    .pr-type { font-size:10px; color:var(--muted); margin-top:2px; letter-spacing:0.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .pr-right { text-align:right; flex-shrink:0; }
-    .pr-price { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--inr-color); white-space:nowrap; }
+    .pr-price { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--inr-color); white-space:nowrap; line-height:1.2; }
     .pr-card.pr-best .pr-price { color:var(--green); }
     .pr-note { font-family:var(--mono); font-size:9px; color:var(--muted); margin-top:2px; white-space:nowrap; }
     .pr-badge { position:absolute; top:0; right:0; background:var(--green); color:#000; font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.08em; padding:2px 8px; border-radius:0 10px 0 6px; text-transform:uppercase; }
@@ -196,7 +196,8 @@
     .tl-panel { margin-top:18px; background:var(--surface); border:1px solid var(--border); border-radius:16px; }
     .tl-header { padding:14px 20px; background:rgba(212,168,83,0.05); border-bottom:1px solid var(--border); border-radius:16px 16px 0 0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
     .tl-header-title { font-size:13px; font-weight:700; color:var(--text); letter-spacing:0.01em; }
-    .tl-body { padding:12px; display:flex; flex-direction:column; gap:8px; }
+    .tl-body { padding:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width:560px) { .tl-body { grid-template-columns:1fr; } }
     /* Best Buy cards reuse .pr-card — only signal dot needs its own style */
     .tl-dot { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
     .tl-dot.green  { background:rgba(34,197,94,0.15);  color:var(--green);  border:1.5px solid rgba(34,197,94,0.45); }
