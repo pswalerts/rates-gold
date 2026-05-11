@@ -769,6 +769,7 @@
 <script>
   const TROY = 31.1035;
   let ibjaCache = { ibja24k: null, ibja22k: null, ibja995: null };
+  let _india24 = 0; // module-level — set early in loadPrice so safety net can use it
 
   function fmt(n)    { return "₹ " + Number(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function fmtAED(n) { return "د.إ " + Number(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
@@ -1394,6 +1395,7 @@
       const ibja22  = data.ibja22k  || ibjaCache.ibja22k  || ibja24 * 0.916;
       const ibja995 = data.ibja995  || ibjaCache.ibja995  || ibja24 * 0.995;
       const india24 = ibja24;
+      _india24 = india24; // save globally so safety-net can access it
 
       // --- Silver ---
       const silverUSD  = data.silverPrice || (data.price / 92); // gold/silver ratio ~90-100x
@@ -1411,36 +1413,40 @@
       const spreadPct  = ((spread / india24) * 100).toFixed(2);
 
       // --- Gold: International Spot column ---
-      document.getElementById("intl-xau").textContent    = fmtUSD(data.price);
-      document.getElementById("intl-inr").textContent    = "₹" + usdInr.toFixed(2);
-      document.getElementById("intl-result").textContent = fmt(calc24k);
-      document.getElementById("intl-24k").textContent    = fmt(calc24k);
-      document.getElementById("intl-995").textContent    = fmt(calc24k * 0.995);
-      document.getElementById("intl-916").textContent    = fmt(calc24k * 0.916);
-      document.getElementById("intl-750").textContent    = fmt(calc24k * 0.75);
+      try {
+        document.getElementById("intl-xau").textContent    = fmtUSD(data.price);
+        document.getElementById("intl-inr").textContent    = "₹" + usdInr.toFixed(2);
+        document.getElementById("intl-result").textContent = fmt(calc24k);
+        document.getElementById("intl-24k").textContent    = fmt(calc24k);
+        document.getElementById("intl-995").textContent    = fmt(calc24k * 0.995);
+        document.getElementById("intl-916").textContent    = fmt(calc24k * 0.916);
+        document.getElementById("intl-750").textContent    = fmt(calc24k * 0.75);
+      } catch(e) { console.warn("intl col:", e); }
 
       // --- Gold: IBJA column ---
-      const badge    = document.getElementById("ibjaLiveBadge");
-      const staleMsg = document.getElementById("ibjaStaleMsg");
-      const calcMsg  = document.getElementById("ibjaCalcMsg");
-      document.getElementById("ibja24k").textContent = fmt(ibja24);
-      document.getElementById("ibja22k").textContent = fmt(ibja22);
-      document.getElementById("ibja995").textContent = fmt(ibja995);
-      document.getElementById("ibja750").textContent = fmt(ibja24 * 0.75);
-      const ibjaSource = data.sources?.ibja || "unknown";
-      if (ibjaSource === "calculated") {
-        badge.textContent = "CALC"; badge.className = "source-badge calc-src";
-        staleMsg.style.display = "none"; calcMsg.style.display = "block";
-      } else if (ibjaSourceIsReal) {
-        badge.textContent = "IBJA LIVE"; badge.className = "source-badge live-src";
-        staleMsg.style.display = "none"; calcMsg.style.display = "none";
-      } else if (ibjaCache.ibja24k) {
-        badge.textContent = "IBJA PREV"; badge.className = "source-badge stale-src";
-        staleMsg.style.display = "block"; calcMsg.style.display = "none";
-      } else {
-        badge.textContent = "CALC"; badge.className = "source-badge calc-src";
-        staleMsg.style.display = "none"; calcMsg.style.display = "block";
-      }
+      try {
+        const badge    = document.getElementById("ibjaLiveBadge");
+        const staleMsg = document.getElementById("ibjaStaleMsg");
+        const calcMsg  = document.getElementById("ibjaCalcMsg");
+        document.getElementById("ibja24k").textContent = fmt(ibja24);
+        document.getElementById("ibja22k").textContent = fmt(ibja22);
+        document.getElementById("ibja995").textContent = fmt(ibja995);
+        document.getElementById("ibja750").textContent = fmt(ibja24 * 0.75);
+        const ibjaSource = data.sources?.ibja || "unknown";
+        if (ibjaSource === "calculated") {
+          badge.textContent = "CALC"; badge.className = "source-badge calc-src";
+          staleMsg.style.display = "none"; calcMsg.style.display = "block";
+        } else if (ibjaSourceIsReal) {
+          badge.textContent = "IBJA LIVE"; badge.className = "source-badge live-src";
+          staleMsg.style.display = "none"; calcMsg.style.display = "none";
+        } else if (ibjaCache.ibja24k) {
+          badge.textContent = "IBJA PREV"; badge.className = "source-badge stale-src";
+          staleMsg.style.display = "block"; calcMsg.style.display = "none";
+        } else {
+          badge.textContent = "CALC"; badge.className = "source-badge calc-src";
+          staleMsg.style.display = "none"; calcMsg.style.display = "block";
+        }
+      } catch(e) { console.warn("ibja col:", e); }
 
       // --- Gold: Retailers & ETFs ---
       try { buildPhysicalRetailers(india24); } catch(e) { console.warn("buildPhysicalRetailers:", e); }
@@ -1632,6 +1638,16 @@
 
   loadPrice(); // fresh fetch
   setInterval(loadPrice, 60 * 60 * 1000);
+
+  // Safety net: if Best Buy section is still empty 4s after page load, force-render it.
+  // This catches any edge case where buildTrafficLight was skipped for any reason.
+  setTimeout(() => {
+    const tl = document.getElementById("tlBody");
+    if (tl && !tl.querySelector(".pr-card") && _india24 > 0) {
+      console.warn("Safety net: re-rendering Best Buy section");
+      try { buildTrafficLight(_india24, {}, {}); } catch(e) { console.error("Safety net failed:", e); }
+    }
+  }, 4000);
 </script>
 </body>
 </html>
