@@ -1443,29 +1443,27 @@
       }
 
       // --- Gold: Retailers & ETFs ---
-      buildPhysicalRetailers(india24);
-      buildDigitalPlatforms(india24, data.digitalGoldPrices);
+      try { buildPhysicalRetailers(india24); } catch(e) { console.warn("buildPhysicalRetailers:", e); }
+      try { buildDigitalPlatforms(india24, data.digitalGoldPrices); } catch(e) { console.warn("buildDigitalPlatforms:", e); }
+
       // Gold daily % move (international spot): first point in 1d history ≈ yesterday's close
       const goldHist1d = data.goldHistory?.["1d"] || [];
-      // Use 1m series as fallback to get yesterday's close
       const goldHist1m = data.goldHistory?.["1m"] || [];
       const goldPrevClose = goldHist1d.length >= 2
         ? goldHist1d[0].v
         : (goldHist1m.length >= 2 ? goldHist1m[goldHist1m.length - 2].v : null);
-      const goldDailyPct  = goldPrevClose ? (calc24k - goldPrevClose) / goldPrevClose : null;
+      const goldDailyPct = goldPrevClose ? (calc24k - goldPrevClose) / goldPrevClose : null;
 
-      // Show day-change under both hero prices
-      function showDayChange(elId, pct) {
+      // Show day-change under both hero prices (arrow fn — safe inside try blocks)
+      const showDayChange = (elId, pct) => {
         const el = document.getElementById(elId);
         if (!el || pct == null) return;
-        const up   = pct >= 0;
-        const sign = up ? "▲ +" : "▼ ";
-        el.textContent  = sign + (pct * 100).toFixed(2) + "%  today";
-        el.style.color  = up ? "var(--green)" : "var(--red)";
-        el.style.opacity = "0.9";
-      }
+        const up = pct >= 0;
+        el.textContent = (up ? "▲ +" : "▼ ") + (pct * 100).toFixed(2) + "% today";
+        el.style.color = up ? "var(--green)" : "var(--red)";
+      };
       showDayChange("intl-daychange", goldDailyPct);
-      showDayChange("ibja-daychange", goldDailyPct); // same % move; IBJA mirrors international
+      showDayChange("ibja-daychange", goldDailyPct);
 
       // Per-ETF daily % move vs gold — the gap is the discount/premium signal
       const etfTrackingMap = {};
@@ -1473,17 +1471,18 @@
         const live = data.etfNavRaw[sym];
         const prev = data.etfPrevRaw?.[sym];
         if (live > 0 && prev > 0 && goldDailyPct != null) {
-          const etfDailyPct = (live - prev) / prev;
-          etfTrackingMap[sym] = etfDailyPct - goldDailyPct; // negative = discount, positive = premium
+          etfTrackingMap[sym] = (live - prev) / prev - goldDailyPct;
         }
       }
+
       let etfNavsForTL = {};
       try {
         etfNavsForTL = renderETFNavs(india24, data.etfNavs, data.etfSparklines, data.etfNavRaw, calc24k, etfTrackingMap) || {};
-      } catch(etfErr) {
-        console.warn("ETF render error (non-fatal):", etfErr);
-      }
-      buildTrafficLight(india24, etfNavsForTL, etfTrackingMap);
+      } catch(etfErr) { console.warn("ETF render error:", etfErr); }
+
+      try {
+        buildTrafficLight(india24, etfNavsForTL, etfTrackingMap);
+      } catch(tlErr) { console.error("buildTrafficLight error:", tlErr); }
 
       // --- Gold: History panel ---
       // Use calc24k (international spot) as current since history data is also international spot.
