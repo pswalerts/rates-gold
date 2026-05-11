@@ -1172,6 +1172,11 @@
   // TRAFFIC LIGHT (24K coin vs digital vs ETF)
   // -------------------------------------------------------
   function buildTrafficLight(india24, etfNavs, etfTrackingMap) {
+    // Immediately replace placeholder so any crash below still shows progress
+    try {
+      const _tlBodyEarly = document.getElementById("tlBody");
+      if (_tlBodyEarly) _tlBodyEarly.innerHTML = '<div style="padding:12px;color:var(--muted);font-family:var(--mono);font-size:11px;">Computing best buy…</div>';
+    } catch(_) {}
     etfTrackingMap = etfTrackingMap || {};
     const validNavs = Object.values(etfNavs || {}).filter(v => v > 0 && isFinite(v));
     const bestEtf   = validNavs.length > 0 ? Math.min(...validNavs) : india24; // fallback to IBJA if NAVs not loaded
@@ -1640,12 +1645,13 @@
   setInterval(loadPrice, 60 * 60 * 1000);
 
   // Safety net: if Best Buy section is still empty 4s after page load, force-render it.
-  // This catches any edge case where buildTrafficLight was skipped for any reason.
+  // Fires unconditionally — uses _india24 if available, falls back to ibjaCache or 9500.
   setTimeout(() => {
     const tl = document.getElementById("tlBody");
-    if (tl && !tl.querySelector(".pr-card") && _india24 > 0) {
-      console.warn("Safety net: re-rendering Best Buy section");
-      try { buildTrafficLight(_india24, {}, {}); } catch(e) { console.error("Safety net failed:", e); }
+    if (tl && !tl.querySelector(".pr-card")) {
+      const fallback = _india24 > 0 ? _india24 : (ibjaCache?.ibja24k || 9500);
+      console.warn("Safety net: force-rendering Best Buy with fallback =", fallback);
+      try { buildTrafficLight(fallback, {}, {}); } catch(e) { console.error("Safety net failed:", e); }
     }
   }, 4000);
 </script>
