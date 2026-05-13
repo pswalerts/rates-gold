@@ -131,27 +131,27 @@
     .source-badge.live-src  { background:rgba(34,197,94,0.08);  color:var(--green);  border-color:rgba(34,197,94,0.2); }
     .source-badge.stale-src { background:rgba(234,179,8,0.08);  color:var(--yellow); border-color:rgba(234,179,8,0.2); }
     .source-badge.calc-src  { background:rgba(100,116,139,0.1); color:var(--muted);  border-color:rgba(255,255,255,0.08); }
-    .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap: 0; margin-top: 32px; border:1.5px solid rgba(200,148,58,0.28); border-radius:18px; overflow:hidden; background:linear-gradient(165deg,rgba(200,148,58,0.09) 0%,var(--surface) 60%); box-shadow:0 12px 56px rgba(0,0,0,0.4),0 1px 0 rgba(255,248,200,0.05) inset,0 0 0 1px rgba(200,148,58,0.08); align-items:stretch; }
-    .dual-rate-col { padding: 32px 36px; display:flex; flex-direction:column; justify-content:flex-start; }
+    .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap: 0; margin-top: 28px; border:1.5px solid rgba(200,148,58,0.28); border-radius:16px; overflow:hidden; background:linear-gradient(165deg,rgba(200,148,58,0.09) 0%,var(--surface) 60%); box-shadow:0 12px 56px rgba(0,0,0,0.4),0 1px 0 rgba(255,248,200,0.05) inset,0 0 0 1px rgba(200,148,58,0.08); align-items:stretch; }
+    .dual-rate-col { padding: 26px 28px; display:flex; flex-direction:column; justify-content:flex-start; }
     .dual-rate-col:first-child { border-right:1.5px solid rgba(255,255,255,0.1); }
-    .dual-rate-col-header { display:flex; align-items:center; justify-content:center; flex-direction:column; margin-bottom:12px; flex-wrap:wrap; gap:6px; min-height:40px; }
-    .dual-rate-col-title { font-size: 11px; letter-spacing: 0.1em; text-transform:uppercase; color:#ffffff; font-family:var(--mono); font-weight:800; text-align:center; width:100%; line-height:1.2; min-height:24px; display:flex; align-items:center; justify-content:center; }
+    .dual-rate-col-header { display:flex; align-items:center; justify-content:center; flex-direction:column; margin-bottom:10px; flex-wrap:wrap; gap:4px; min-height:36px; }
+    .dual-rate-col-title { font-size: 9px; letter-spacing: 0.09em; text-transform:uppercase; color:#ffffff; font-family:var(--mono); font-weight:700; text-align:center; width:100%; line-height:1.15; min-height:18px; display:flex; align-items:center; justify-content:center; }
     .dual-rate-fx-line { display:flex; align-items:baseline; gap:6px; font-family:var(--mono); margin-bottom:8px; flex-wrap:wrap; }
     .fx-usd-hero { color:var(--usd-color); font-size:16px; font-weight:700; }
     .fx-inr-hero { color:var(--inr-color); font-size:16px; font-weight:700; }
     .fx-sep-hero { font-size:11px; color:var(--muted); }
-    /* PREMIUM HERO RATES - Bold & Readable */
-    .dual-rate-main { font-family:var(--mono); font-size: 52px; font-weight:800; color:var(--gold-bright); line-height:1.05; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; text-shadow:0 2px 8px rgba(229,178,69,0.15); min-height:62px; display:flex; align-items:center; }
-    .dual-rate-main.ibja-val { color: var(--inr-color); font-weight: 800; text-shadow:0 2px 8px rgba(212,168,94,0.15); }
-    .dual-rate-main.silver-val { color:var(--silver-bright, #d0dce8); text-shadow:0 2px 8px rgba(204,218,232,0.15); }
-    .dual-rate-perkg { font-family:var(--mono); font-size: 16px; font-weight:700; color:var(--inr-color); opacity:0.8; margin-top:6px; letter-spacing:0.01em; min-height:24px; display:flex; align-items:center; }
-    .etf-unit-nav   { font-family:var(--mono); font-size:10px; color:var(--usd-color); margin-top:3px; font-weight:600; }
-    .etf-grams-unit { font-family:var(--mono); font-size:10px; color:var(--text); margin-top:2px; font-weight:600; }
+    /* PREMIUM HERO RATES - Bold & Fits */
+    .dual-rate-main { font-family:var(--mono); font-size: 48px; font-weight:800; color:var(--gold-bright); line-height:1.0; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; text-shadow:0 2px 6px rgba(229,178,69,0.12); min-height:56px; display:flex; align-items:center; }
+    .dual-rate-main.ibja-val { color: var(--inr-color); font-weight: 800; text-shadow:0 2px 6px rgba(212,168,94,0.12); }
+    .dual-rate-main.silver-val { color:var(--silver-bright, #d0dce8); text-shadow:0 2px 6px rgba(204,218,232,0.12); }
+    .dual-rate-perkg { font-family:var(--mono); font-size: 14px; font-weight:700; color:var(--inr-color); opacity:0.75; margin-top:4px; letter-spacing:0em; min-height:20px; display:flex; align-items:center; }
+    .etf-unit-nav   { font-family:var(--mono); font-size:9px; color:var(--usd-color); margin-top:2px; font-weight:600; }
+    .etf-grams-unit { font-family:var(--mono); font-size:9px; color:var(--text); margin-top:1px; font-weight:600; }
     .v-inr { color:var(--inr-color); } .v-usd { color:var(--usd-color); } .v-aed { color:var(--aed-color); }
-    .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:14px; width:100%; }
-    .dual-rate-sub-label { font-size:10px; color:var(--muted); font-family:var(--mono); margin-bottom:4px; letter-spacing:0.06em; font-weight:700; text-transform:uppercase; min-height:14px; }
-    .dual-rate-sub-val   { font-family:var(--mono); font-size:15px; font-weight:800; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; text-shadow:0 1px 3px rgba(0,0,0,0.3); min-height:22px; display:flex; align-items:center; }
-    .dual-rate-sub-box   { background:linear-gradient(135deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.02) 100%); border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:10px 12px; transition:all 0.25s; display:flex; flex-direction:column; min-height:70px; }
+    .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; margin-top:12px; width:100%; }
+    .dual-rate-sub-label { font-size:9px; color:var(--muted); font-family:var(--mono); margin-bottom:3px; letter-spacing:0.05em; font-weight:700; text-transform:uppercase; min-height:12px; }
+    .dual-rate-sub-val   { font-family:var(--mono); font-size:14px; font-weight:800; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; text-shadow:0 1px 2px rgba(0,0,0,0.2); min-height:20px; display:flex; align-items:center; }
+    .dual-rate-sub-box   { background:linear-gradient(135deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.02) 100%); border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:9px 10px; transition:all 0.25s; display:flex; flex-direction:column; min-height:64px; }
     .dual-rate-sub-val.intl-sub { color:var(--gold-bright); }
     .dual-rate-formula   { background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:8px; padding:9px 14px; font-family:var(--mono); font-size:12px; color:rgba(255,255,255,0.65); line-height:1.4; margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; font-variant-numeric:tabular-nums; }
     .dual-rate-stale     { background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--yellow); line-height:1.6; margin-top:12px; }
@@ -1098,7 +1098,7 @@
         <span id="ds-spreadpct" style="display:none"></span>
         <span id="dxb-verdict" style="display:none"></span>
 
-        <div class="dubai-note">Dubai: no import duty &nbsp;·&nbsp; India: 6% customs + 3% IGST &nbsp;·&nbsp; Personal allowance: 20g (women) / 10g (men) duty-free</div>
+        <div class="dubai-note">Dubai: no import duty &nbsp;·&nbsp; India: 15% customs + 3% GST (updated May 13, 2026) &nbsp;·&nbsp; Personal allowance: 20g (women) / 10g (men) duty-free</div>
       </div>
       <div class="ad-inline"></div>
     </div><!-- /gold-section -->
