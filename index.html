@@ -131,27 +131,27 @@
     .source-badge.live-src  { background:rgba(34,197,94,0.08);  color:var(--green);  border-color:rgba(34,197,94,0.2); }
     .source-badge.stale-src { background:rgba(234,179,8,0.08);  color:var(--yellow); border-color:rgba(234,179,8,0.2); }
     .source-badge.calc-src  { background:rgba(100,116,139,0.1); color:var(--muted);  border-color:rgba(255,255,255,0.08); }
-    .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap: 0; margin-top: 32px; border:1.5px solid rgba(200,148,58,0.28); border-radius:18px; overflow:hidden; background:linear-gradient(165deg,rgba(200,148,58,0.09) 0%,var(--surface) 60%); box-shadow:0 12px 56px rgba(0,0,0,0.4),0 1px 0 rgba(255,248,200,0.05) inset,0 0 0 1px rgba(200,148,58,0.08); }
-    .dual-rate-col { padding: 40px 44px; }
+    .dual-rate-box { display:grid; grid-template-columns:1fr 1fr; gap: 0; margin-top: 32px; border:1.5px solid rgba(200,148,58,0.28); border-radius:18px; overflow:hidden; background:linear-gradient(165deg,rgba(200,148,58,0.09) 0%,var(--surface) 60%); box-shadow:0 12px 56px rgba(0,0,0,0.4),0 1px 0 rgba(255,248,200,0.05) inset,0 0 0 1px rgba(200,148,58,0.08); align-items:stretch; }
+    .dual-rate-col { padding: 40px 44px; display:flex; flex-direction:column; justify-content:flex-start; }
     .dual-rate-col:first-child { border-right:1.5px solid rgba(255,255,255,0.1); }
-    .dual-rate-col-header { display:flex; align-items:center; justify-content:center; flex-direction:column; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
-    .dual-rate-col-title { font-size: 15px; letter-spacing: 0.12em; text-transform:uppercase; color:#ffffff; font-family:var(--mono); font-weight:800; text-align:center; width:100%; }
+    .dual-rate-col-header { display:flex; align-items:center; justify-content:center; flex-direction:column; margin-bottom:16px; flex-wrap:wrap; gap:8px; min-height:48px; }
+    .dual-rate-col-title { font-size: 12px; letter-spacing: 0.11em; text-transform:uppercase; color:#ffffff; font-family:var(--mono); font-weight:800; text-align:center; width:100%; line-height:1.3; min-height:28px; display:flex; align-items:center; justify-content:center; }
     .dual-rate-fx-line { display:flex; align-items:baseline; gap:6px; font-family:var(--mono); margin-bottom:8px; flex-wrap:wrap; }
     .fx-usd-hero { color:var(--usd-color); font-size:16px; font-weight:700; }
     .fx-inr-hero { color:var(--inr-color); font-size:16px; font-weight:700; }
     .fx-sep-hero { font-size:11px; color:var(--muted); }
-    /* PREMIUM HERO RATES - Much Larger & Bolder */
-    .dual-rate-main { font-family:var(--mono); font-size: 64px; font-weight:800; color:var(--gold-bright); line-height:1.0; letter-spacing:-0.03em; font-variant-numeric:tabular-nums; text-shadow:0 2px 8px rgba(229,178,69,0.15); }
+    /* PREMIUM HERO RATES - Large & Bold */
+    .dual-rate-main { font-family:var(--mono); font-size: 56px; font-weight:800; color:var(--gold-bright); line-height:1.1; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; text-shadow:0 2px 8px rgba(229,178,69,0.15); min-height:68px; display:flex; align-items:center; }
     .dual-rate-main.ibja-val { color: var(--inr-color); font-weight: 800; text-shadow:0 2px 8px rgba(212,168,94,0.15); }
     .dual-rate-main.silver-val { color:var(--silver-bright, #d0dce8); text-shadow:0 2px 8px rgba(204,218,232,0.15); }
-    .dual-rate-perkg { font-family:var(--mono); font-size: 18px; font-weight:600; color:var(--inr-color); opacity:0.8; margin-top:8px; letter-spacing:0.01em; }
+    .dual-rate-perkg { font-family:var(--mono); font-size: 18px; font-weight:600; color:var(--inr-color); opacity:0.8; margin-top:8px; letter-spacing:0.01em; min-height:26px; display:flex; align-items:center; }
     .etf-unit-nav   { font-family:var(--mono); font-size:11px; color:var(--usd-color); margin-top:4px; font-weight:600; }
     .etf-grams-unit { font-family:var(--mono); font-size:11px; color:var(--text); margin-top:2px; font-weight:600; }
     .v-inr { color:var(--inr-color); } .v-usd { color:var(--usd-color); } .v-aed { color:var(--aed-color); }
-    .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:18px; }
-    .dual-rate-sub-label { font-size:11px; color:var(--muted); font-family:var(--mono); margin-bottom:6px; letter-spacing:0.07em; font-weight:700; text-transform:uppercase; }
-    .dual-rate-sub-val   { font-family:var(--mono); font-size:16px; font-weight:800; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; text-shadow:0 1px 3px rgba(0,0,0,0.3); }
-    .dual-rate-sub-box   { background:linear-gradient(135deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.02) 100%); border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:12px 14px; transition:all 0.25s; }
+    .dual-rate-sub-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:18px; width:100%; }
+    .dual-rate-sub-label { font-size:11px; color:var(--muted); font-family:var(--mono); margin-bottom:6px; letter-spacing:0.07em; font-weight:700; text-transform:uppercase; min-height:16px; }
+    .dual-rate-sub-val   { font-family:var(--mono); font-size:16px; font-weight:800; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; text-shadow:0 1px 3px rgba(0,0,0,0.3); min-height:24px; display:flex; align-items:center; }
+    .dual-rate-sub-box   { background:linear-gradient(135deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.02) 100%); border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:12px 14px; transition:all 0.25s; display:flex; flex-direction:column; min-height:80px; }
     .dual-rate-sub-val.intl-sub { color:var(--gold-bright); }
     .dual-rate-formula   { background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:8px; padding:9px 14px; font-family:var(--mono); font-size:12px; color:rgba(255,255,255,0.65); line-height:1.4; margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:4px; font-variant-numeric:tabular-nums; }
     .dual-rate-stale     { background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.15); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--yellow); line-height:1.6; margin-top:12px; }
@@ -356,16 +356,17 @@
     .dxb-fx-item:not(:last-child) { border-right:1px solid rgba(255,255,255,0.1); }
     .dxb-fx-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); font-weight:700; }
     .dxb-fx-val   { font-family:var(--mono); font-size:18px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-0.01em; text-shadow:0 1px 3px rgba(0,0,0,0.2); }
-    /* Dubai vs India comparison rows */
-    .dxb-rows { border:1.5px solid rgba(255,255,255,0.12); border-radius:12px; overflow:hidden; margin-bottom:14px; background:rgba(255,255,255,0.02); }
-    .dxb-oneliner { display:flex; align-items:center; gap:0; padding:12px 16px; font-family:var(--mono); }
-    .dxb-oneliner:not(:last-child) { border-bottom:1px solid rgba(255,255,255,0.08); }
-    .dxb-ol-purity { width:70px; flex-shrink:0; font-size:11px; font-weight:800; color:var(--muted); letter-spacing:0.07em; text-transform:uppercase; }
-    .dxb-ol-item { display:flex; align-items:baseline; gap:6px; padding:0 12px; }
-    .dxb-ol-lbl { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; font-weight:700; }
-    .dxb-ol-val { font-size:18px; font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; letter-spacing:-0.01em; text-shadow:0 1px 3px rgba(0,0,0,0.2); }
-    .dxb-ol-sep { color:rgba(255,255,255,0.2); padding:0 4px; }
-    .dxb-ol-verdict { display:flex; align-items:center; gap:6px; margin-left:auto; font-size:12px; font-weight:800; white-space:nowrap; padding-left:12px; letter-spacing:0.02em; text-transform:uppercase; }
+    /* Dubai vs India comparison - COMPACT HORIZONTAL LAYOUT */
+    .dxb-rows { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:16px; }
+    .dxb-oneliner { background:linear-gradient(135deg,rgba(220,122,32,0.08) 0%,rgba(220,122,32,0.02) 100%); border:1.5px solid rgba(220,122,32,0.22); border-radius:12px; padding:16px 14px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; transition:all 0.3s ease; }
+    .dxb-oneliner:hover { border-color:rgba(220,122,32,0.38); box-shadow:0 8px 24px rgba(220,122,32,0.12); transform:translateY(-2px); }
+    .dxb-ol-purity { width:100%; flex-shrink:0; font-size:11px; font-weight:800; color:var(--aed-color); letter-spacing:0.08em; text-transform:uppercase; }
+    .dxb-ol-item { display:flex; align-items:center; gap:8px; padding:0; justify-content:center; flex-wrap:wrap; width:100%; }
+    .dxb-ol-lbl { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-weight:800; }
+    .dxb-ol-val { font-size:16px; font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; letter-spacing:-0.01em; text-shadow:0 1px 3px rgba(0,0,0,0.2); color:var(--inr-color); }
+    .dxb-ol-val.dubai { color:var(--aed-color); }
+    .dxb-ol-sep { display:none; }
+    .dxb-ol-verdict { display:flex; align-items:center; gap:4px; font-size:11px; font-weight:800; white-space:nowrap; letter-spacing:0.02em; text-transform:uppercase; color:var(--green); margin-top:4px; }
     /* Reference strip: 22K / 18K */
     .dxb-ref-strip { display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:8px 14px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px; font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:12px; }
     .dxb-ref-dot { opacity:0.25; }
@@ -1022,27 +1023,69 @@
           </div>
         </div>
 
-        <!-- 24K / 22K / 18K comparison rows -->
+        <!-- 24K / 22K / 18K comparison rows - COMPACT CARDS -->
         <div class="dxb-rows">
           <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">24K 999</span>
-            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-24k-inr" style="color:var(--inr-color)">--</span></span>
-            <span class="dxb-ol-sep">·</span>
-            <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india" style="color:var(--inr-color)">--</span></span>
+            <span class="dxb-ol-purity">24K · 999</span>
+            <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="font-size:16px;">🇦🇪</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                  <span class="dxb-ol-lbl">Dubai</span>
+                  <span class="dxb-ol-val dubai" id="dxb-24k-inr">--</span>
+                </div>
+              </div>
+              <span style="color:var(--muted);opacity:0.5;">→</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="font-size:16px;">🇮🇳</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                  <span class="dxb-ol-lbl">India</span>
+                  <span class="dxb-ol-val" id="ds-india">--</span>
+                </div>
+              </div>
+            </div>
             <span class="dxb-ol-verdict" id="dxb-verdict-24">--</span>
           </div>
           <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">22K 916</span>
-            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-22k-inr" style="color:var(--inr-color)">--</span></span>
-            <span class="dxb-ol-sep">·</span>
-            <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india-22" style="color:var(--inr-color)">--</span></span>
+            <span class="dxb-ol-purity">22K · 916</span>
+            <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="font-size:16px;">🇦🇪</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                  <span class="dxb-ol-lbl">Dubai</span>
+                  <span class="dxb-ol-val dubai" id="dxb-22k-inr">--</span>
+                </div>
+              </div>
+              <span style="color:var(--muted);opacity:0.5;">→</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="font-size:16px;">🇮🇳</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                  <span class="dxb-ol-lbl">India</span>
+                  <span class="dxb-ol-val" id="ds-india-22">--</span>
+                </div>
+              </div>
+            </div>
             <span class="dxb-ol-verdict" id="dxb-verdict-22">--</span>
           </div>
           <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">18K 750</span>
-            <span class="dxb-ol-item">🇦🇪 <span class="dxb-ol-lbl">DXB</span> <span class="dxb-ol-val" id="dxb-18k-inr" style="color:var(--inr-color)">--</span></span>
-            <span class="dxb-ol-sep">·</span>
-            <span class="dxb-ol-item">🇮🇳 <span class="dxb-ol-lbl">IND</span> <span class="dxb-ol-val" id="ds-india-18" style="color:var(--inr-color)">--</span></span>
+            <span class="dxb-ol-purity">18K · 750</span>
+            <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="font-size:16px;">🇦🇪</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                  <span class="dxb-ol-lbl">Dubai</span>
+                  <span class="dxb-ol-val dubai" id="dxb-18k-inr">--</span>
+                </div>
+              </div>
+              <span style="color:var(--muted);opacity:0.5;">→</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span style="font-size:16px;">🇮🇳</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                  <span class="dxb-ol-lbl">India</span>
+                  <span class="dxb-ol-val" id="ds-india-18">--</span>
+                </div>
+              </div>
+            </div>
             <span class="dxb-ol-verdict" id="dxb-verdict-18">--</span>
           </div>
         </div>
