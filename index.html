@@ -1456,6 +1456,7 @@
   // TRAFFIC LIGHT (24K coin vs digital vs ETF)
   // -------------------------------------------------------
   function buildTrafficLight(india24, etfNavs, etfTrackingMap) {
+    console.log("buildTrafficLight called with:", { india24, etfNavs, etfTrackingMap });
     // Immediately replace placeholder so any crash below still shows progress
     try {
       const _tlBodyEarly = document.getElementById("tlBody");
@@ -1740,7 +1741,6 @@
       // --- Gold: Retailers & ETFs ---
       try { buildPhysicalRetailers(india24); } catch(e) { console.warn("buildPhysicalRetailers:", e); }
       try { buildDigitalPlatforms(india24, data.digitalGoldPrices); } catch(e) { console.warn("buildDigitalPlatforms:", e); }
-      try { buildRetailerCards(data.digitalGoldPrices, india24); } catch(e) { console.warn("buildRetailerCards:", e); }
 
       // Gold daily % move (international spot): first point in 1d history ≈ yesterday's close
       const goldHist1d = data.goldHistory?.["1d"] || [];
@@ -1951,14 +1951,19 @@
      * CRITICAL FIX for the broken Best Buy section
      */
     function buildRetailerCards(retailers, basePrice) {
+      console.log("buildRetailerCards called with:", { retailers, basePrice });
+
       if (!retailers || !basePrice || basePrice <= 0) {
         const el = document.getElementById('tlBody');
-        if (el) el.innerHTML = '<div style="font-size:13px;color:var(--muted);font-family:var(--mono);">No retailers available</div>';
+        if (el) el.innerHTML = '<div style="font-size:13px;color:var(--muted);font-family:var(--mono);">No retailer data available</div>';
+        console.warn("buildRetailerCards: missing data", { retailers, basePrice });
         return;
       }
 
       const entries = Object.entries(retailers)
         .filter(([k, v]) => v && v > 0);
+
+      console.log("buildRetailerCards entries:", entries);
 
       if (entries.length === 0) {
         document.getElementById('tlBody').innerHTML = '<div style="font-size:13px;color:var(--muted);font-family:var(--mono);">No pricing data available</div>';
