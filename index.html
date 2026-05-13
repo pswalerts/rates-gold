@@ -418,7 +418,21 @@
     .refresh-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
     .refreshing { opacity:0.4; pointer-events:none; }
     .etf-section-wrap { display:flex; flex-direction:column; gap:16px; }
-    #etfGrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    #etfGrid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    /* ETF Card Structure */
+    .etf-card { background:linear-gradient(165deg,rgba(200,148,58,0.08) 0%,var(--surface) 60%); border:1.5px solid rgba(200,148,58,0.22); border-radius:14px; padding:18px 16px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px; transition:all 0.3s ease; position:relative; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.25); cursor:default; }
+    .etf-card:hover { border-color:rgba(200,148,58,0.4); box-shadow:0 8px 32px rgba(200,148,58,0.12); transform:translateY(-2px); }
+    .etf-card.etf-best { border-color:rgba(34,197,94,0.5); box-shadow:0 0 32px rgba(34,197,94,0.15); background:linear-gradient(165deg,rgba(34,197,94,0.05) 0%,var(--surface) 60%); animation:pulse-green 2.5s ease-in-out infinite; }
+    .etf-icon { width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,rgba(200,148,58,0.15),rgba(200,148,58,0.05)); border:1.5px solid rgba(200,148,58,0.3); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+    .etf-header { display:flex; flex-direction:column; gap:2px; width:100%; }
+    .etf-name { font-size:13px; font-weight:800; color:var(--text); line-height:1.2; }
+    .etf-fund { font-size:10px; color:var(--muted); letter-spacing:0.05em; }
+    .etf-ter { font-size:10px; color:var(--gold-bright); font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
+    .etf-prices { width:100%; display:flex; flex-direction:column; gap:6px; background:rgba(255,255,255,0.02); border:1px solid rgba(200,148,58,0.15); border-radius:8px; padding:10px 12px; }
+    .etf-price-row { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+    .etf-price-label { font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; font-weight:700; min-width:50px; text-align:left; }
+    .etf-price-value { font-size:14px; font-weight:800; color:var(--inr-color); font-family:var(--mono); letter-spacing:-0.01em; text-shadow:0 1px 2px rgba(0,0,0,0.2); }
+    .etf-footer { font-size:9px; color:var(--muted); letter-spacing:0.05em; }
     #etfHistPanel { border-radius:14px; }
     .gold-section   { display:block; }
     .silver-section { display:none; }
@@ -426,7 +440,7 @@
     body.silver-mode .silver-section { display:block; }
     .silver-hero-label { font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:var(--silver); margin-bottom:10px; font-family:var(--mono); font-weight:600; }
     .gs-ratio-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-family:var(--mono); font-size:12px; background:rgba(168,184,200,0.1); color:var(--silver); border:1px solid rgba(168,184,200,0.2); margin-top:10px; }
-    @media (max-width:900px) { #etfGrid { grid-template-columns:1fr 1fr !important; } }
+    @media (max-width:900px) { #etfGrid { grid-template-columns:repeat(2,1fr) !important; gap:12px; } }
 
     @media (max-width:768px) {
       /* Layout */
@@ -491,6 +505,12 @@
 
       /* Retailer / ETF grids */
       .retailer-grid { grid-template-columns:1fr 1fr !important; }
+      #etfGrid { grid-template-columns:1fr !important; gap:10px; }
+      .etf-card { padding:14px 12px; }
+      .etf-prices { padding:8px 10px; gap:4px; }
+      .etf-price-row { gap:4px; }
+      .etf-price-label { font-size:7px; }
+      .etf-price-value { font-size:12px; }
       #etfGrid { grid-template-columns:1fr !important; }
       .pr-grid { grid-template-columns:1fr !important; }
       .retailer-price { font-size:15px; }
@@ -1563,6 +1583,9 @@
       const navStr  = e.unitNav > 0
         ? `₹ ${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:0})}`
         : "—";
+      const gramStr = e.gramRate > 0
+        ? `₹ ${e.gramRate.toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:0})}`
+        : "—";
       const gpuStr  = e.gramsPerUnit ? `${e.gramsPerUnit.toFixed(3)} g` : "—";
 
       // Corner badge — same pattern as "Best Price" on digital/physical cards
@@ -1578,18 +1601,25 @@
       }
       const hasBadge = !!cornerBadge;
 
-      return `<div class="pr-card ${isBest?"pr-best":""} ${hasBadge?"pr-has-badge":""}" style="cursor:${hasSp?"pointer":"default"};" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
+      return `<div class="etf-card ${isBest?"etf-best":""} ${hasBadge?"etf-has-badge":""}" style="cursor:${hasSp?"pointer":"default"};" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
         ${cornerBadge}
-        <div class="pr-icon">${e.emoji}</div>
-        <div class="pr-info">
-          <div class="pr-name">${e.name}</div>
-          <div class="pr-type">${e.fund} &nbsp;·&nbsp; <span style="color:var(--gold-bright);font-family:var(--mono);">TER ${(e.expense*100).toFixed(2)}%</span></div>
-          <span class="pr-source calc">AUM ${e.aum} &nbsp;·&nbsp; ${gpuStr} gold</span>
+        <div class="etf-icon">${e.emoji}</div>
+        <div class="etf-header">
+          <div class="etf-name">${e.name}</div>
+          <div class="etf-fund">${e.fund}</div>
         </div>
-        <div class="pr-right">
-          <div class="pr-price" style="font-size:14px;">${navStr}</div>
-          <div class="pr-note">per unit${hasSp?' · <span style="opacity:0.5;color:var(--gold);">↓chart</span>':""}</div>
+        <div class="etf-ter"><span style="color:var(--muted);font-size:9px;">TER</span> <span style="color:var(--gold-bright);">${(e.expense*100).toFixed(2)}%</span></div>
+        <div class="etf-prices">
+          <div class="etf-price-row">
+            <span class="etf-price-label">per unit</span>
+            <span class="etf-price-value">${navStr}</span>
+          </div>
+          <div class="etf-price-row">
+            <span class="etf-price-label">per gram</span>
+            <span class="etf-price-value">${gramStr}</span>
+          </div>
         </div>
+        <div class="etf-footer">${gpuStr}${hasSp?' · <span style="opacity:0.6;color:var(--gold);cursor:pointer;">↓ chart</span>':""}</div>
       </div>`;
     }).join("");
     // Rebuild dropdown with only ETFs that actually have 1y sparkline data
