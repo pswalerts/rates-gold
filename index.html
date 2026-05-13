@@ -176,7 +176,7 @@
 
     /* ── Price row card — physical gold & digital gold ── */
     .pr-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .pr-card { display:flex; align-items:center; gap:12px; padding:12px 15px; border-radius:10px; border:1px solid rgba(200,148,58,0.14); background:var(--surface); background-image:linear-gradient(180deg,var(--card-highlight) 0%,transparent 60%); position:relative; overflow:hidden; transition:border-color 0.25s, box-shadow 0.25s; }
+    .pr-card { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding:12px 15px; border-radius:10px; border:1px solid rgba(200,148,58,0.14); background:var(--surface); background-image:linear-gradient(180deg,var(--card-highlight) 0%,transparent 60%); position:relative; overflow:hidden; transition:border-color 0.25s, box-shadow 0.25s; }
     .pr-card:hover { border-color:rgba(200,148,58,0.26); box-shadow:0 4px 18px rgba(0,0,0,0.25),0 0 0 1px rgba(200,148,58,0.08); }
     .pr-card.pr-best { border-color:rgba(34,197,94,0.42); background:linear-gradient(135deg,rgba(34,197,94,0.04) 0%,var(--surface) 70%); box-shadow:0 0 18px rgba(34,197,94,0.07); animation:pulse-green 2.5s ease-in-out infinite; }
     /* Best Buy signal variants — top-align since cards are taller with tags */
@@ -184,8 +184,8 @@
     .pr-card.bc-orange { border-color:rgba(249,115,22,0.28); background:rgba(249,115,22,0.025); align-items:flex-start; }
     .pr-card.bc-red    { border-color:rgba(239,68,68,0.28);  background:rgba(239,68,68,0.025);  align-items:flex-start; }
     .pr-icon { width:36px; height:36px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
-    .pr-info { flex:1; min-width:0; }
-    .pr-name { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:0.01em; line-height:1.3; }
+    .pr-info { flex: 1 1 auto; min-width: 0; width: auto; }
+    .pr-name { font-size:13px; font-weight:700; color:var(--text); white-space: normal; overflow: visible; text-overflow: initial; letter-spacing:0.01em; line-height:1.3; max-width: 100%; }
     .pr-type { font-size:10px; color:var(--muted); margin-top:2px; letter-spacing:0.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .pr-right { text-align:right; flex-shrink:0; }
     .pr-price { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--inr-color); white-space:nowrap; line-height:1.2; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
