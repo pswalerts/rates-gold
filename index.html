@@ -356,9 +356,12 @@
     .dxb-fx-item:not(:last-child) { border-right:1px solid rgba(255,255,255,0.1); }
     .dxb-fx-label { font-size:9px; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); font-family:var(--mono); font-weight:700; }
     .dxb-fx-val   { font-family:var(--mono); font-size:16px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-0.01em; text-shadow:0 1px 2px rgba(0,0,0,0.2); }
-    /* Dubai vs India comparison - COMPACT HORIZONTAL LAYOUT */
-    .dxb-rows { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
-    .dxb-oneliner { background:linear-gradient(135deg,rgba(220,122,32,0.08) 0%,rgba(220,122,32,0.02) 100%); border:1.5px solid rgba(220,122,32,0.22); border-radius:12px; padding:14px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; transition:all 0.3s ease; overflow:hidden; }
+    /* Dubai vs India comparison - ASYMMETRICAL LAYOUT (1 large + 2 small stacked) */
+    .dxb-rows { display:grid; grid-template-columns:1.5fr 1fr; gap:14px; margin-bottom:14px; }
+    .dxb-oneliner { background:linear-gradient(135deg,rgba(220,122,32,0.08) 0%,rgba(220,122,32,0.02) 100%); border:1.5px solid rgba(220,122,32,0.22); border-radius:12px; padding:16px 14px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; transition:all 0.3s ease; overflow:hidden; min-height:160px; }
+    .dxb-oneliner:first-child { grid-row:1/3; min-height:auto; padding:24px 18px; }
+    .dxb-oneliner:nth-child(2), .dxb-oneliner:nth-child(3) { min-height:65px; padding:12px 10px; gap:4px; }
+    .dxb-right-stack { display:flex; flex-direction:column; gap:14px; }
     .dxb-oneliner:hover { border-color:rgba(220,122,32,0.38); box-shadow:0 8px 24px rgba(220,122,32,0.12); transform:translateY(-2px); }
     .dxb-ol-purity { width:100%; flex-shrink:0; font-size:10px; font-weight:800; color:var(--aed-color); letter-spacing:0.07em; text-transform:uppercase; }
     .dxb-ol-item { display:flex; align-items:center; gap:4px; padding:0; justify-content:center; flex-wrap:wrap; width:100%; }
@@ -464,11 +467,13 @@
       .dxb-fx-strip { grid-template-columns:repeat(2,1fr); }
       .dxb-fx-val { font-size:14px; }
 
-      /* Dubai comparison rows — compact on mobile */
-      .dxb-oneliner { padding:7px 10px; flex-wrap:wrap; gap:2px; }
-      .dxb-ol-purity { width:44px; font-size:10px; }
-      .dxb-ol-item { padding:0 5px; gap:3px; }
-      .dxb-ol-lbl { font-size:9px; }
+      /* Dubai comparison rows — tablet layout */
+      .dxb-rows { grid-template-columns:1fr; gap:12px; }
+      .dxb-right-stack { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+      .dxb-oneliner { min-height:auto; padding:12px 10px; }
+      .dxb-oneliner:first-child { grid-row:auto; min-height:100px; padding:14px 10px; }
+      .dxb-ol-purity { font-size:10px; }
+      .dxb-ol-val { font-size:12px; }
       .dxb-ol-val { font-size:13px; }
       .dxb-ol-sep { display:none; }                  /* hide · separator on mobile */
       .dxb-ol-verdict { font-size:11px; padding-left:4px; }
@@ -487,11 +492,14 @@
       .dxb-fx-val { font-size:13px; }
       .dxb-fx-label { font-size:9px; }
 
-      /* Dubai comparison rows — ultra-compact */
-      .dxb-oneliner { padding:6px 8px; }
-      .dxb-ol-purity { width:40px; font-size:9px; }
-      .dxb-ol-val { font-size:12px; }
-      .dxb-ol-verdict { font-size:10px; }
+      /* Dubai comparison rows — ultra-compact (very small mobile) */
+      .dxb-rows { gap:10px; }
+      .dxb-right-stack { gap:10px; }
+      .dxb-oneliner { padding:8px 8px; }
+      .dxb-oneliner:first-child { padding:10px 8px; }
+      .dxb-ol-purity { font-size:9px; }
+      .dxb-ol-val { font-size:11px; }
+      .dxb-ol-verdict { font-size:9px; }
 
       /* Retailer / ETF grids */
       .retailer-grid { grid-template-columns:1fr 1fr !important; }
@@ -1023,70 +1031,78 @@
           </div>
         </div>
 
-        <!-- 24K / 22K / 18K comparison rows - COMPACT CARDS -->
+        <!-- 24K / 22K / 18K comparison - ASYMMETRICAL LAYOUT (1 large + 2 small) -->
         <div class="dxb-rows">
+          <!-- Large 24K box on left -->
           <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">24K · 999</span>
-            <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
-              <div style="display:flex;align-items:center;gap:4px;">
-                <span style="font-size:16px;">🇦🇪</span>
+            <span class="dxb-ol-purity" style="font-size:12px;">24K · 999</span>
+            <div style="display:flex;align-items:center;gap:8px;justify-content:center;flex:1;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:20px;">🇦🇪</span>
                 <div style="display:flex;flex-direction:column;align-items:flex-end;">
-                  <span class="dxb-ol-lbl">Dubai</span>
-                  <span class="dxb-ol-val dubai" id="dxb-24k-inr">--</span>
+                  <span class="dxb-ol-lbl" style="font-size:9px;">Dubai</span>
+                  <span class="dxb-ol-val dubai" id="dxb-24k-inr" style="font-size:16px;">--</span>
                 </div>
               </div>
-              <span style="color:var(--muted);opacity:0.5;">→</span>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <span style="font-size:16px;">🇮🇳</span>
+              <span style="color:var(--muted);opacity:0.5;font-size:18px;">→</span>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:20px;">🇮🇳</span>
                 <div style="display:flex;flex-direction:column;align-items:flex-end;">
-                  <span class="dxb-ol-lbl">India</span>
-                  <span class="dxb-ol-val" id="ds-india">--</span>
+                  <span class="dxb-ol-lbl" style="font-size:9px;">India</span>
+                  <span class="dxb-ol-val" id="ds-india" style="font-size:16px;">--</span>
                 </div>
               </div>
             </div>
-            <span class="dxb-ol-verdict" id="dxb-verdict-24">--</span>
+            <span class="dxb-ol-verdict" id="dxb-verdict-24" style="font-size:12px;">--</span>
           </div>
-          <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">22K · 916</span>
-            <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
-              <div style="display:flex;align-items:center;gap:4px;">
-                <span style="font-size:16px;">🇦🇪</span>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;">
-                  <span class="dxb-ol-lbl">Dubai</span>
-                  <span class="dxb-ol-val dubai" id="dxb-22k-inr">--</span>
+
+          <!-- Right column: 22K & 18K stacked -->
+          <div class="dxb-right-stack">
+            <!-- 22K box -->
+            <div class="dxb-oneliner">
+              <span class="dxb-ol-purity" style="font-size:10px;">22K · 916</span>
+              <div style="display:flex;align-items:center;gap:4px;justify-content:center;flex:1;">
+                <div style="display:flex;align-items:center;gap:3px;">
+                  <span style="font-size:14px;">🇦🇪</span>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                    <span class="dxb-ol-lbl" style="font-size:7px;">Dubai</span>
+                    <span class="dxb-ol-val dubai" id="dxb-22k-inr" style="font-size:13px;">--</span>
+                  </div>
+                </div>
+                <span style="color:var(--muted);opacity:0.5;font-size:13px;">→</span>
+                <div style="display:flex;align-items:center;gap:3px;">
+                  <span style="font-size:14px;">🇮🇳</span>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                    <span class="dxb-ol-lbl" style="font-size:7px;">India</span>
+                    <span class="dxb-ol-val" id="ds-india-22" style="font-size:13px;">--</span>
+                  </div>
                 </div>
               </div>
-              <span style="color:var(--muted);opacity:0.5;">→</span>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <span style="font-size:16px;">🇮🇳</span>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;">
-                  <span class="dxb-ol-lbl">India</span>
-                  <span class="dxb-ol-val" id="ds-india-22">--</span>
-                </div>
-              </div>
+              <span class="dxb-ol-verdict" id="dxb-verdict-22" style="font-size:10px;">--</span>
             </div>
-            <span class="dxb-ol-verdict" id="dxb-verdict-22">--</span>
-          </div>
-          <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">18K · 750</span>
-            <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
-              <div style="display:flex;align-items:center;gap:4px;">
-                <span style="font-size:16px;">🇦🇪</span>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;">
-                  <span class="dxb-ol-lbl">Dubai</span>
-                  <span class="dxb-ol-val dubai" id="dxb-18k-inr">--</span>
+
+            <!-- 18K box -->
+            <div class="dxb-oneliner">
+              <span class="dxb-ol-purity" style="font-size:10px;">18K · 750</span>
+              <div style="display:flex;align-items:center;gap:4px;justify-content:center;flex:1;">
+                <div style="display:flex;align-items:center;gap:3px;">
+                  <span style="font-size:14px;">🇦🇪</span>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                    <span class="dxb-ol-lbl" style="font-size:7px;">Dubai</span>
+                    <span class="dxb-ol-val dubai" id="dxb-18k-inr" style="font-size:13px;">--</span>
+                  </div>
+                </div>
+                <span style="color:var(--muted);opacity:0.5;font-size:13px;">→</span>
+                <div style="display:flex;align-items:center;gap:3px;">
+                  <span style="font-size:14px;">🇮🇳</span>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;">
+                    <span class="dxb-ol-lbl" style="font-size:7px;">India</span>
+                    <span class="dxb-ol-val" id="ds-india-18" style="font-size:13px;">--</span>
+                  </div>
                 </div>
               </div>
-              <span style="color:var(--muted);opacity:0.5;">→</span>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <span style="font-size:16px;">🇮🇳</span>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;">
-                  <span class="dxb-ol-lbl">India</span>
-                  <span class="dxb-ol-val" id="ds-india-18">--</span>
-                </div>
-              </div>
+              <span class="dxb-ol-verdict" id="dxb-verdict-18" style="font-size:10px;">--</span>
             </div>
-            <span class="dxb-ol-verdict" id="dxb-verdict-18">--</span>
           </div>
         </div>
 
