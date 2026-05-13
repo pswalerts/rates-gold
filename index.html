@@ -1740,6 +1740,7 @@
       // --- Gold: Retailers & ETFs ---
       try { buildPhysicalRetailers(india24); } catch(e) { console.warn("buildPhysicalRetailers:", e); }
       try { buildDigitalPlatforms(india24, data.digitalGoldPrices); } catch(e) { console.warn("buildDigitalPlatforms:", e); }
+      try { buildRetailerCards(data.digitalGoldPrices, india24); } catch(e) { console.warn("buildRetailerCards:", e); }
 
       // Gold daily % move (international spot): first point in 1d history ≈ yesterday's close
       const goldHist1d = data.goldHistory?.["1d"] || [];
