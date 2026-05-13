@@ -433,12 +433,19 @@
     /* Sticky Navigation Bar */
     #stickyNav {
       animation: slideDown 0.3s ease-out;
+      display: flex !important;
+    }
+
+    #stickyNav a {
+      transition: all 0.2s;
+      border-radius: 6px;
     }
 
     #stickyNav a:hover {
       color: var(--gold-bright);
       text-shadow: 0 0 8px rgba(212, 168, 83, 0.4);
       background: rgba(212, 168, 83, 0.08);
+      border-color: rgba(212, 168, 83, 0.3);
     }
 
     @keyframes slideDown {
@@ -744,6 +751,15 @@
           <span id="statusText">connecting...</span>
         </div>
       </div>
+    </div>
+
+    <!-- =================== STICKY NAVIGATION BAR =================== -->
+    <div id="stickyNav" style="display:none;position:fixed;top:0;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 24px;z-index:999;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center;">
+      <a href="#" onclick="scrollToSection('goldratesection'); return false;" style="color:var(--text);text-decoration:none;font-size:12px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;padding:8px 16px;border-radius:6px;transition:all 0.2s;border:1px solid transparent;display:flex;align-items:center;gap:4px;white-space:nowrap;">📊 Rates</a>
+      <a href="#" onclick="scrollToSection('bestbuy'); return false;" style="color:var(--text);text-decoration:none;font-size:12px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;padding:8px 16px;border-radius:6px;transition:all 0.2s;border:1px solid transparent;display:flex;align-items:center;gap:4px;white-space:nowrap;">🛒 Buy Now</a>
+      <a href="#" onclick="scrollToSection('dubai-section'); return false;" style="color:var(--text);text-decoration:none;font-size:12px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;padding:8px 16px;border-radius:6px;transition:all 0.2s;border:1px solid transparent;display:flex;align-items:center;gap:4px;white-space:nowrap;">🇦🇪 Dubai</a>
+      <a href="#" onclick="scrollToSection('etfsection'); return false;" style="color:var(--text);text-decoration:none;font-size:12px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;padding:8px 16px;border-radius:6px;transition:all 0.2s;border:1px solid transparent;display:flex;align-items:center;gap:4px;white-space:nowrap;">📈 ETFs</a>
+      <a href="#" onclick="scrollToSection('silversection'); return false;" style="color:var(--text);text-decoration:none;font-size:12px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;padding:8px 16px;border-radius:6px;transition:all 0.2s;border:1px solid transparent;display:flex;align-items:center;gap:4px;white-space:nowrap;">🥈 Silver</a>
     </div>
 
     <!-- SEO: semantically meaningful H1, visually hidden -->
@@ -1881,6 +1897,10 @@
         document.getElementById("statusText").textContent = "live";
         document.getElementById("footerNote").textContent = "Auto-refreshes every 60 min · last: " + timeStr(data.timestamp);
       }
+
+      // Initialize UI features
+      try { initStickyNav(); } catch(e) { console.warn("initStickyNav error:", e); }
+      try { updateAdBadges(); } catch(e) { console.warn("updateAdBadges error:", e); }
     } catch(e) {
       document.getElementById("statusDot").className    = "dot error";
       document.getElementById("statusText").textContent = "error";
