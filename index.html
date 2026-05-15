@@ -2,12 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+
+  <!-- ── SECURITY ── -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
+
+  <!-- ── BRANDING ── -->
+  <meta name="theme-color" content="#0b0a08" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="application-name" content="rateof.gold" />
+  <meta name="author" content="rateof.gold" />
+
+  <!-- ── PRIMARY SEO ── -->
   <title>Gold Rate Today in India — Live 24K 22K 18K Price | rateof.gold</title>
   <meta name="description" content="Live gold rate in India today — 24K, 22K, 18K prices from IBJA and MCX. Compare Dubai vs India gold rates, track gold ETFs, and find the best place to buy gold in India." />
-  <meta name="keywords" content="gold rate today, gold price india, 24k gold rate, 22k gold rate, gold rate per gram, IBJA gold price, MCX gold, Dubai gold rate, gold rate comparison, live gold price india" />
-  <meta name="robots" content="index, follow" />
+  <meta name="keywords" content="gold rate today, gold price india, 24k gold rate, 22k gold rate, gold rate per gram, IBJA gold price, MCX gold, Dubai gold rate, gold rate comparison, live gold price india, gold purity converter, silver rate today india" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <meta name="googlebot" content="index, follow" />
   <link rel="canonical" href="https://rateof.gold/" />
+  <link rel="alternate" hreflang="en-IN" href="https://rateof.gold/" />
+  <link rel="alternate" hreflang="x-default" href="https://rateof.gold/" />
 
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://rateof.gold/" />
@@ -1765,6 +1782,508 @@
       .converter-result-amount { font-size: 24px; }
     }
 
+    /* =========================================================
+       FINAL POLISH PASS — addresses readability, contrast,
+       logo prominence, Dubai table, bullet lists
+       ========================================================= */
+
+    /* ---- LOGO: bigger, more prominent ---- */
+    .logo-rate, .logo-dot, .logo-gold-word {
+      font-size: 32px;
+      line-height: 1;
+    }
+    .logo-tagline {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--text-3);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* ---- CONTRAST LIFTS for readability ---- */
+    /* Brighter mid-tones — was too dim on certain screens */
+    :root {
+      --text-3: #b0b6bf;  /* was #9ca3af — brighter */
+      --text-4: #8a909a;  /* was #6b7280 — much brighter */
+    }
+    /* Section title sub-text more readable */
+    .section-title-sub {
+      color: var(--text-3);
+      font-size: 12px;
+    }
+    /* Helpers and notes get a small bump */
+    .purity-helper {
+      font-size: 11px !important;
+      color: var(--text-3) !important;
+    }
+    .converter-value-note,
+    .pr-note,
+    .etf-note,
+    .footer-note,
+    .dubai-note li {
+      font-size: 11px !important;
+      color: var(--text-3) !important;
+    }
+
+    /* ---- CONVERTER v4: result inside right panel, bigger ---- */
+    /* Hide the old standalone result strip — result now lives in right panel */
+    .converter-result { display: none; }
+
+    .converter-row {
+      grid-template-columns: 1fr 36px 1fr !important;
+      gap: var(--s-4) !important;
+      align-items: stretch !important;
+    }
+    .converter-panel {
+      padding: var(--s-4) !important;
+      gap: var(--s-3) !important;
+    }
+    .converter-panel-output {
+      background: linear-gradient(180deg, rgba(212,168,83,0.06) 0%, var(--bg-2) 100%);
+      border-color: var(--border-gold);
+    }
+    body.silver-mode .converter-panel-output,
+    .converter-card[data-target-metal="silver"] .converter-panel-output {
+      background: linear-gradient(180deg, rgba(168,184,200,0.06) 0%, var(--bg-2) 100%);
+      border-color: rgba(168,184,200,0.20);
+    }
+
+    .converter-panel-label {
+      font-size: 11px !important;
+      color: var(--text-3) !important;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+    .converter-input {
+      font-size: 22px !important;
+      font-weight: 700 !important;
+      padding: 12px 14px !important;
+    }
+    .purity-input {
+      font-size: 18px !important;
+      font-weight: 700 !important;
+      padding: 12px 14px !important;
+    }
+    .converter-unit,
+    .purity-suffix {
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      color: var(--text-3) !important;
+      padding: 0 14px !important;
+    }
+    .purity-preset {
+      font-size: 11px !important;
+      padding: 4px 10px !important;
+      font-weight: 600 !important;
+    }
+
+    /* Result inside right panel — big & centered */
+    .converter-result-inline {
+      margin-top: auto;
+      padding-top: var(--s-3);
+      border-top: 1px dashed var(--border);
+      text-align: center;
+    }
+    .converter-result-inline .converter-result-label {
+      font-size: 11px;
+      letter-spacing: 0.10em;
+      color: var(--text-3);
+      font-family: var(--mono);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .converter-result-inline .converter-result-amount {
+      font-family: var(--mono);
+      font-size: clamp(28px, 4vw, 38px);
+      font-weight: 700;
+      color: var(--gold-bright);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      display: block;
+    }
+    body.silver-mode .converter-result-inline .converter-result-amount,
+    .converter-card[data-target-metal="silver"] .converter-result-inline .converter-result-amount {
+      color: var(--silver-bright);
+    }
+    .converter-result-inline .converter-result-sub {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 2px;
+      font-family: var(--mono);
+    }
+
+    /* ---- CROSS-METAL SWAP TOGGLE: bigger, easier to read ---- */
+    .converter-swap-row {
+      margin-bottom: var(--s-4);
+      padding: 10px var(--s-3);
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px !important;
+      color: var(--text-2);
+    }
+    .converter-swap-label {
+      gap: 10px !important;
+    }
+    .converter-swap-text {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      color: var(--text-2);
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .converter-swap-toggle {
+      width: 36px !important;
+      height: 20px !important;
+    }
+    .converter-swap-toggle::after {
+      width: 16px !important;
+      height: 16px !important;
+    }
+    .converter-swap-row input[type="checkbox"]:checked + .converter-swap-toggle::after {
+      transform: translateX(16px) !important;
+    }
+
+    /* ---- VALUE CARDS: aligned heights ---- */
+    .converter-values {
+      grid-template-columns: 1fr 1fr 1fr !important;
+      gap: var(--s-3) !important;
+      align-items: stretch;
+    }
+    .converter-value-card {
+      display: flex !important;
+      flex-direction: column !important;
+      padding: var(--s-4) !important;
+      gap: 4px;
+      min-height: 110px;
+    }
+    .converter-value-label {
+      min-height: 24px;
+      align-items: center;
+      margin-bottom: 6px !important;
+    }
+    .converter-value-amount {
+      font-size: var(--text-lg) !important;
+      font-weight: 700 !important;
+      margin-top: auto;
+      line-height: 1.2;
+    }
+    .converter-value-note {
+      margin-top: 4px;
+      min-height: 14px;
+    }
+
+    /* Buyback chip — slightly bigger */
+    .buyback-pct-chip {
+      padding: 4px 12px !important;
+    }
+    .buyback-pct-chip input {
+      width: 38px !important;
+      font-size: 13px !important;
+    }
+    .buyback-pct-chip span {
+      font-size: 11px !important;
+    }
+
+    /* ---- BULLET LISTS for warnings and footnotes ---- */
+    .converter-loss-strip ul,
+    .converter-footnote ul,
+    .dubai-note {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .converter-loss-strip {
+      padding: var(--s-4) !important;
+    }
+    .converter-loss-strip ul li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-2);
+    }
+    .converter-loss-strip ul li:last-child { margin-bottom: 0; }
+    .converter-loss-strip ul li::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 8px;
+      width: 5px;
+      height: 5px;
+      background: var(--yellow);
+      border-radius: 50%;
+    }
+
+    .converter-footnote {
+      margin-top: var(--s-4);
+      padding: var(--s-4);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-style: normal !important;
+      font-size: 11px !important;
+    }
+    .converter-footnote ul li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 5px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-3);
+    }
+    .converter-footnote ul li:last-child { margin-bottom: 0; }
+    .converter-footnote ul li::before {
+      content: '·';
+      position: absolute;
+      left: 4px;
+      top: 0;
+      font-size: 16px;
+      line-height: 1;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .converter-footnote code {
+      font-size: 10px !important;
+    }
+
+    /* ---- DUBAI TABLE: clean professional layout ---- */
+    .dubai-header {
+      padding-bottom: var(--s-4) !important;
+      margin-bottom: var(--s-4) !important;
+    }
+    .dubai-title {
+      font-size: 13px !important;
+      letter-spacing: 0.08em !important;
+      gap: var(--s-3) !important;
+    }
+    .dubai-title-text { color: var(--aed-color); font-weight: 700; }
+    .dubai-title-arabic {
+      font-size: var(--text-base) !important;
+      opacity: 0.7 !important;
+    }
+    .dubai-updated {
+      font-size: 11px;
+      color: var(--text-3);
+      font-family: var(--mono);
+      letter-spacing: 0.04em;
+    }
+
+    .dxb-fx-strip {
+      margin-bottom: var(--s-4) !important;
+    }
+    .dxb-fx-label {
+      font-size: 10px !important;
+      color: var(--text-3) !important;
+    }
+    .dxb-fx-val {
+      font-size: var(--text-md) !important;
+      font-weight: 700 !important;
+    }
+
+    /* New Dubai comparison table */
+    .dxb-table {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: var(--s-4);
+    }
+    .dxb-table-head,
+    .dxb-table-row {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr 1.3fr 1.3fr;
+      align-items: center;
+    }
+    .dxb-table-head {
+      background: rgba(249,115,22,0.05);
+      border-bottom: 1px solid var(--border);
+    }
+    .dxb-th {
+      padding: 10px 14px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      font-family: var(--mono);
+      font-weight: 600;
+    }
+    .dxb-th-purity { color: var(--gold); }
+    .dxb-th-dubai  { color: var(--aed-color); }
+    .dxb-th-india  { color: var(--inr-color); }
+    .dxb-th-diff   { text-align: right; }
+    .dxb-flag {
+      font-size: 12px;
+      margin-right: 4px;
+    }
+
+    .dxb-table-row {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s ease;
+    }
+    .dxb-table-row:last-child { border-bottom: none; }
+    .dxb-table-row:hover { background: rgba(255,255,255,0.02); }
+
+    .dxb-td {
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: var(--text-base);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .dxb-td-purity {
+      color: var(--gold-bright);
+      font-weight: 700;
+      font-size: var(--text-md);
+    }
+    .dxb-purity-num {
+      color: var(--text-3);
+      font-size: 11px;
+      font-weight: 500;
+      margin-left: 4px;
+    }
+    .dxb-td-dubai  { color: var(--aed-color); }
+    .dxb-td-india  { color: var(--inr-color); }
+    .dxb-td-diff   {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .dxb-diff-arrow {
+      font-size: 13px;
+      margin-right: 2px;
+    }
+    .dxb-diff-pct {
+      font-size: 11px;
+      opacity: 0.7;
+      font-weight: 500;
+    }
+
+    /* Dubai note as bullet list */
+    .dubai-note {
+      display: flex !important;
+      flex-wrap: wrap;
+      gap: var(--s-4);
+      font-size: 11px !important;
+      line-height: 1.5 !important;
+      margin-top: var(--s-3) !important;
+      padding: var(--s-3) var(--s-4);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .dubai-note li {
+      position: relative;
+      padding-left: 14px;
+      color: var(--text-3) !important;
+      font-family: var(--mono);
+    }
+    .dubai-note li::before {
+      content: '·';
+      position: absolute;
+      left: 0;
+      top: -3px;
+      font-size: 16px;
+      color: var(--aed-color);
+      font-weight: 700;
+    }
+
+    /* ---- ETF: arrow legend footnote ---- */
+    .etf-legend {
+      display: flex;
+      gap: var(--s-4);
+      flex-wrap: wrap;
+      padding: 10px var(--s-4);
+      margin-top: var(--s-2);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 11px;
+      color: var(--text-3);
+      font-family: var(--mono);
+    }
+    .etf-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .etf-legend-arrow {
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .etf-legend-arrow.up { color: var(--orange); }
+    .etf-legend-arrow.down { color: var(--green); }
+
+    /* ---- MOBILE: stack converter row and dubai table ---- */
+    @media (max-width: 768px) {
+      .converter-row {
+        grid-template-columns: 1fr !important;
+        gap: var(--s-3) !important;
+      }
+      .converter-arrow {
+        transform: rotate(90deg);
+        padding: 6px 0;
+        font-size: 20px;
+      }
+      .converter-input { font-size: 18px !important; }
+      .purity-input { font-size: 16px !important; }
+      .converter-values {
+        grid-template-columns: 1fr !important;
+      }
+      .logo-rate, .logo-dot, .logo-gold-word { font-size: 26px; }
+      .logo-tagline { font-size: 10px; }
+
+      .dxb-table-head { display: none; }
+      .dxb-table-row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "purity diff"
+          "dubai  india";
+        padding: 10px;
+        gap: 4px;
+      }
+      .dxb-td { padding: 6px 8px; }
+      .dxb-td-purity { grid-area: purity; }
+      .dxb-td-diff   { grid-area: diff; }
+      .dxb-td-dubai  {
+        grid-area: dubai;
+        font-size: 12px;
+      }
+      .dxb-td-india  {
+        grid-area: india;
+        font-size: 12px;
+        text-align: right;
+      }
+      .dxb-td-dubai::before {
+        content: '🇦🇪 ';
+        opacity: 0.7;
+      }
+      .dxb-td-india::before {
+        content: '🇮🇳 ';
+        opacity: 0.7;
+      }
+
+      .dubai-note { gap: 4px var(--s-3); padding: var(--s-2) var(--s-3); }
+      .dubai-note li { font-size: 10px !important; }
+
+      .converter-loss-strip ul li { font-size: 11px; }
+      .converter-footnote ul li { font-size: 10px; }
+    }
+
+    @media (max-width: 480px) {
+      .logo-rate, .logo-dot, .logo-gold-word { font-size: 24px; }
+      .converter-input { font-size: 16px !important; padding: 10px 12px !important; }
+      .purity-input { font-size: 14px !important; padding: 10px 12px !important; }
+      .converter-result-inline .converter-result-amount { font-size: 26px; }
+      .converter-value-amount { font-size: 16px !important; }
+      .buyback-pct-chip { padding: 3px 10px !important; }
+      .buyback-pct-chip input { width: 32px !important; font-size: 12px !important; }
+      .dxb-td-purity { font-size: 13px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1897,10 +2416,15 @@
 
       <div class="ad-inline"></div>
 
-      <div class="section-title" id="etfsection">Gold ETFs <span class="section-title-sub">· Live NAV &amp; ₹/gram equivalent</span></div>
+      <div class="section-title" id="etfsection">Gold ETFs <span class="section-title-sub">· Live NAV · best tracking shown first</span></div>
       <div class="etf-section-wrap">
         <div id="etfGrid">
           <div style="grid-column:1/-1;text-align:center;padding:var(--s-5);font-family:var(--mono);font-size:12px;color:var(--text-4);animation:blink 1.5s infinite">loading ETF prices…</div>
+        </div>
+        <div class="etf-legend">
+          <span class="etf-legend-item"><strong>Best Buy</strong> · lowest tracking deviation from gold spot</span>
+          <span class="etf-legend-item"><span class="etf-legend-arrow down">▼</span> trading at a discount to gold</span>
+          <span class="etf-legend-item"><span class="etf-legend-arrow up">▲</span> trading at a premium over gold</span>
         </div>
         <div id="etfHistPanel" style="background:var(--bg-1);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:none;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap;">
@@ -1925,9 +2449,14 @@
 
       <div class="dubai-card" id="dubai-section" style="margin-top:var(--s-7)">
         <div class="dubai-header">
-          <div class="dubai-title">Dubai · India Rate Comparison <span class="dubai-title-arabic">اسعار الذهب · دبي</span></div>
-          <div style="font-size:11px;color:var(--text-4);font-family:var(--mono);" id="dubaiUpdated">--</div>
+          <div class="dubai-title">
+            <span class="dubai-title-text">Dubai · India Rate Comparison</span>
+            <span class="dubai-title-arabic">اسعار الذهب · دبي</span>
+          </div>
+          <div class="dubai-updated" id="dubaiUpdated">--</div>
         </div>
+
+        <!-- FX strip — 4 key rates -->
         <div class="dxb-fx-strip">
           <div class="dxb-fx-item">
             <div class="dxb-fx-label">USD / INR</div>
@@ -1946,42 +2475,47 @@
             <div class="dxb-fx-val" id="dxb-24k-aed" style="color:var(--aed-color)">--</div>
           </div>
         </div>
-        <div class="dxb-rows">
-          <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">24K · 999</span>
-            <div style="display:flex;align-items:center;gap:var(--s-3);justify-content:center;width:100%;">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:12px;">🇦🇪</span><span class="dxb-ol-val dubai" id="dxb-24k-inr">--</span></div>
-              <span style="color:var(--text-4);font-size:11px;">·</span>
-              <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:12px;">🇮🇳</span><span class="dxb-ol-val" id="ds-india" style="color:var(--inr-color);">--</span></div>
-            </div>
-            <span class="dxb-ol-verdict" id="dxb-verdict-24">--</span>
+
+        <!-- Comparison table -->
+        <div class="dxb-table">
+          <div class="dxb-table-head">
+            <div class="dxb-th dxb-th-purity">Purity</div>
+            <div class="dxb-th dxb-th-dubai"><span class="dxb-flag">🇦🇪</span> Dubai</div>
+            <div class="dxb-th dxb-th-india"><span class="dxb-flag">🇮🇳</span> India</div>
+            <div class="dxb-th dxb-th-diff">Difference</div>
           </div>
-          <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">22K · 916</span>
-            <div style="display:flex;align-items:center;gap:var(--s-3);justify-content:center;width:100%;">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:12px;">🇦🇪</span><span class="dxb-ol-val dubai" id="dxb-22k-inr">--</span></div>
-              <span style="color:var(--text-4);font-size:11px;">·</span>
-              <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:12px;">🇮🇳</span><span class="dxb-ol-val" id="ds-india-22" style="color:var(--inr-color);">--</span></div>
-            </div>
-            <span class="dxb-ol-verdict" id="dxb-verdict-22">--</span>
+          <div class="dxb-table-row">
+            <div class="dxb-td dxb-td-purity">24K <span class="dxb-purity-num">999</span></div>
+            <div class="dxb-td dxb-td-dubai" id="dxb-24k-inr">--</div>
+            <div class="dxb-td dxb-td-india" id="ds-india">--</div>
+            <div class="dxb-td dxb-td-diff" id="dxb-verdict-24">--</div>
           </div>
-          <div class="dxb-oneliner">
-            <span class="dxb-ol-purity">18K · 750</span>
-            <div style="display:flex;align-items:center;gap:var(--s-3);justify-content:center;width:100%;">
-              <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:12px;">🇦🇪</span><span class="dxb-ol-val dubai" id="dxb-18k-inr">--</span></div>
-              <span style="color:var(--text-4);font-size:11px;">·</span>
-              <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:12px;">🇮🇳</span><span class="dxb-ol-val" id="ds-india-18" style="color:var(--inr-color);">--</span></div>
-            </div>
-            <span class="dxb-ol-verdict" id="dxb-verdict-18">--</span>
+          <div class="dxb-table-row">
+            <div class="dxb-td dxb-td-purity">22K <span class="dxb-purity-num">916</span></div>
+            <div class="dxb-td dxb-td-dubai" id="dxb-22k-inr">--</div>
+            <div class="dxb-td dxb-td-india" id="ds-india-22">--</div>
+            <div class="dxb-td dxb-td-diff" id="dxb-verdict-22">--</div>
+          </div>
+          <div class="dxb-table-row">
+            <div class="dxb-td dxb-td-purity">18K <span class="dxb-purity-num">750</span></div>
+            <div class="dxb-td dxb-td-dubai" id="dxb-18k-inr">--</div>
+            <div class="dxb-td dxb-td-india" id="ds-india-18">--</div>
+            <div class="dxb-td dxb-td-diff" id="dxb-verdict-18">--</div>
           </div>
         </div>
+
         <span id="dxb-22k-aed" style="display:none"></span>
         <span id="dxb-18k-aed" style="display:none"></span>
         <span id="dxb-aed-inr" style="display:none"></span>
         <span id="ds-spread" style="display:none"></span>
         <span id="ds-spreadpct" style="display:none"></span>
         <span id="dxb-verdict" style="display:none"></span>
-        <div class="dubai-note">Dubai: no import duty · India: 15% customs + 3% GST · Personal allowance: 20g (women) / 10g (men) duty-free</div>
+
+        <ul class="dubai-note">
+          <li>Dubai: no import duty</li>
+          <li>India: 15% customs + 3% GST</li>
+          <li>Personal allowance: 20g (women) / 10g (men) duty-free</li>
+        </ul>
       </div>
 
       <div class="ad-inline"></div>
@@ -1998,16 +2532,17 @@
         </div>
 
         <div class="converter-swap-row">
-          <label>
+          <label class="converter-swap-label">
             <input type="checkbox" id="convSwapToggle" onchange="toggleSwapMode()" />
             <span class="converter-swap-toggle"></span>
-            <span id="convSwapLabel">Cross-metal swap (gold ↔ silver)</span>
+            <span class="converter-swap-text" id="convSwapLabel">Cross-metal swap (gold ↔ silver)</span>
           </label>
         </div>
 
         <div class="converter-row">
+          <!-- LEFT: input -->
           <div class="converter-panel">
-            <div class="converter-panel-label" id="convInputLabel">I have</div>
+            <div class="converter-panel-label" id="convInputLabel">Convert</div>
             <div class="converter-input-row">
               <div class="converter-input-group converter-input-weight">
                 <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
@@ -2018,35 +2553,35 @@
                 <span class="purity-suffix">/ 1000</span>
               </div>
             </div>
-            <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
             <div class="purity-presets" id="convInputPresets"></div>
+            <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
           </div>
 
           <div class="converter-arrow">→</div>
 
-          <div class="converter-panel">
+          <!-- RIGHT: output (includes result) -->
+          <div class="converter-panel converter-panel-output">
             <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
             <div class="purity-input-group">
               <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
               <span class="purity-suffix">/ 1000</span>
             </div>
-            <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
             <div class="purity-presets" id="convOutputPresets"></div>
-          </div>
-        </div>
-
-        <!-- Compact result strip -->
-        <div class="converter-result">
-          <div class="converter-result-row">
-            <div class="converter-result-label">Equivalent weight</div>
-            <div class="converter-result-amount" id="convOutputWeight">--</div>
-            <div class="converter-result-sub" id="convOutputSub">grams of equivalent purity</div>
+            <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
+            <!-- Result lives inside the right panel -->
+            <div class="converter-result-inline">
+              <div class="converter-result-label">Equivalent weight</div>
+              <div class="converter-result-amount" id="convOutputWeight">--</div>
+              <div class="converter-result-sub" id="convOutputSub">grams of equivalent purity</div>
+            </div>
           </div>
         </div>
 
         <div class="converter-values">
           <div class="converter-value-card theoretical">
-            <div class="converter-value-label">Theoretical Value · IBJA spot</div>
+            <div class="converter-value-label">
+              <span class="converter-value-label-text">Theoretical Value · IBJA spot</span>
+            </div>
             <div class="converter-value-amount" id="convTheoretical">--</div>
             <div class="converter-value-note" id="convTheoreticalNote">pure metal at today's spot rate</div>
           </div>
@@ -2062,18 +2597,30 @@
             <div class="converter-value-note" id="convBuybackNote">edit % to match jeweller's quote</div>
           </div>
           <div class="converter-value-card replacement">
-            <div class="converter-value-label">Replacement Cost · new</div>
+            <div class="converter-value-label">
+              <span class="converter-value-label-text">Replacement Cost · new</span>
+            </div>
             <div class="converter-value-amount" id="convReplacement">--</div>
             <div class="converter-value-note" id="convReplacementNote">new gold + 10% making + GST</div>
           </div>
         </div>
 
         <div class="converter-loss-strip" id="convLossStrip" style="display:none;">
-          ⚠️ At a <strong id="convLossPctDisplay">--</strong>% deduction, you'd lose <strong id="convLossAmount">--</strong> selling to this jeweller. Replacing the same weight as new jewellery costs <strong id="convExchangeGap">--</strong> more than the buy-back. <strong>MMTC-PAMP</strong> and refineries typically offer 2-4% deduction vs 6-8% at local jewellers.
+          <ul>
+            <li>At <strong id="convLossPctDisplay">--</strong>% deduction, you'd lose <strong id="convLossAmount">--</strong> selling to this jeweller.</li>
+            <li>Replacing as new jewellery costs <strong id="convExchangeGap">--</strong> more than the buy-back.</li>
+            <li><strong>MMTC-PAMP</strong> and refineries typically offer 2-4% deduction vs 6-8% at local jewellers.</li>
+          </ul>
         </div>
 
         <div class="converter-footnote">
-          Pure metal content: <code>weight × (purity ÷ 1000)</code>. Theoretical value uses live IBJA 24K (999) rate. Edit the buyback % to match the actual deduction your jeweller quotes. Replacement cost adds 10% making charges + 3% GST on new jewellery (varies by design). Cross-metal swap uses live gold:silver value ratio.
+          <ul>
+            <li>Pure metal content = <code>weight × (purity ÷ 1000)</code></li>
+            <li>Theoretical value uses live IBJA 24K (999) rate</li>
+            <li>Edit the buyback % to match your jeweller's actual quote</li>
+            <li>Replacement cost adds 10% making charges + 3% GST (varies by design)</li>
+            <li>Cross-metal swap uses live gold:silver value ratio</li>
+          </ul>
         </div>
       </div>
 
@@ -2811,12 +3358,11 @@
         const diff = indiaInr - dubaiInr;
         const diffAbs = Math.abs(diff);
         const pct = (diffAbs / indiaInr * 100).toFixed(1);
-        const indiaMore = diff >= 0;
-        const arrow = indiaMore ? "▲" : "▼";
-        const label = indiaMore ? "India" : "Dubai";
-        const color = indiaMore ? "var(--red)" : "var(--green)";
+        const dubaiCheaper = diff > 0;
+        const arrow = dubaiCheaper ? "▼" : "▲";
+        const color = dubaiCheaper ? "var(--green)" : "var(--red)";
         el.style.color = color;
-        el.innerHTML = `<span style="font-size:13px;line-height:1">${arrow}</span>&nbsp;${label}&nbsp;${fmt(diffAbs)}/g&nbsp;<span style="opacity:0.65;font-size:10px">(${pct}%)</span>`;
+        el.innerHTML = `<span class="dxb-diff-arrow">${arrow}</span> ${fmt(diffAbs)} <span class="dxb-diff-pct">(${pct}%)</span>`;
       }
       renderVerdict("dxb-verdict-24", dubai24Inr, india24);
       renderVerdict("dxb-verdict-22", dubai22Inr, ibja22);
