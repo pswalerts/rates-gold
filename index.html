@@ -1633,6 +1633,138 @@
         radial-gradient(ellipse 80% 50% at 50% 0%, rgba(168,184,200,0.07) 0%, transparent 60%);
     }
 
+    /* =========================================================
+       CONVERTER v3 — COMPACT LAYOUT
+       Weight + purity on same row, tighter spacing, slim result
+       ========================================================= */
+    .converter-card {
+      padding: var(--s-4);
+    }
+    .converter-row {
+      grid-template-columns: 1fr 32px 1fr;
+      gap: var(--s-3);
+      margin-bottom: var(--s-3);
+    }
+    .converter-panel {
+      padding: var(--s-3) var(--s-4);
+      gap: var(--s-2);
+    }
+    .converter-panel-label {
+      margin-bottom: 2px;
+    }
+    .converter-input-row {
+      display: flex;
+      gap: var(--s-2);
+      align-items: stretch;
+    }
+    .converter-input-row > * { flex: 1; min-width: 0; }
+    .converter-input-row .converter-input-weight { flex: 1.3; }
+    .converter-input-row .converter-input-purity { flex: 1; }
+    .converter-input {
+      font-size: var(--text-md);
+      padding: 8px 12px;
+    }
+    .purity-input {
+      font-size: var(--text-base);
+      padding: 8px 12px;
+    }
+    .converter-unit {
+      padding: 0 10px;
+      font-size: 11px;
+    }
+    .purity-suffix {
+      padding: 0 8px;
+      font-size: 10px;
+    }
+    .purity-helper {
+      font-size: 10px;
+      margin-top: 2px;
+      letter-spacing: 0.04em;
+    }
+    .purity-presets {
+      gap: 3px;
+      margin-top: 2px;
+    }
+    .purity-preset {
+      font-size: 9px;
+      padding: 2px 7px;
+      letter-spacing: 0.03em;
+    }
+
+    /* Slim result strip — banner style, not a big panel */
+    .converter-result {
+      margin: 0 0 var(--s-4);
+      padding: var(--s-3) var(--s-4);
+      background: linear-gradient(90deg, rgba(212,168,83,0.10) 0%, rgba(212,168,83,0.04) 50%, rgba(212,168,83,0.10) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .converter-result::before { display: none; }
+    .converter-result-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+    }
+    .converter-result-label {
+      font-size: 10px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      font-family: var(--mono);
+      font-weight: 500;
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
+    .converter-result-amount {
+      font-size: clamp(22px, 3.5vw, 30px);
+      line-height: 1.1;
+      margin: 0;
+    }
+    .converter-result-sub {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 0;
+      white-space: nowrap;
+    }
+    body.silver-mode .converter-result,
+    .converter-card[data-target-metal="silver"] .converter-result {
+      background: linear-gradient(90deg, rgba(168,184,200,0.10) 0%, rgba(168,184,200,0.04) 50%, rgba(168,184,200,0.10) 100%);
+      border-color: rgba(168,184,200,0.25);
+    }
+
+    /* Tighter value cards */
+    .converter-values {
+      gap: var(--s-2);
+    }
+    .converter-value-card {
+      padding: var(--s-3) var(--s-4);
+    }
+    .converter-value-amount {
+      font-size: var(--text-lg);
+    }
+
+    /* Header tighter */
+    .converter-header {
+      padding-bottom: var(--s-3);
+      margin-bottom: var(--s-3);
+    }
+    .converter-swap-row {
+      margin-bottom: var(--s-3);
+      font-size: 10px;
+    }
+
+    /* Mobile: stack inputs vertically */
+    @media (max-width: 600px) {
+      .converter-input-row { flex-direction: column; gap: 6px; }
+      .converter-input-row > * { flex: 1 1 auto; }
+      .converter-result-row { flex-direction: column; gap: 4px; }
+      .converter-result-amount { font-size: 24px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1876,40 +2008,40 @@
         <div class="converter-row">
           <div class="converter-panel">
             <div class="converter-panel-label" id="convInputLabel">I have</div>
-            <div class="converter-input-group">
-              <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
-              <div class="converter-unit">g</div>
-            </div>
-            <div>
-              <div class="purity-input-group">
+            <div class="converter-input-row">
+              <div class="converter-input-group converter-input-weight">
+                <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
+                <div class="converter-unit">g</div>
+              </div>
+              <div class="purity-input-group converter-input-purity">
                 <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
                 <span class="purity-suffix">/ 1000</span>
               </div>
-              <div class="purity-presets" id="convInputPresets"></div>
-              <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
             </div>
+            <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
+            <div class="purity-presets" id="convInputPresets"></div>
           </div>
 
           <div class="converter-arrow">→</div>
 
           <div class="converter-panel">
             <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
-            <div>
-              <div class="purity-input-group">
-                <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
-                <span class="purity-suffix">/ 1000</span>
-              </div>
-              <div class="purity-presets" id="convOutputPresets"></div>
-              <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
+            <div class="purity-input-group">
+              <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
+              <span class="purity-suffix">/ 1000</span>
             </div>
+            <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
+            <div class="purity-presets" id="convOutputPresets"></div>
           </div>
         </div>
 
-        <!-- Result as the centerpiece -->
+        <!-- Compact result strip -->
         <div class="converter-result">
-          <div class="converter-result-label">Equivalent weight</div>
-          <div class="converter-result-amount" id="convOutputWeight">--</div>
-          <div class="converter-result-sub" id="convOutputSub">grams of equivalent purity</div>
+          <div class="converter-result-row">
+            <div class="converter-result-label">Equivalent weight</div>
+            <div class="converter-result-amount" id="convOutputWeight">--</div>
+            <div class="converter-result-sub" id="convOutputSub">grams of equivalent purity</div>
+          </div>
         </div>
 
         <div class="converter-values">
@@ -2832,18 +2964,16 @@
   // Preset purity chips (common values, but any number 1-999 is valid)
   const PURITY_PRESETS = {
     gold: [
-      { v: 999, lbl: "999 · 24K" },
-      { v: 916, lbl: "916 · 22K" },
-      { v: 875, lbl: "875 · 21K" },
-      { v: 750, lbl: "750 · 18K" },
-      { v: 585, lbl: "585 · 14K" },
-      { v: 375, lbl: "375 · 9K" },
+      { v: 999, lbl: "999" },
+      { v: 916, lbl: "916" },
+      { v: 750, lbl: "750" },
+      { v: 585, lbl: "585" },
+      { v: 375, lbl: "375" },
     ],
     silver: [
-      { v: 999, lbl: "999 · Fine" },
-      { v: 925, lbl: "925 · Sterling" },
-      { v: 900, lbl: "900 · Coin" },
-      { v: 800, lbl: "800 · European" },
+      { v: 999, lbl: "999" },
+      { v: 925, lbl: "925" },
+      { v: 900, lbl: "900" },
     ]
   };
 
