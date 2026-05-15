@@ -2449,6 +2449,381 @@
       }
     }
 
+    /* =========================================================
+       FINAL POLISH v3 — 3-col converter, aligned values,
+       making chip, history panel polish, dubai bottom strip
+       ========================================================= */
+
+    /* ---- DUBAI: kill the old top FX line + new bottom split ---- */
+    .dxb-fx-line { display: none !important; }
+
+    .dubai-footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--s-4);
+      align-items: stretch;
+      margin-top: var(--s-3);
+      padding: var(--s-3) var(--s-4);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .dubai-footer .dubai-note {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2) var(--s-4);
+      margin: 0;
+      padding: 0;
+      background: none;
+      border: none;
+      list-style: none;
+      align-self: center;
+    }
+    .dubai-footer .dubai-note li {
+      position: relative;
+      padding-left: 14px;
+      color: var(--text-3);
+      font-size: 11px !important;
+      font-family: var(--mono);
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+    }
+    .dubai-footer .dubai-note li::before {
+      content: '·';
+      position: absolute;
+      left: 0; top: -3px;
+      font-size: 16px;
+      color: var(--aed-color);
+      font-weight: 700;
+    }
+    .dubai-fx-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-4);
+      align-items: center;
+      padding-left: var(--s-4);
+      border-left: 1px solid var(--border);
+    }
+    .dubai-fx-inline .dxb-fx-pair {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-family: var(--mono);
+    }
+    .dubai-fx-inline .dxb-fx-k {
+      color: var(--text-3);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .dubai-fx-inline .dxb-fx-v {
+      font-size: 12px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---- DUBAI table: 5 cols with AED first ---- */
+    .dxb-table-head,
+    .dxb-table-row {
+      grid-template-columns: 0.7fr 1.1fr 1.2fr 1.2fr 1.3fr !important;
+    }
+    .dxb-th-aed { color: var(--aed-color); opacity: 0.85; }
+    .dxb-td-aed {
+      color: var(--aed-color);
+      opacity: 0.85;
+      font-size: var(--text-base);
+      font-weight: 600;
+    }
+
+    /* ---- CONVERTER: 3-column layout ---- */
+    .converter-row-3col {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+      gap: var(--s-3) !important;
+      align-items: stretch !important;
+    }
+    .converter-row-3col .converter-arrow,
+    .converter-arrow { display: none !important; }
+
+    .converter-input-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+    }
+    .converter-input-stack .converter-input-group,
+    .converter-input-stack .purity-input-group {
+      width: 100%;
+    }
+    .converter-input-stack .converter-input,
+    .converter-input-stack .purity-input {
+      width: 100%;
+    }
+
+    .converter-panel-result {
+      background: linear-gradient(135deg, rgba(212,168,83,0.10) 0%, rgba(212,168,83,0.02) 100%);
+      border-color: var(--border-gold);
+      justify-content: center !important;
+      text-align: center;
+    }
+    body.silver-mode .converter-panel-result,
+    .converter-card[data-target-metal="silver"] .converter-panel-result {
+      background: linear-gradient(135deg, rgba(168,184,200,0.10) 0%, rgba(168,184,200,0.02) 100%);
+      border-color: rgba(168,184,200,0.25);
+    }
+    .converter-result-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s-2);
+      flex: 1;
+      padding: var(--s-4) 0;
+    }
+    .converter-panel-result .converter-result-amount {
+      font-family: var(--mono);
+      font-size: clamp(28px, 4vw, 38px);
+      font-weight: 700;
+      color: var(--gold-bright);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    body.silver-mode .converter-panel-result .converter-result-amount,
+    .converter-card[data-target-metal="silver"] .converter-panel-result .converter-result-amount {
+      color: var(--silver-bright);
+    }
+    .converter-panel-result .converter-result-sub {
+      font-size: 11px;
+      color: var(--text-3);
+      font-family: var(--mono);
+      letter-spacing: 0.04em;
+    }
+    /* Hide legacy result containers */
+    .converter-result,
+    .converter-result-inline,
+    .converter-result-top { display: none !important; }
+    .converter-output-header,
+    .converter-output-controls { display: contents; }
+
+    /* ---- VALUE CARDS: forced uniform alignment ---- */
+    .converter-values {
+      grid-template-columns: 1fr 1fr 1fr !important;
+      gap: var(--s-3) !important;
+      align-items: stretch !important;
+    }
+    .converter-value-card {
+      display: grid !important;
+      grid-template-rows: auto 1fr auto;
+      padding: var(--s-4) !important;
+      min-height: 130px;
+    }
+    .converter-value-label {
+      min-height: 32px !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: var(--s-2) !important;
+      flex-wrap: nowrap;
+    }
+    .converter-value-label-text {
+      flex: 0 1 auto;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--text-3);
+      line-height: 1.3;
+    }
+    .converter-value-amount {
+      align-self: end;
+      font-size: var(--text-lg) !important;
+      font-weight: 700 !important;
+      line-height: 1.2;
+      margin-top: 0 !important;
+    }
+    .converter-value-note {
+      align-self: end;
+      margin-top: 6px !important;
+      min-height: 14px;
+      font-size: 10px !important;
+      line-height: 1.4;
+    }
+
+    /* ---- MAKING % CHIP (replacement card) ---- */
+    .making-pct-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(249,115,22,0.12);
+      border: 1px solid rgba(249,115,22,0.35);
+      border-radius: 999px;
+      padding: 4px 12px;
+      cursor: text;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      font-family: var(--mono);
+      flex-shrink: 0;
+    }
+    .making-pct-chip:hover,
+    .making-pct-chip:focus-within {
+      background: rgba(249,115,22,0.18);
+      border-color: rgba(249,115,22,0.55);
+    }
+    .making-pct-chip input {
+      width: 38px;
+      background: transparent;
+      border: none;
+      color: var(--orange);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: right;
+      padding: 0;
+      outline: none;
+      font-variant-numeric: tabular-nums;
+    }
+    .making-pct-chip input::-webkit-outer-spin-button,
+    .making-pct-chip input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .making-pct-chip span {
+      color: var(--orange);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Make label row taller to accommodate chips on all cards */
+    .converter-value-card .converter-value-label {
+      min-height: 36px !important;
+    }
+
+    /* ---- HISTORY PANEL: match digital/physical card style ---- */
+    .hero-hist-panel {
+      background: var(--bg-1);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-hist-panel::before {
+      content: '';
+      position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+      opacity: 0.5;
+    }
+    .hero-hist-tabs {
+      padding: 6px var(--s-3);
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.015);
+      align-items: center;
+    }
+    .hero-hist-tab {
+      padding: 8px 14px !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.06em !important;
+      border-radius: 6px;
+      border: 1px solid transparent !important;
+      border-bottom-color: transparent !important;
+      transition: all 0.15s ease;
+    }
+    .hero-hist-tab:hover {
+      background: rgba(212,168,83,0.06);
+      color: var(--text-1);
+    }
+    .hero-hist-tab.active {
+      background: rgba(212,168,83,0.10) !important;
+      border-color: var(--border-gold) !important;
+      color: var(--gold-bright) !important;
+      border-bottom-color: var(--border-gold) !important;
+    }
+    body.silver-mode .hero-hist-tab.active {
+      background: rgba(168,184,200,0.10) !important;
+      border-color: rgba(168,184,200,0.25) !important;
+      color: var(--silver-bright) !important;
+    }
+    .hist-toggle-wrap {
+      background: var(--bg-2) !important;
+      padding: 3px !important;
+      margin-left: auto !important;
+    }
+    .hist-toggle-btn {
+      padding: 5px 12px !important;
+      font-size: 11px !important;
+    }
+    #histModeLabel {
+      padding: 10px var(--s-4) 0 !important;
+      font-size: 11px !important;
+      letter-spacing: 0.06em !important;
+    }
+    .hero-hist-body {
+      gap: 1px !important;
+      background: var(--border);
+      padding: 1px;
+    }
+    .hero-hist-cell {
+      background: var(--bg-1);
+      padding: var(--s-4) !important;
+      border: none !important;
+    }
+    .hero-hist-clabel {
+      font-size: 10px !important;
+      letter-spacing: 0.08em !important;
+      color: var(--text-3) !important;
+      margin-bottom: 8px !important;
+      font-weight: 600 !important;
+    }
+    .hero-hist-cval {
+      font-size: var(--text-lg) !important;
+      font-weight: 700 !important;
+      letter-spacing: -0.02em !important;
+      line-height: 1.1 !important;
+    }
+    .hero-hist-cchg {
+      font-size: 12px !important;
+      margin-top: 6px !important;
+      font-weight: 600 !important;
+    }
+
+    /* ---- MOBILE: stack 3-col converter, smaller Dubai footer ---- */
+    @media (max-width: 768px) {
+      .converter-row-3col {
+        grid-template-columns: 1fr !important;
+        gap: var(--s-2) !important;
+      }
+      .converter-panel-result .converter-result-amount {
+        font-size: 28px;
+      }
+      .converter-input-stack {
+        flex-direction: row;
+        gap: var(--s-2);
+      }
+      .converter-input-stack .converter-input-group { flex: 1.3; }
+      .converter-input-stack .purity-input-group { flex: 1; }
+
+      .dubai-footer {
+        grid-template-columns: 1fr;
+        gap: var(--s-3);
+      }
+      .dubai-fx-inline {
+        padding-left: 0;
+        border-left: none;
+        padding-top: var(--s-3);
+        border-top: 1px solid var(--border);
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .converter-input-stack { flex-direction: column; }
+      .converter-panel-result .converter-result-amount { font-size: 24px; }
+      .making-pct-chip { padding: 3px 10px; }
+      .making-pct-chip input { width: 32px; font-size: 12px; }
+    }
+
   </style>
 </head>
 <body>
@@ -2621,42 +2996,35 @@
           <div class="dubai-updated" id="dubaiUpdated">--</div>
         </div>
 
-        <!-- Compact FX line -->
-        <div class="dxb-fx-line">
-          <span class="dxb-fx-pair"><span class="dxb-fx-k">USD/INR</span> <span id="dxb-usd-inr" class="dxb-fx-v" style="color:var(--usd-color)">--</span></span>
-          <span class="dxb-fx-pair"><span class="dxb-fx-k">AED/INR</span> <span id="dxb-aed-inr-strip" class="dxb-fx-v" style="color:var(--aed-color)">--</span></span>
-          <span class="dxb-fx-pair"><span class="dxb-fx-k">XAU/USD</span> <span id="dxb-xau-usd" class="dxb-fx-v" style="color:var(--gold-bright)">--</span></span>
-        </div>
-
-        <!-- 4-column comparison table -->
+        <!-- 5-column comparison table: Purity | Dubai AED | Dubai INR | India INR | Saving -->
         <div class="dxb-table">
           <div class="dxb-table-head">
             <div class="dxb-th dxb-th-purity">Purity</div>
+            <div class="dxb-th dxb-th-aed"><span class="dxb-flag">🇦🇪</span> Dubai · AED</div>
             <div class="dxb-th dxb-th-dubai"><span class="dxb-flag">🇦🇪</span> Dubai · INR</div>
             <div class="dxb-th dxb-th-india"><span class="dxb-flag">🇮🇳</span> India · INR</div>
-            <div class="dxb-th dxb-th-aed">Dubai · AED</div>
             <div class="dxb-th dxb-th-diff">Saving</div>
           </div>
           <div class="dxb-table-row">
             <div class="dxb-td dxb-td-purity">24K <span class="dxb-purity-num">999</span></div>
+            <div class="dxb-td dxb-td-aed"   id="dxb-24k-aed">--</div>
             <div class="dxb-td dxb-td-dubai" id="dxb-24k-inr">--</div>
             <div class="dxb-td dxb-td-india" id="ds-india">--</div>
-            <div class="dxb-td dxb-td-aed"  id="dxb-24k-aed">--</div>
-            <div class="dxb-td dxb-td-diff" id="dxb-verdict-24">--</div>
+            <div class="dxb-td dxb-td-diff"  id="dxb-verdict-24">--</div>
           </div>
           <div class="dxb-table-row">
             <div class="dxb-td dxb-td-purity">22K <span class="dxb-purity-num">916</span></div>
+            <div class="dxb-td dxb-td-aed"   id="dxb-22k-aed">--</div>
             <div class="dxb-td dxb-td-dubai" id="dxb-22k-inr">--</div>
             <div class="dxb-td dxb-td-india" id="ds-india-22">--</div>
-            <div class="dxb-td dxb-td-aed"  id="dxb-22k-aed">--</div>
-            <div class="dxb-td dxb-td-diff" id="dxb-verdict-22">--</div>
+            <div class="dxb-td dxb-td-diff"  id="dxb-verdict-22">--</div>
           </div>
           <div class="dxb-table-row">
             <div class="dxb-td dxb-td-purity">18K <span class="dxb-purity-num">750</span></div>
+            <div class="dxb-td dxb-td-aed"   id="dxb-18k-aed">--</div>
             <div class="dxb-td dxb-td-dubai" id="dxb-18k-inr">--</div>
             <div class="dxb-td dxb-td-india" id="ds-india-18">--</div>
-            <div class="dxb-td dxb-td-aed"  id="dxb-18k-aed">--</div>
-            <div class="dxb-td dxb-td-diff" id="dxb-verdict-18">--</div>
+            <div class="dxb-td dxb-td-diff"  id="dxb-verdict-18">--</div>
           </div>
         </div>
 
@@ -2665,11 +3033,19 @@
         <span id="ds-spreadpct" style="display:none"></span>
         <span id="dxb-verdict" style="display:none"></span>
 
-        <ul class="dubai-note">
-          <li>Dubai: no import duty</li>
-          <li>India: 15% customs + 3% GST</li>
-          <li>Personal allowance: 20g (women) / 10g (men) duty-free</li>
-        </ul>
+        <!-- Footer strip: duty info on left, FX rates on right -->
+        <div class="dubai-footer">
+          <ul class="dubai-note">
+            <li>Dubai: no import duty</li>
+            <li>India: 15% customs + 3% GST</li>
+            <li>Personal allowance: 20g (women) / 10g (men) duty-free</li>
+          </ul>
+          <div class="dubai-fx-inline">
+            <span class="dxb-fx-pair"><span class="dxb-fx-k">USD/INR</span> <span id="dxb-usd-inr" class="dxb-fx-v" style="color:var(--usd-color)">--</span></span>
+            <span class="dxb-fx-pair"><span class="dxb-fx-k">AED/INR</span> <span id="dxb-aed-inr-strip" class="dxb-fx-v" style="color:var(--aed-color)">--</span></span>
+            <span class="dxb-fx-pair"><span class="dxb-fx-k">XAU/USD</span> <span id="dxb-xau-usd" class="dxb-fx-v" style="color:var(--gold-bright)">--</span></span>
+          </div>
+        </div>
       </div>
 
       <div class="ad-inline"></div>
@@ -2693,16 +3069,16 @@
           </label>
         </div>
 
-        <div class="converter-row">
-          <!-- LEFT: input -->
+        <div class="converter-row converter-row-3col">
+          <!-- COL 1: CONVERT (weight + input purity) -->
           <div class="converter-panel">
             <div class="converter-panel-label" id="convInputLabel">Convert</div>
-            <div class="converter-input-row">
-              <div class="converter-input-group converter-input-weight">
+            <div class="converter-input-stack">
+              <div class="converter-input-group">
                 <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
                 <div class="converter-unit">g</div>
               </div>
-              <div class="purity-input-group converter-input-purity">
+              <div class="purity-input-group">
                 <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
                 <span class="purity-suffix">/ 1000</span>
               </div>
@@ -2711,24 +3087,25 @@
             <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
           </div>
 
-          <div class="converter-arrow">→</div>
-
-          <!-- RIGHT: output — result featured prominently, then purity controls -->
-          <div class="converter-panel converter-panel-output">
-            <div class="converter-output-header">
-              <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
-              <div class="converter-result-top">
-                <div class="converter-result-amount" id="convOutputWeight">--</div>
-                <div class="converter-result-sub" id="convOutputSub">grams equivalent</div>
-              </div>
-            </div>
-            <div class="converter-output-controls">
+          <!-- COL 2: EQUIVALENT (target purity) -->
+          <div class="converter-panel">
+            <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
+            <div class="converter-input-stack">
               <div class="purity-input-group">
                 <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
                 <span class="purity-suffix">/ 1000</span>
               </div>
-              <div class="purity-presets" id="convOutputPresets"></div>
-              <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
+            </div>
+            <div class="purity-presets" id="convOutputPresets"></div>
+            <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
+          </div>
+
+          <!-- COL 3: AMOUNT (the result) -->
+          <div class="converter-panel converter-panel-result">
+            <div class="converter-panel-label">Amount</div>
+            <div class="converter-result-block">
+              <div class="converter-result-amount" id="convOutputWeight">--</div>
+              <div class="converter-result-sub" id="convOutputSub">grams equivalent</div>
             </div>
           </div>
         </div>
@@ -2755,9 +3132,13 @@
           <div class="converter-value-card replacement">
             <div class="converter-value-label">
               <span class="converter-value-label-text">Replacement Cost · new</span>
+              <label class="making-pct-chip" for="convMakingPct">
+                <input type="number" id="convMakingPct" value="10" min="0" max="50" step="0.5" oninput="updateConverter()" />
+                <span>% making</span>
+              </label>
             </div>
             <div class="converter-value-amount" id="convReplacement">--</div>
-            <div class="converter-value-note" id="convReplacementNote">new gold + 10% making + GST</div>
+            <div class="converter-value-note" id="convReplacementNote">new gold + making + 3% GST</div>
           </div>
         </div>
 
@@ -3787,6 +4168,8 @@
     const outputPurity = parseInt(document.getElementById('convOutputPurity').value) || 0;
     const buybackPct   = parseFloat(document.getElementById('convBuybackPct').value) || 0;
     const buybackDeduction = Math.max(0, Math.min(50, buybackPct)) / 100;
+    const makingPct    = parseFloat(document.getElementById('convMakingPct').value) || 0;
+    const makingCharge = Math.max(0, Math.min(50, makingPct)) / 100;
 
     const inputMetal   = _convMetal;
     const outputMetal  = _convSwapMode ? (_convMetal === 'gold' ? 'silver' : 'gold') : _convMetal;
@@ -3838,7 +4221,7 @@
     if (inputRate > 0 && fineInput > 0) {
       const theoreticalValue = fineInput * inputRate;
       const buybackValue     = theoreticalValue * (1 - buybackDeduction);
-      const replacementValue = (weight * (inputPurity / 1000)) * inputRate * (1 + MAKING_CHARGE) * (1 + GST_RATE);
+      const replacementValue = (weight * (inputPurity / 1000)) * inputRate * (1 + makingCharge) * (1 + GST_RATE);
       const lossAmount       = theoreticalValue - buybackValue;
       const exchangeGap      = replacementValue - buybackValue;
       const rateLbl          = inputMetal === 'gold' ? 'IBJA 999' : 'India silver 999';
@@ -3850,7 +4233,7 @@
         ? `${fmt(theoreticalValue)} − ${buybackPct.toFixed(1)}% deduction`
         : `no deduction · full theoretical value`;
       replacementEl.textContent     = fmt(replacementValue);
-      replacementNoteEl.textContent = `same weight new + 10% making + 3% GST`;
+      replacementNoteEl.textContent = `new gold + ${makingPct.toFixed(1)}% making + 3% GST`;
 
       document.getElementById('convLossAmount').textContent     = fmt(lossAmount);
       document.getElementById('convLossPctDisplay').textContent = buybackPct.toFixed(1);
