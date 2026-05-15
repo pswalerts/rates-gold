@@ -2284,6 +2284,171 @@
       .dxb-td-purity { font-size: 13px; }
     }
 
+    /* =========================================================
+       FINAL POLISH v2 — Dubai 4-col table + Converter compact
+       ========================================================= */
+
+    /* ---- DUBAI: compact FX line replacing the strip ---- */
+    .dxb-fx-strip { display: none !important; }
+
+    .dxb-fx-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-4);
+      padding: 10px var(--s-4);
+      margin-bottom: var(--s-4);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+    .dxb-fx-pair {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .dxb-fx-k {
+      color: var(--text-3);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .dxb-fx-v {
+      font-size: 12px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---- DUBAI table: 5 columns with AED ---- */
+    .dxb-table-head,
+    .dxb-table-row {
+      grid-template-columns: 0.8fr 1.2fr 1.2fr 1fr 1.2fr !important;
+    }
+    .dxb-th-aed,
+    .dxb-td-aed {
+      text-align: right;
+    }
+    .dxb-th-aed {
+      color: var(--text-3);
+    }
+    .dxb-td-aed {
+      color: var(--aed-color);
+      opacity: 0.8;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .dxb-th-diff,
+    .dxb-td-diff {
+      text-align: right;
+    }
+
+    /* ---- CONVERTER: right panel result-on-top compact layout ---- */
+    .converter-panel-output {
+      gap: var(--s-4) !important;
+      justify-content: space-between;
+    }
+    .converter-output-header {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-3);
+    }
+    .converter-result-top {
+      background: linear-gradient(135deg, rgba(212,168,83,0.10) 0%, rgba(212,168,83,0.02) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 10px;
+      padding: var(--s-3) var(--s-4);
+      text-align: center;
+    }
+    body.silver-mode .converter-result-top,
+    .converter-card[data-target-metal="silver"] .converter-result-top {
+      background: linear-gradient(135deg, rgba(168,184,200,0.10) 0%, rgba(168,184,200,0.02) 100%);
+      border-color: rgba(168,184,200,0.25);
+    }
+    .converter-result-top .converter-result-amount {
+      font-family: var(--mono);
+      font-size: clamp(28px, 3.8vw, 36px);
+      font-weight: 700;
+      color: var(--gold-bright);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      display: block;
+    }
+    body.silver-mode .converter-result-top .converter-result-amount,
+    .converter-card[data-target-metal="silver"] .converter-result-top .converter-result-amount {
+      color: var(--silver-bright);
+    }
+    .converter-result-top .converter-result-sub {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 4px;
+      font-family: var(--mono);
+      letter-spacing: 0.04em;
+    }
+    .converter-output-controls {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+    }
+    /* Hide the old inline result element (legacy) */
+    .converter-result-inline { display: none; }
+
+    /* ---- HEIGHT MATCHING: left panel matches right ---- */
+    .converter-row {
+      align-items: stretch !important;
+    }
+    .converter-panel {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between;
+    }
+
+    /* ---- MOBILE: Dubai table collapse to 3-row card per purity ---- */
+    @media (max-width: 768px) {
+      .dxb-fx-line {
+        gap: var(--s-3);
+        padding: 8px var(--s-3);
+        font-size: 10px;
+      }
+      .dxb-fx-v { font-size: 11px; }
+
+      .dxb-table-head { display: none; }
+      .dxb-table-row {
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-areas:
+          "purity diff"
+          "dubai  india"
+          "aed    aed" !important;
+        padding: 10px;
+        gap: 4px;
+      }
+      .dxb-td { padding: 4px 8px; }
+      .dxb-td-purity { grid-area: purity; }
+      .dxb-td-diff   { grid-area: diff; text-align: right; }
+      .dxb-td-dubai  { grid-area: dubai; font-size: 12px; }
+      .dxb-td-india  { grid-area: india; font-size: 12px; text-align: right; }
+      .dxb-td-aed    {
+        grid-area: aed;
+        font-size: 10px;
+        text-align: left;
+        opacity: 0.6;
+        border-top: 1px dashed var(--border);
+        padding-top: 6px;
+        margin-top: 2px;
+      }
+      .dxb-td-aed::before {
+        content: 'Dubai AED: ';
+        color: var(--text-4);
+      }
+
+      .converter-result-top .converter-result-amount {
+        font-size: 26px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2456,56 +2621,45 @@
           <div class="dubai-updated" id="dubaiUpdated">--</div>
         </div>
 
-        <!-- FX strip — 4 key rates -->
-        <div class="dxb-fx-strip">
-          <div class="dxb-fx-item">
-            <div class="dxb-fx-label">USD / INR</div>
-            <div class="dxb-fx-val" id="dxb-usd-inr" style="color:var(--usd-color)">--</div>
-          </div>
-          <div class="dxb-fx-item">
-            <div class="dxb-fx-label">AED / INR</div>
-            <div class="dxb-fx-val" id="dxb-aed-inr-strip" style="color:var(--aed-color)">--</div>
-          </div>
-          <div class="dxb-fx-item">
-            <div class="dxb-fx-label">XAU / USD</div>
-            <div class="dxb-fx-val" id="dxb-xau-usd" style="color:var(--gold-bright)">--</div>
-          </div>
-          <div class="dxb-fx-item">
-            <div class="dxb-fx-label">Dubai 24K · AED/g</div>
-            <div class="dxb-fx-val" id="dxb-24k-aed" style="color:var(--aed-color)">--</div>
-          </div>
+        <!-- Compact FX line -->
+        <div class="dxb-fx-line">
+          <span class="dxb-fx-pair"><span class="dxb-fx-k">USD/INR</span> <span id="dxb-usd-inr" class="dxb-fx-v" style="color:var(--usd-color)">--</span></span>
+          <span class="dxb-fx-pair"><span class="dxb-fx-k">AED/INR</span> <span id="dxb-aed-inr-strip" class="dxb-fx-v" style="color:var(--aed-color)">--</span></span>
+          <span class="dxb-fx-pair"><span class="dxb-fx-k">XAU/USD</span> <span id="dxb-xau-usd" class="dxb-fx-v" style="color:var(--gold-bright)">--</span></span>
         </div>
 
-        <!-- Comparison table -->
+        <!-- 4-column comparison table -->
         <div class="dxb-table">
           <div class="dxb-table-head">
             <div class="dxb-th dxb-th-purity">Purity</div>
-            <div class="dxb-th dxb-th-dubai"><span class="dxb-flag">🇦🇪</span> Dubai</div>
-            <div class="dxb-th dxb-th-india"><span class="dxb-flag">🇮🇳</span> India</div>
-            <div class="dxb-th dxb-th-diff">Difference</div>
+            <div class="dxb-th dxb-th-dubai"><span class="dxb-flag">🇦🇪</span> Dubai · INR</div>
+            <div class="dxb-th dxb-th-india"><span class="dxb-flag">🇮🇳</span> India · INR</div>
+            <div class="dxb-th dxb-th-aed">Dubai · AED</div>
+            <div class="dxb-th dxb-th-diff">Saving</div>
           </div>
           <div class="dxb-table-row">
             <div class="dxb-td dxb-td-purity">24K <span class="dxb-purity-num">999</span></div>
             <div class="dxb-td dxb-td-dubai" id="dxb-24k-inr">--</div>
             <div class="dxb-td dxb-td-india" id="ds-india">--</div>
+            <div class="dxb-td dxb-td-aed"  id="dxb-24k-aed">--</div>
             <div class="dxb-td dxb-td-diff" id="dxb-verdict-24">--</div>
           </div>
           <div class="dxb-table-row">
             <div class="dxb-td dxb-td-purity">22K <span class="dxb-purity-num">916</span></div>
             <div class="dxb-td dxb-td-dubai" id="dxb-22k-inr">--</div>
             <div class="dxb-td dxb-td-india" id="ds-india-22">--</div>
+            <div class="dxb-td dxb-td-aed"  id="dxb-22k-aed">--</div>
             <div class="dxb-td dxb-td-diff" id="dxb-verdict-22">--</div>
           </div>
           <div class="dxb-table-row">
             <div class="dxb-td dxb-td-purity">18K <span class="dxb-purity-num">750</span></div>
             <div class="dxb-td dxb-td-dubai" id="dxb-18k-inr">--</div>
             <div class="dxb-td dxb-td-india" id="ds-india-18">--</div>
+            <div class="dxb-td dxb-td-aed"  id="dxb-18k-aed">--</div>
             <div class="dxb-td dxb-td-diff" id="dxb-verdict-18">--</div>
           </div>
         </div>
 
-        <span id="dxb-22k-aed" style="display:none"></span>
-        <span id="dxb-18k-aed" style="display:none"></span>
         <span id="dxb-aed-inr" style="display:none"></span>
         <span id="ds-spread" style="display:none"></span>
         <span id="ds-spreadpct" style="display:none"></span>
@@ -2559,20 +2713,22 @@
 
           <div class="converter-arrow">→</div>
 
-          <!-- RIGHT: output (includes result) -->
+          <!-- RIGHT: output — result featured prominently, then purity controls -->
           <div class="converter-panel converter-panel-output">
-            <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
-            <div class="purity-input-group">
-              <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
-              <span class="purity-suffix">/ 1000</span>
+            <div class="converter-output-header">
+              <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
+              <div class="converter-result-top">
+                <div class="converter-result-amount" id="convOutputWeight">--</div>
+                <div class="converter-result-sub" id="convOutputSub">grams equivalent</div>
+              </div>
             </div>
-            <div class="purity-presets" id="convOutputPresets"></div>
-            <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
-            <!-- Result lives inside the right panel -->
-            <div class="converter-result-inline">
-              <div class="converter-result-label">Equivalent weight</div>
-              <div class="converter-result-amount" id="convOutputWeight">--</div>
-              <div class="converter-result-sub" id="convOutputSub">grams of equivalent purity</div>
+            <div class="converter-output-controls">
+              <div class="purity-input-group">
+                <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
+                <span class="purity-suffix">/ 1000</span>
+              </div>
+              <div class="purity-presets" id="convOutputPresets"></div>
+              <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
             </div>
           </div>
         </div>
