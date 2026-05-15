@@ -974,6 +974,105 @@
       line-height: 1.4;
     }
 
+    /* Custom purity input + preset chips */
+    .purity-input-group {
+      display: flex; align-items: stretch; gap: 6px;
+    }
+    .purity-input {
+      flex: 1; min-width: 0;
+      background: var(--bg-1); border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-1);
+      font-family: var(--mono); font-size: var(--text-base); font-weight: 600;
+      padding: 9px 12px;
+      letter-spacing: 0; font-variant-numeric: tabular-nums;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      width: 100%;
+    }
+    .purity-input:focus {
+      outline: none; border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212,168,83,0.12);
+    }
+    .purity-input::-webkit-outer-spin-button,
+    .purity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .purity-input[type="number"] { -moz-appearance: textfield; }
+    .purity-suffix {
+      display: flex; align-items: center; padding: 0 10px;
+      background: var(--bg-1); border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--mono); font-size: 11px; color: var(--text-4);
+      font-weight: 500; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .purity-presets {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      margin-top: 4px;
+    }
+    .purity-preset {
+      background: var(--bg-1); border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--mono); font-size: 10px; font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 3px 8px; cursor: pointer;
+      color: var(--text-3);
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .purity-preset:hover {
+      border-color: var(--border-gold); color: var(--gold-bright);
+      background: rgba(212,168,83,0.05);
+    }
+    .purity-preset.active {
+      border-color: var(--gold); color: var(--gold-bright);
+      background: rgba(212,168,83,0.10);
+      font-weight: 600;
+    }
+    body.silver-mode .purity-preset:hover,
+    body.silver-mode .purity-preset.active {
+      border-color: var(--silver); color: var(--silver-bright);
+      background: rgba(168,184,200,0.10);
+    }
+    .purity-helper {
+      font-family: var(--mono); font-size: 10px; color: var(--text-4);
+      margin-top: 4px; letter-spacing: 0.02em;
+    }
+    .purity-helper.karat-warn { color: var(--yellow); }
+
+    /* Editable buyback % */
+    .buyback-pct-edit {
+      display: inline-flex; align-items: center; gap: 2px;
+      margin-left: auto;
+      background: rgba(239,68,68,0.10);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 4px;
+      padding: 1px 4px;
+    }
+    .buyback-pct-input {
+      width: 38px;
+      background: transparent; border: none;
+      color: var(--red);
+      font-family: var(--mono); font-size: 11px; font-weight: 600;
+      text-align: right; padding: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .buyback-pct-input:focus {
+      outline: none;
+    }
+    .buyback-pct-input::-webkit-outer-spin-button,
+    .buyback-pct-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .buyback-pct-input[type="number"] { -moz-appearance: textfield; }
+    .buyback-pct-suffix {
+      color: var(--red); font-family: var(--mono); font-size: 11px; font-weight: 600;
+    }
+    .converter-value-card.buyback .converter-value-label {
+      justify-content: flex-start;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .converter-value-card.buyback .converter-value-label-text {
+      flex: 0 1 auto;
+    }
+
     .converter-loss-strip {
       margin-top: var(--s-4); padding: 10px var(--s-4);
       background: rgba(234,179,8,0.06); border: 1px solid rgba(234,179,8,0.22);
@@ -1106,6 +1205,300 @@
       .dxb-fx-strip { grid-template-columns: 1fr 1fr; }
       .logo-rate, .logo-dot, .logo-gold-word { font-size: 20px; }
     }
+    /* =========================================================
+       OVERFLOW + CROSS-BROWSER COMPATIBILITY FIXES
+       Applied last to override any selector specificity issues
+       ========================================================= */
+
+    /* Defensive: prevent ALL horizontal overflow */
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* Force-fix: every direct child of containers shrinks below content */
+    .page-wrap > *,
+    .main-col > *,
+    .gold-section > *,
+    .silver-section > *,
+    .hero > * { max-width: 100%; min-width: 0; }
+
+    /* All grid/flex children must allow shrinking */
+    .dual-rate-col,
+    .dual-rate-sub-box,
+    .tl-compact-card,
+    .pr-card, .pr-info, .pr-right,
+    .etf-card, .etf-top, .etf-info, .etf-right,
+    .dxb-fx-item,
+    .dxb-oneliner,
+    .converter-panel,
+    .converter-value-card,
+    .hero-hist-cell,
+    .best-buy-card > *,
+    .best-buy-card .pr-info,
+    .best-buy-card .pr-right { min-width: 0; }
+
+    /* Right-aligned price containers must not push siblings */
+    .pr-right, .etf-right { flex-shrink: 1; overflow: hidden; }
+    .pr-right .pr-price,
+    .pr-right .pr-note,
+    .etf-right > * { max-width: 100%; }
+
+    /* Long monospace numbers: ellipsis instead of overflow */
+    .dxb-fx-val,
+    .etf-nav, .etf-gram,
+    .pr-price, .pr-note,
+    .dxb-ol-val,
+    .tl-compact-price {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    /* Source badges must not push header rows */
+    .source-badge {
+      flex-shrink: 1;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Section titles wrap their sub-text if too long */
+    .section-title { flex-wrap: wrap; }
+    .section-title-sub { white-space: normal; }
+
+    /* Hero history tabs need horizontal scroll on narrow */
+    .hero-hist-tabs { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Dubai verdict text wraps to multiple lines if narrow */
+    .dxb-ol-verdict {
+      flex-wrap: wrap;
+      justify-content: center;
+      white-space: normal;
+      max-width: 100%;
+    }
+
+    /* Converter: amounts can be huge (e.g. lots of gold) - allow wrap */
+    .converter-value-amount {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      min-width: 0;
+    }
+    .converter-value-note { overflow-wrap: anywhere; }
+    .converter-output { overflow-wrap: anywhere; word-break: break-word; }
+    .converter-output-sub { overflow-wrap: anywhere; }
+
+    /* Purity presets row scrolls horizontally on tiny screens */
+    .purity-presets {
+      max-width: 100%;
+      flex-wrap: wrap;
+    }
+
+    /* Buyback % editor: contain on mobile so it doesn't overflow */
+    .converter-value-card.buyback .converter-value-label {
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      align-items: center;
+    }
+
+    /* =========================================================
+       TABLET FIX (901px–1100px): narrow desktop / small laptop
+       Where 5-card best-buy was overflowing on Windows
+       ========================================================= */
+    @media (min-width: 901px) and (max-width: 1100px) {
+      .tl-body { gap: 6px; }
+      .tl-compact-card { padding: 10px 6px; gap: 6px; }
+      .tl-compact-name { font-size: 11px; }
+      .tl-compact-price { font-size: 12px; }
+      .tl-compact-rank { font-size: 9px; }
+      .tl-compact-benefit { font-size: 9px; }
+
+      .pr-card { padding: 12px; }
+      .pr-name { font-size: 13px; }
+      .pr-price { font-size: 17px; }
+      .pr-icon { width: 36px; height: 36px; font-size: 14px; }
+
+      .etf-card { padding: 12px; gap: 10px; }
+      .etf-top { gap: 8px; }
+      .etf-icon { width: 36px; height: 36px; font-size: 14px; }
+      .etf-name { font-size: 13px; }
+      .etf-nav { font-size: 14px; }
+      .etf-gram { font-size: 11px; }
+
+      .dxb-rows { gap: 8px; }
+      .dxb-oneliner { padding: 12px 8px; }
+      .dxb-ol-val { font-size: 13px; }
+      .dxb-ol-verdict { font-size: 10px; }
+
+      .dxb-fx-strip { grid-template-columns: repeat(2, 1fr); }
+      .dxb-fx-item:nth-child(odd) { border-right: 1px solid var(--border); }
+      .dxb-fx-item:nth-child(even) { border-right: none; }
+      .dxb-fx-item:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+
+      .converter-values { gap: 8px; }
+      .converter-value-card { padding: 12px; }
+      .converter-value-amount { font-size: 18px; }
+    }
+
+    /* =========================================================
+       MOBILE FIX (≤768px): aggressive overflow protection
+       ========================================================= */
+    @media (max-width: 768px) {
+      .dual-rate-sub-grid { gap: 4px; }
+      .dual-rate-sub-box { padding: 6px 8px; }
+      .dual-rate-sub-label { font-size: 9px; }
+      .dual-rate-sub-val { font-size: 11px; }
+      .dual-rate-formula { font-size: 10px; padding: 6px 8px; flex-wrap: wrap; }
+      .dual-rate-main { min-height: 44px; }
+      .dual-rate-stale, .dual-rate-unavail { font-size: 10px; padding: 8px 10px; }
+
+      .source-badge { font-size: 9px; padding: 2px 6px; }
+
+      /* Best buy: 2 columns on mobile, not 1 (more compact) */
+      .tl-body { grid-template-columns: 1fr 1fr !important; gap: 6px; }
+      .tl-compact-card { padding: 10px 8px; }
+      .tl-compact-name { font-size: 12px; }
+      .tl-compact-price { font-size: 13px; }
+      .tl-compact-rank { font-size: 9px; }
+      .tl-compact-benefit { font-size: 10px; }
+
+      /* Dubai header wrapping */
+      .dubai-header { gap: 4px; }
+      .dubai-title { font-size: 10px; gap: 6px; }
+      .dxb-rows { gap: 8px; }
+      .dxb-oneliner { padding: 10px 8px; gap: 6px; }
+      .dxb-ol-purity { font-size: 10px; }
+      .dxb-ol-val { font-size: 12px; }
+      .dxb-ol-verdict { font-size: 9px; gap: 3px; }
+
+      /* Disclaimer + footer */
+      .disclaimer { font-size: 11px; padding: 10px 12px; }
+      .footer-note { font-size: 10px; }
+
+      /* Header: stack better on mobile */
+      .header { gap: 8px; }
+      .header-right { gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+      .logo-tagline { font-size: 9px; }
+
+      /* Converter: tighter on mobile */
+      .converter-card { padding: 14px; }
+      .converter-panel { padding: 12px; gap: 10px; }
+      .converter-input { font-size: 16px; padding: 8px 12px; }
+      .purity-input { font-size: 13px; padding: 8px 10px; }
+      .converter-output { font-size: 18px; }
+      .converter-value-card { padding: 12px; }
+      .converter-value-amount { font-size: 18px; }
+      .converter-value-label { font-size: 9px; }
+      .converter-value-note { font-size: 9px; }
+      .buyback-pct-input { width: 36px; }
+      .converter-loss-strip { font-size: 11px; padding: 8px 12px; }
+      .converter-footnote { font-size: 10px; }
+
+      /* History */
+      .hero-hist-cell { padding: 10px; }
+      .hero-hist-cval { font-size: 13px; }
+      .hero-hist-clabel { font-size: 9px; }
+      .hero-hist-cchg { font-size: 10px; }
+    }
+
+    /* =========================================================
+       SMALL MOBILE (≤480px)
+       ========================================================= */
+    @media (max-width: 480px) {
+      .page-wrap { padding: 12px 10px 32px; gap: 0; }
+      .ad-banner { padding: 8px 12px; min-height: 50px; }
+      .ad-inline { height: 40px; margin: 20px 0; }
+
+      .logo-rate, .logo-dot, .logo-gold-word { font-size: 20px; }
+      .logo-tagline { display: none; }
+
+      .toggle-btn { padding: 4px 10px; font-size: 10px; }
+      .status { font-size: 10px; gap: 4px; }
+
+      .dual-rate-col { padding: 14px; }
+      .dual-rate-col-title { font-size: 9px; }
+      .dual-rate-purity-line { font-size: 9px; }
+
+      .dxb-fx-strip { grid-template-columns: 1fr 1fr; }
+      .dxb-fx-item { padding: 8px 10px; }
+      .dxb-fx-val { font-size: 12px; }
+      .dxb-fx-label { font-size: 8px; }
+
+      .dxb-rows { grid-template-columns: 1fr; gap: 8px; }
+
+      .converter-card { padding: 12px; }
+      .converter-header { padding-bottom: 12px; margin-bottom: 14px; }
+      .converter-title { font-size: 14px; }
+      .converter-mode-btn { padding: 4px 10px; font-size: 10px; }
+      .converter-swap-row { font-size: 10px; }
+      .converter-values { grid-template-columns: 1fr; gap: 8px; }
+      .converter-value-amount { font-size: 16px; }
+      .buyback-pct-input { width: 30px; font-size: 10px; }
+      .buyback-pct-suffix { font-size: 10px; }
+    }
+
+    /* =========================================================
+       TINY MOBILE (≤360px)
+       ========================================================= */
+    @media (max-width: 360px) {
+      .page-wrap { padding: 10px 8px 24px; }
+      .logo-rate, .logo-dot, .logo-gold-word { font-size: 18px; }
+      .dual-rate-col { padding: 12px; }
+      .dual-rate-main { font-size: clamp(22px, 8vw, 28px); min-height: 38px; }
+      .dxb-fx-strip { grid-template-columns: 1fr; }
+      .dxb-fx-item { border-right: none !important; border-bottom: 1px solid var(--border); }
+      .dxb-fx-item:last-child { border-bottom: none; }
+      .tl-body { grid-template-columns: 1fr !important; }
+      .converter-input { font-size: 14px; }
+      .purity-input { font-size: 12px; }
+    }
+
+    /* =========================================================
+       WINDOWS-SPECIFIC FIXES
+       ========================================================= */
+    /* Windows scrollbar accounting */
+    @supports not (scrollbar-gutter: stable) {
+      body { overflow-y: scroll; }
+    }
+    /* Windows Chrome/Edge: prevent subpixel rounding overflow */
+    .page-wrap, .main-col {
+      contain: layout;
+    }
+    /* Number inputs: hide Windows spin buttons consistently */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none !important;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    /* =========================================================
+       FIREFOX-SPECIFIC FIXES
+       ========================================================= */
+    @-moz-document url-prefix() {
+      .converter-select, .pure-input, .purity-input {
+        background-position: right 10px center;
+      }
+    }
+
+    /* =========================================================
+       SAFARI / iOS FIXES
+       ========================================================= */
+    @supports (-webkit-touch-callout: none) {
+      /* iOS Safari: prevent zoom on input focus by ensuring 16px font */
+      .converter-input, .purity-input, .buyback-pct-input {
+        font-size: max(16px, var(--text-base));
+      }
+      /* iOS Safari: fix backdrop-filter rendering */
+      #stickyNav {
+        -webkit-backdrop-filter: blur(12px);
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1353,14 +1746,28 @@
               <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
               <div class="converter-unit">g</div>
             </div>
-            <select class="converter-select" id="convInputPurity" onchange="updateConverter()"></select>
+            <div>
+              <div class="purity-input-group">
+                <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
+                <span class="purity-suffix">/ 1000</span>
+              </div>
+              <div class="purity-presets" id="convInputPresets"></div>
+              <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
+            </div>
           </div>
 
           <div class="converter-arrow">→</div>
 
           <div class="converter-panel">
             <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
-            <select class="converter-select" id="convOutputPurity" onchange="updateConverter()"></select>
+            <div>
+              <div class="purity-input-group">
+                <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
+                <span class="purity-suffix">/ 1000</span>
+              </div>
+              <div class="purity-presets" id="convOutputPresets"></div>
+              <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
+            </div>
             <div>
               <div class="converter-output" id="convOutputWeight">--</div>
               <div class="converter-output-sub" id="convOutputSub">grams of equivalent purity</div>
@@ -1375,9 +1782,14 @@
             <div class="converter-value-note" id="convTheoreticalNote">pure metal at today's spot rate</div>
           </div>
           <div class="converter-value-card buyback">
-            <div class="converter-value-label">Jeweller Buy-Back · approx</div>
+            <div class="converter-value-label">
+              <span class="converter-value-label-text">Jeweller Buy-Back</span>
+              <span class="buyback-pct-edit">
+                − <input type="number" class="buyback-pct-input" id="convBuybackPct" value="6" min="0" max="50" step="0.1" oninput="updateConverter()" /><span class="buyback-pct-suffix">%</span>
+              </span>
+            </div>
             <div class="converter-value-amount" id="convBuyback">--</div>
-            <div class="converter-value-note" id="convBuybackNote">after ~6% deduction (typical)</div>
+            <div class="converter-value-note" id="convBuybackNote">edit % to match your jeweller's quote</div>
           </div>
           <div class="converter-value-card replacement">
             <div class="converter-value-label">Replacement Cost · new</div>
@@ -1387,11 +1799,11 @@
         </div>
 
         <div class="converter-loss-strip" id="convLossStrip" style="display:none;">
-          ⚠️ Selling to a jeweller today, you'd lose <strong id="convLossAmount">--</strong> (<span id="convLossPct">--</span>%) to deductions. Exchanging old gold for new costs <strong id="convExchangeGap">--</strong> extra. <strong>MMTC-PAMP</strong> and refineries typically offer better buy-back rates than local jewellers.
+          ⚠️ At a <strong id="convLossPctDisplay">--</strong>% deduction, you'd lose <strong id="convLossAmount">--</strong> selling to this jeweller. Replacing the same weight as new jewellery costs <strong id="convExchangeGap">--</strong> more than the buy-back. <strong>MMTC-PAMP</strong> and refineries typically offer 2-4% deduction vs 6-8% at local jewellers.
         </div>
 
         <div class="converter-footnote">
-          Pure metal content: <code>weight × (purity ÷ 1000)</code>. Theoretical value uses live IBJA 24K (999) rate. Buy-back assumes 6% jeweller deduction (varies 4-8%). Replacement cost adds 10% making charges + 3% GST on new jewellery (varies by design). Cross-metal swap uses live gold:silver ratio.
+          Pure metal content: <code>weight × (purity ÷ 1000)</code>. Theoretical value uses live IBJA 24K (999) rate. Edit the buyback % to match the actual deduction your jeweller quotes. Replacement cost adds 10% making charges + 3% GST on new jewellery (varies by design). Cross-metal swap uses live gold:silver value ratio.
         </div>
       </div>
 
@@ -2277,58 +2689,113 @@
 
   // =====================================================
   // CONVERTER WIDGET v2 — purity + value + cross-metal swap
+  // Now supports custom purity values + editable buyback %
   // =====================================================
   let _convMetal = 'gold';
   let _convSwapMode = false;
-  const BUYBACK_DEDUCTION = 0.06;
-  const MAKING_CHARGE     = 0.10;
-  const GST_RATE          = 0.03;
+  const MAKING_CHARGE = 0.10;
+  const GST_RATE      = 0.03;
 
-  const PURITY_OPTIONS = {
+  // Preset purity chips (common values, but any number 1-999 is valid)
+  const PURITY_PRESETS = {
     gold: [
-      { v: 999, lbl: "999 · 24K · Pure" },
-      { v: 995, lbl: "995 · Fine" },
+      { v: 999, lbl: "999 · 24K" },
       { v: 916, lbl: "916 · 22K" },
-      { v: 875, lbl: "875 · 21K (Middle East)" },
+      { v: 875, lbl: "875 · 21K" },
       { v: 750, lbl: "750 · 18K" },
       { v: 585, lbl: "585 · 14K" },
-      { v: 416, lbl: "416 · 10K" },
       { v: 375, lbl: "375 · 9K" },
     ],
     silver: [
-      { v: 999, lbl: "999 · Fine Silver" },
+      { v: 999, lbl: "999 · Fine" },
       { v: 925, lbl: "925 · Sterling" },
-      { v: 900, lbl: "900 · Coin Silver" },
+      { v: 900, lbl: "900 · Coin" },
       { v: 800, lbl: "800 · European" },
     ]
   };
 
-  function populatePuritySelects() {
-    const inputSel  = document.getElementById('convInputPurity');
-    const outputSel = document.getElementById('convOutputPurity');
+  // Convert purity (per-mille) → karat string for gold
+  function purityToKarat(purity, metal) {
+    if (metal !== 'gold') {
+      // Silver: just show purity %
+      if (purity >= 999) return '99.9% Fine Silver';
+      if (purity >= 925) return 'Sterling · ' + (purity/10).toFixed(1) + '%';
+      return (purity / 10).toFixed(1) + '% pure';
+    }
+    const karat = (purity / 1000) * 24;
+    const pct   = (purity / 10).toFixed(1);
+    // Round karat to nearest whole for display if very close
+    const roundedK = Math.round(karat * 10) / 10;
+    if (Math.abs(karat - Math.round(karat)) < 0.05) {
+      return `${Math.round(karat)}K · ${pct}% pure`;
+    }
+    return `~${roundedK}K · ${pct}% pure`;
+  }
+
+  function populatePurityPresets() {
     const inputMetal  = _convMetal;
     const outputMetal = _convSwapMode ? (_convMetal === 'gold' ? 'silver' : 'gold') : _convMetal;
-    const inputOpts  = PURITY_OPTIONS[inputMetal];
-    const outputOpts = PURITY_OPTIONS[outputMetal];
-    const inputDefault  = inputMetal === 'gold' ? '916' : '925';
-    const outputDefault = '999';
-    inputSel.innerHTML  = inputOpts.map(o => `<option value="${o.v}"${o.v == inputDefault  ? ' selected':''}>${o.lbl}</option>`).join('');
-    outputSel.innerHTML = outputOpts.map(o => `<option value="${o.v}"${o.v == outputDefault ? ' selected':''}>${o.lbl}</option>`).join('');
-    // Update target metal color via data attribute
+    const inputPresetsEl  = document.getElementById('convInputPresets');
+    const outputPresetsEl = document.getElementById('convOutputPresets');
+    const inputCurrent  = parseInt(document.getElementById('convInputPurity').value);
+    const outputCurrent = parseInt(document.getElementById('convOutputPurity').value);
+
+    inputPresetsEl.innerHTML = PURITY_PRESETS[inputMetal].map(p =>
+      `<button type="button" class="purity-preset${p.v === inputCurrent ? ' active' : ''}" onclick="setPurityPreset('input', ${p.v})">${p.lbl}</button>`
+    ).join('');
+    outputPresetsEl.innerHTML = PURITY_PRESETS[outputMetal].map(p =>
+      `<button type="button" class="purity-preset${p.v === outputCurrent ? ' active' : ''}" onclick="setPurityPreset('output', ${p.v})">${p.lbl}</button>`
+    ).join('');
+
     document.getElementById('converterCard').setAttribute('data-target-metal', outputMetal);
+  }
+
+  function setPurityPreset(which, value) {
+    const inputEl = document.getElementById(which === 'input' ? 'convInputPurity' : 'convOutputPurity');
+    inputEl.value = value;
+    onPurityInput(which);
+  }
+
+  function onPurityInput(which) {
+    // Clamp value to 1-999
+    const inputEl = document.getElementById(which === 'input' ? 'convInputPurity' : 'convOutputPurity');
+    let val = parseInt(inputEl.value) || 0;
+    if (val > 999) { val = 999; inputEl.value = 999; }
+    if (val < 1 && inputEl.value !== '') { val = 1; }
+
+    // Update karat helper text
+    const metal = which === 'input'
+      ? _convMetal
+      : (_convSwapMode ? (_convMetal === 'gold' ? 'silver' : 'gold') : _convMetal);
+    const helperEl = document.getElementById(which === 'input' ? 'convInputKarat' : 'convOutputKarat');
+    if (helperEl && val > 0) {
+      helperEl.textContent = purityToKarat(val, metal);
+      // Warn if unusual purity for gold
+      if (metal === 'gold' && val < 375) {
+        helperEl.classList.add('karat-warn');
+        helperEl.textContent += ' · below jewellery grade';
+      } else {
+        helperEl.classList.remove('karat-warn');
+      }
+    }
+
+    populatePurityPresets();
+    updateConverter();
   }
 
   function setConverterMetal(metal) {
     _convMetal = metal;
     document.getElementById('convBtnGold').className   = 'converter-mode-btn' + (metal === 'gold'   ? ' active-gold'   : '');
     document.getElementById('convBtnSilver').className = 'converter-mode-btn' + (metal === 'silver' ? ' active-silver' : '');
-    // Update swap label
     const swapLabel = document.getElementById('convSwapLabel');
     if (swapLabel) {
       swapLabel.textContent = metal === 'gold' ? 'Cross-metal swap (gold → silver)' : 'Cross-metal swap (silver → gold)';
     }
-    populatePuritySelects();
-    updateConverter();
+    // Reset to sensible defaults for this metal
+    document.getElementById('convInputPurity').value  = metal === 'gold' ? 916 : 925;
+    document.getElementById('convOutputPurity').value = 999;
+    onPurityInput('input');
+    onPurityInput('output');
   }
 
   function toggleSwapMode() {
@@ -2339,18 +2806,23 @@
       const targetMetal = _convMetal === 'gold' ? 'silver' : 'gold';
       inputLabel.textContent  = `I have (${_convMetal})`;
       outputLabel.textContent = `Equivalent in ${targetMetal}`;
+      // Reset output purity to 999 of target metal
+      document.getElementById('convOutputPurity').value = 999;
     } else {
       inputLabel.textContent  = 'I have';
       outputLabel.textContent = 'Equivalent in';
     }
-    populatePuritySelects();
-    updateConverter();
+    onPurityInput('input');
+    onPurityInput('output');
   }
 
   function updateConverter() {
     const weight       = parseFloat(document.getElementById('convInputWeight').value) || 0;
-    const inputPurity  = parseInt(document.getElementById('convInputPurity').value)  || 999;
-    const outputPurity = parseInt(document.getElementById('convOutputPurity').value) || 999;
+    const inputPurity  = parseInt(document.getElementById('convInputPurity').value)  || 0;
+    const outputPurity = parseInt(document.getElementById('convOutputPurity').value) || 0;
+    const buybackPct   = parseFloat(document.getElementById('convBuybackPct').value) || 0;
+    const buybackDeduction = Math.max(0, Math.min(50, buybackPct)) / 100;
+
     const inputMetal   = _convMetal;
     const outputMetal  = _convSwapMode ? (_convMetal === 'gold' ? 'silver' : 'gold') : _convMetal;
 
@@ -2360,27 +2832,24 @@
     // Get rates
     const goldRate   = _india24 > 0 ? _india24 : (ibjaCache?.ibja24k || 0);
     const silverRate = _silverIndiaRate > 0 ? _silverIndiaRate : 0;
-
-    // Pick input/output rates
     const inputRate  = inputMetal  === 'gold' ? goldRate : silverRate;
     const outputRate = outputMetal === 'gold' ? goldRate : silverRate;
 
     // Equivalent weight calculation
     let equivWeight;
     if (_convSwapMode && inputRate > 0 && outputRate > 0) {
-      // Convert by VALUE: fine_input_grams × input_rate ÷ output_rate, then adjust for output purity
+      // Convert by VALUE
       const inputValue = fineInput * inputRate;
       const fineOutputGrams = inputValue / outputRate;
-      equivWeight = fineOutputGrams / (outputPurity / 1000);
+      equivWeight = outputPurity > 0 ? fineOutputGrams / (outputPurity / 1000) : 0;
     } else {
-      // Same-metal: just rebase purity (same fine metal content)
       equivWeight = outputPurity > 0 ? fineInput / (outputPurity / 1000) : 0;
     }
 
     // Render output
     const outputEl    = document.getElementById('convOutputWeight');
     const outputSubEl = document.getElementById('convOutputSub');
-    if (weight > 0 && equivWeight > 0) {
+    if (weight > 0 && equivWeight > 0 && inputPurity > 0 && outputPurity > 0) {
       outputEl.textContent = equivWeight.toLocaleString('en-IN', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' g';
       if (_convSwapMode) {
         outputSubEl.textContent = `equal value · ${fineInput.toFixed(3)}g fine ${inputMetal} → ${outputMetal}`;
@@ -2389,60 +2858,62 @@
       }
     } else {
       outputEl.textContent = '0.000 g';
-      outputSubEl.textContent = 'enter a weight to convert';
+      outputSubEl.textContent = inputPurity > 0 ? 'enter a weight to convert' : 'enter input purity (1-999)';
     }
 
-    // Values (based on input metal — what your existing metal is worth)
-    const theoreticalEl = document.getElementById('convTheoretical');
+    // Value cards
+    const theoreticalEl     = document.getElementById('convTheoretical');
     const theoreticalNoteEl = document.getElementById('convTheoreticalNote');
-    const buybackEl = document.getElementById('convBuyback');
-    const buybackNoteEl = document.getElementById('convBuybackNote');
-    const replacementEl = document.getElementById('convReplacement');
+    const buybackEl         = document.getElementById('convBuyback');
+    const buybackNoteEl     = document.getElementById('convBuybackNote');
+    const replacementEl     = document.getElementById('convReplacement');
     const replacementNoteEl = document.getElementById('convReplacementNote');
-    const lossStrip = document.getElementById('convLossStrip');
+    const lossStrip         = document.getElementById('convLossStrip');
 
     if (inputRate > 0 && fineInput > 0) {
       const theoreticalValue = fineInput * inputRate;
-      const buybackValue     = theoreticalValue * (1 - BUYBACK_DEDUCTION);
-      // Replacement: same weight of new metal at same purity + 10% making + 3% GST
+      const buybackValue     = theoreticalValue * (1 - buybackDeduction);
       const replacementValue = (weight * (inputPurity / 1000)) * inputRate * (1 + MAKING_CHARGE) * (1 + GST_RATE);
       const lossAmount       = theoreticalValue - buybackValue;
       const exchangeGap      = replacementValue - buybackValue;
-      const lossPct          = (BUYBACK_DEDUCTION * 100).toFixed(1);
       const rateLbl          = inputMetal === 'gold' ? 'IBJA 999' : 'India silver 999';
 
-      theoreticalEl.textContent = fmt(theoreticalValue);
+      theoreticalEl.textContent     = fmt(theoreticalValue);
       theoreticalNoteEl.textContent = `${fineInput.toFixed(2)}g × ${fmt(inputRate)}/g (${rateLbl})`;
-      buybackEl.textContent = fmt(buybackValue);
-      buybackNoteEl.textContent = `${fmt(theoreticalValue)} − 6% deduction`;
-      replacementEl.textContent = fmt(replacementValue);
+      buybackEl.textContent         = fmt(buybackValue);
+      buybackNoteEl.textContent     = buybackDeduction > 0
+        ? `${fmt(theoreticalValue)} − ${buybackPct.toFixed(1)}% deduction`
+        : `no deduction · full theoretical value`;
+      replacementEl.textContent     = fmt(replacementValue);
       replacementNoteEl.textContent = `same weight new + 10% making + 3% GST`;
 
-      document.getElementById('convLossAmount').textContent = fmt(lossAmount);
-      document.getElementById('convLossPct').textContent = lossPct;
-      document.getElementById('convExchangeGap').textContent = fmt(exchangeGap);
-      lossStrip.style.display = 'block';
-    } else if (weight > 0) {
-      theoreticalEl.textContent = '—';
+      document.getElementById('convLossAmount').textContent     = fmt(lossAmount);
+      document.getElementById('convLossPctDisplay').textContent = buybackPct.toFixed(1);
+      document.getElementById('convExchangeGap').textContent    = fmt(exchangeGap);
+      lossStrip.style.display = buybackDeduction > 0 ? 'block' : 'none';
+    } else if (weight > 0 && inputPurity > 0) {
+      theoreticalEl.textContent     = '—';
       theoreticalNoteEl.textContent = 'waiting for live rate…';
-      buybackEl.textContent = '—';
-      buybackNoteEl.textContent = 'waiting for live rate…';
-      replacementEl.textContent = '—';
+      buybackEl.textContent         = '—';
+      buybackNoteEl.textContent     = 'waiting for live rate…';
+      replacementEl.textContent     = '—';
       replacementNoteEl.textContent = 'waiting for live rate…';
       lossStrip.style.display = 'none';
     } else {
-      theoreticalEl.textContent = '—';
-      theoreticalNoteEl.textContent = 'enter weight to see value';
-      buybackEl.textContent = '—';
-      buybackNoteEl.textContent = 'enter weight to see value';
-      replacementEl.textContent = '—';
-      replacementNoteEl.textContent = 'enter weight to see value';
+      theoreticalEl.textContent     = '—';
+      theoreticalNoteEl.textContent = 'enter weight and purity';
+      buybackEl.textContent         = '—';
+      buybackNoteEl.textContent     = 'enter weight and purity';
+      replacementEl.textContent     = '—';
+      replacementNoteEl.textContent = 'enter weight and purity';
       lossStrip.style.display = 'none';
     }
   }
 
   // Init converter on load
-  populatePuritySelects();
+  populatePurityPresets();
+  onPurityInput('input');
+  onPurityInput('output');
   setTimeout(updateConverter, 100);
   let _convPollCount = 0;
   const _convPollInterval = setInterval(() => {
