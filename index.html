@@ -467,26 +467,27 @@
     .pr-source.calc { background: rgba(255,255,255,0.04); color: var(--text-4); border: 1px solid var(--border); }
 
     /* =========================================================
-       ETF CARDS
+       ETF CARDS — matches PR card horizontal layout
        ========================================================= */
     .etf-section-wrap { display: flex; flex-direction: column; gap: var(--s-4); }
     #etfGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-3); }
     .etf-card {
-      display: flex; flex-direction: column; gap: var(--s-3);
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
       padding: var(--s-4);
       border-radius: 10px; border: 1px solid var(--border);
       background: var(--bg-1);
-      position: relative; overflow: visible;
+      position: relative; overflow: hidden;
       transition: border-color 0.2s ease, transform 0.2s ease;
       min-width: 0;
     }
     .etf-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
     .etf-card.etf-best { border-color: rgba(34,197,94,0.40); box-shadow: 0 0 0 1px rgba(34,197,94,0.15); }
     .etf-card.etf-best::after {
-      content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
-      width: 3px; background: var(--green); border-radius: 0 2px 2px 0;
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--green);
     }
-    .etf-top { display: flex; align-items: flex-start; gap: var(--s-3); }
     .etf-icon {
       width: 40px; height: 40px; border-radius: 50%;
       background: linear-gradient(135deg, rgba(212,168,83,0.18), rgba(212,168,83,0.04));
@@ -496,14 +497,34 @@
       color: var(--gold-bright); flex-shrink: 0;
     }
     .etf-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .etf-name { font-size: var(--text-base); font-weight: 600; color: var(--text-1); letter-spacing: -0.01em; }
-    .etf-fund { font-size: 11px; color: var(--text-3); font-weight: 400; }
-    .etf-ter  { font-size: 11px; color: var(--gold); font-weight: 600; font-family: var(--mono); }
-    .etf-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; padding-left: var(--s-3); min-width: 0; }
-    .etf-nav  { font-size: var(--text-md); font-weight: 600; color: var(--inr-color); font-family: var(--mono); letter-spacing: -0.02em; line-height: 1.1; white-space: nowrap; font-variant-numeric: tabular-nums; }
-    .etf-gram { font-size: var(--text-sm); font-weight: 500; color: var(--inr-color); font-family: var(--mono); opacity: 0.75; line-height: 1.1; white-space: nowrap; font-variant-numeric: tabular-nums; }
-    .etf-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
-    .etf-note { font-size: 10px; color: var(--text-4); font-family: var(--mono); letter-spacing: 0.04em; }
+    .etf-name {
+      font-size: var(--text-base); font-weight: 600;
+      color: var(--text-1); letter-spacing: -0.01em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .etf-fund {
+      font-size: 11px; color: var(--text-3); font-weight: 400;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .etf-ter  { color: var(--gold); font-weight: 600; font-family: var(--mono); }
+    .etf-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+    .etf-price {
+      font-family: var(--mono);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--inr-color);
+      white-space: nowrap; line-height: 1.2;
+      letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+    }
+    .etf-card.etf-best .etf-price { color: var(--green); }
+    .etf-note {
+      font-family: var(--mono); font-size: 11px; color: var(--text-4);
+      white-space: nowrap; font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+    /* Legacy selectors retained as no-ops for backward compat */
+    .etf-top, .etf-bottom { display: contents; }
+    .etf-nav, .etf-gram { display: none; }
 
     /* =========================================================
        BEST BUY TODAY
@@ -1499,6 +1520,119 @@
       }
     }
 
+    /* =========================================================
+       CONVERTER — Result centerpiece + redesigned buyback chip
+       ========================================================= */
+    .converter-result {
+      margin: var(--s-4) auto var(--s-5);
+      padding: var(--s-5) var(--s-4);
+      background: linear-gradient(180deg, rgba(212,168,83,0.08) 0%, rgba(212,168,83,0.02) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .converter-result::before {
+      content: '';
+      position: absolute; top: 0; left: 30%; right: 30%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+      opacity: 0.6;
+    }
+    body.silver-mode .converter-result,
+    .converter-card[data-target-metal="silver"] .converter-result {
+      background: linear-gradient(180deg, rgba(168,184,200,0.08) 0%, rgba(168,184,200,0.02) 100%);
+      border-color: rgba(168,184,200,0.25);
+    }
+    .converter-result-label {
+      font-size: 10px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      font-family: var(--mono);
+      font-weight: 500;
+      margin-bottom: var(--s-2);
+    }
+    .converter-result-amount {
+      font-family: var(--mono);
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700;
+      color: var(--gold-bright);
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.0;
+    }
+    body.silver-mode .converter-result-amount,
+    .converter-card[data-target-metal="silver"] .converter-result-amount {
+      color: var(--silver-bright);
+    }
+    .converter-result-sub {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: var(--s-2);
+      letter-spacing: 0.02em;
+    }
+
+    /* Buyback % chip — clear editable pill */
+    .buyback-pct-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.35);
+      border-radius: 999px;
+      padding: 3px 10px;
+      cursor: text;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      font-family: var(--mono);
+      flex-shrink: 0;
+    }
+    .buyback-pct-chip:hover,
+    .buyback-pct-chip:focus-within {
+      background: rgba(239,68,68,0.18);
+      border-color: rgba(239,68,68,0.55);
+    }
+    .buyback-pct-chip input {
+      width: 32px;
+      background: transparent;
+      border: none;
+      color: var(--red);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: right;
+      padding: 0;
+      outline: none;
+      font-variant-numeric: tabular-nums;
+    }
+    .buyback-pct-chip input::-webkit-outer-spin-button,
+    .buyback-pct-chip input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .buyback-pct-chip span {
+      color: var(--red);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Hide old buyback edit styles (legacy) */
+    .buyback-pct-edit { display: none; }
+
+    /* Slightly warm background for the gold-themed site */
+    body {
+      background: #0b0a08;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,168,83,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 0% 100%, rgba(212,168,83,0.025) 0%, transparent 50%);
+    }
+    body.silver-mode {
+      background: #0a0b0d;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(168,184,200,0.07) 0%, transparent 60%);
+    }
+
   </style>
 </head>
 <body>
@@ -1768,11 +1902,14 @@
               <div class="purity-presets" id="convOutputPresets"></div>
               <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
             </div>
-            <div>
-              <div class="converter-output" id="convOutputWeight">--</div>
-              <div class="converter-output-sub" id="convOutputSub">grams of equivalent purity</div>
-            </div>
           </div>
+        </div>
+
+        <!-- Result as the centerpiece -->
+        <div class="converter-result">
+          <div class="converter-result-label">Equivalent weight</div>
+          <div class="converter-result-amount" id="convOutputWeight">--</div>
+          <div class="converter-result-sub" id="convOutputSub">grams of equivalent purity</div>
         </div>
 
         <div class="converter-values">
@@ -1784,12 +1921,13 @@
           <div class="converter-value-card buyback">
             <div class="converter-value-label">
               <span class="converter-value-label-text">Jeweller Buy-Back</span>
-              <span class="buyback-pct-edit">
-                − <input type="number" class="buyback-pct-input" id="convBuybackPct" value="6" min="0" max="50" step="0.1" oninput="updateConverter()" /><span class="buyback-pct-suffix">%</span>
-              </span>
+              <label class="buyback-pct-chip" for="convBuybackPct">
+                <input type="number" id="convBuybackPct" value="6" min="0" max="50" step="0.5" oninput="updateConverter()" />
+                <span>% off</span>
+              </label>
             </div>
             <div class="converter-value-amount" id="convBuyback">--</div>
-            <div class="converter-value-note" id="convBuybackNote">edit % to match your jeweller's quote</div>
+            <div class="converter-value-note" id="convBuybackNote">edit % to match jeweller's quote</div>
           </div>
           <div class="converter-value-card replacement">
             <div class="converter-value-label">Replacement Cost · new</div>
@@ -2231,31 +2369,26 @@
     grid.innerHTML = liveResults.map(e => {
       const isBest = e.symbol === bestSym;
       const hasSp = _etfSparklines[e.symbol]?.["1y"]?.length >= 2;
-      const navStr  = e.unitNav > 0 ? `₹ ${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:0})}` : "—";
-      const etfGramRate = e.gramsPerUnit && e.unitNav > 0 ? e.unitNav / e.gramsPerUnit : e.gramRate;
-      const gramStr = etfGramRate > 0 ? `₹ ${etfGramRate.toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:0})}` : "—";
-      const gpuStr  = e.gramsPerUnit ? `${e.gramsPerUnit.toFixed(3)} g/unit` : "—";
+      const navStr  = e.unitNav > 0 ? `₹ ${e.unitNav.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}` : "—";
+      const gpuStr  = e.gramsPerUnit ? `${e.gramsPerUnit.toFixed(4)}g per unit` : "—";
       const isDiscount = e.trackDev != null && e.trackDev <= 0;
       const isPremium  = e.trackDev != null && e.trackDev >  0;
       let cornerBadge = "";
       if (isBest) cornerBadge = `<div class="pr-badge">Best Buy</div>`;
       else if (isDiscount) cornerBadge = `<div class="pr-badge badge-discount">▼ ${Math.abs(e.trackDev*100).toFixed(2)}%</div>`;
       else if (isPremium)  cornerBadge = `<div class="pr-badge badge-premium">▲ ${(e.trackDev*100).toFixed(2)}%</div>`;
+      const chartHint = hasSp ? '<span class="pr-source live" style="margin-top:3px">tap for chart</span>' : '';
       return `<div class="etf-card ${isBest?"etf-best":""} ${cornerBadge?"pr-has-badge":""}" style="cursor:${hasSp?"pointer":"default"};" onclick="${hasSp?`selectEtfHistory('${e.symbol}')`:""}">
         ${cornerBadge}
-        <div class="etf-top">
-          <div class="etf-icon">${getMonogram(e.name)}</div>
-          <div class="etf-info">
-            <div class="etf-name">${e.name}</div>
-            <div class="etf-fund">${e.fund} · <span class="etf-ter">TER ${(e.expense*100).toFixed(2)}%</span></div>
-          </div>
-          <div class="etf-right">
-            <div class="etf-nav">${navStr}</div>
-            <div class="etf-gram">${gramStr} / g</div>
-          </div>
+        <div class="etf-icon">${getMonogram(e.name)}</div>
+        <div class="etf-info">
+          <div class="etf-name">${e.name}</div>
+          <div class="etf-fund">${e.fund} · <span class="etf-ter">TER ${(e.expense*100).toFixed(2)}%</span></div>
+          ${chartHint}
         </div>
-        <div class="etf-bottom">
-          <div class="etf-note">${gpuStr}${hasSp?' · chart':""}</div>
+        <div class="etf-right">
+          <div class="etf-price">${navStr}</div>
+          <div class="etf-note">${gpuStr}</div>
         </div>
       </div>`;
     }).join("");
