@@ -3061,6 +3061,204 @@
       }
     }
 
+    /* =========================================================
+       FINAL POLISH v5 — addresses all open issues
+       2-line preset chips, smaller % chips, footnote grid,
+       hero badge spacing, formula spacing, softer palette
+       ========================================================= */
+
+    /* ---- SOFTER PALETTE — less gaudy, more professional ---- */
+    :root {
+      --green: #4ade80;          /* was #22c55e — softer, less neon */
+      --red: #f87171;            /* was #ef4444 — softer */
+      --orange: #fb923c;         /* was #f97316 — softer */
+      --gold-bright: #e8b85a;    /* was #f0c060 — slightly muted */
+      --border-gold: rgba(212,168,83,0.15);  /* was 0.20 — thinner */
+    }
+
+    /* ---- 2-LINE PRESET CHIPS (number + karat inside) ---- */
+    .purity-preset {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 1px !important;
+      padding: 5px 2px !important;
+      line-height: 1.1 !important;
+      min-height: 36px;
+    }
+    .pp-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0;
+      color: inherit;
+      line-height: 1;
+    }
+    .pp-karat {
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--text-4);
+      line-height: 1;
+      opacity: 0.85;
+    }
+    .purity-preset.active .pp-karat {
+      color: var(--gold);
+      opacity: 1;
+    }
+    body.silver-mode .purity-preset.active .pp-karat,
+    .converter-card[data-target-metal="silver"] .purity-preset.active .pp-karat {
+      color: var(--silver);
+    }
+
+    /* Hide purity-helper text since karat is now inside chips */
+    .purity-helper { display: none !important; }
+
+    /* ---- SMALLER % CHIPS so labels don't truncate ---- */
+    .buyback-pct-chip,
+    .making-pct-chip {
+      padding: 3px 8px !important;
+      gap: 3px !important;
+    }
+    .buyback-pct-chip input,
+    .making-pct-chip input {
+      width: 28px !important;
+      font-size: 11px !important;
+      font-weight: 700;
+    }
+    .buyback-pct-chip span,
+    .making-pct-chip span {
+      font-size: 9px !important;
+      letter-spacing: 0.04em !important;
+    }
+
+    /* ---- LABELS: allow wrap to 2 lines instead of ellipsis ---- */
+    .cvl-main {
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      word-break: break-word;
+      line-height: 1.2;
+    }
+    .cvl-sub {
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      line-height: 1.2;
+    }
+    /* Slightly more room for label text */
+    .converter-value-label {
+      gap: var(--s-2) !important;
+      align-items: flex-start !important;
+      min-height: 38px !important;
+    }
+    .converter-value-label-text {
+      flex: 1 1 0 !important;
+      min-width: 0;
+    }
+
+    /* ---- FOOTNOTE: 2-column grid (3+2 items) ---- */
+    .converter-footnote ul {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px var(--s-5);
+    }
+    .converter-footnote ul li {
+      margin-bottom: 0 !important;
+    }
+    .converter-footnote code {
+      white-space: nowrap;
+    }
+
+    /* ---- HERO RATE TITLES: better badge spacing ---- */
+    .hero-rate-titles {
+      gap: var(--s-4) !important;
+    }
+    .hero-rate-title {
+      gap: var(--s-3) !important;
+      padding: 0 4px;
+    }
+    .hero-rate-title .section-title-sub {
+      flex: 0 1 auto !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
+    .hero-rate-title .source-badge {
+      margin-left: var(--s-3) !important;
+      flex-shrink: 0 !important;
+      padding: 3px 10px !important;
+      letter-spacing: 0.08em;
+    }
+
+    /* ---- FORMULA BAR: more breathing room ---- */
+    .dual-rate-formula {
+      gap: 7px !important;
+      padding: 7px 12px !important;
+      font-size: 10px !important;
+      letter-spacing: 0.02em;
+    }
+    .dual-rate-formula > span {
+      white-space: nowrap;
+    }
+    .formula-result {
+      white-space: nowrap !important;
+      padding-left: 2px;
+    }
+
+    /* ---- NOTE LINE: ensure decimals render clearly ---- */
+    .converter-value-note {
+      font-feature-settings: "tnum" 1, "ss01" 1;
+      font-size: 11px !important;
+    }
+    .buyback-pct-chip input,
+    .making-pct-chip input {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---- SLIGHTLY LIFT BACKGROUND (less harsh black) ---- */
+    body {
+      background: #0d0e10;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,168,83,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 0% 100%, rgba(212,168,83,0.02) 0%, transparent 50%);
+    }
+    body.silver-mode {
+      background: #0c0d10;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(168,184,200,0.06) 0%, transparent 60%);
+    }
+
+    /* ---- MOBILE: footnote grid collapses, chips stay 2-line ---- */
+    @media (max-width: 768px) {
+      .converter-footnote ul {
+        grid-template-columns: 1fr !important;
+        gap: 6px;
+      }
+      .hero-rate-title .section-title-sub {
+        font-size: 10px;
+      }
+      .hero-rate-title .source-badge {
+        font-size: 9px;
+      }
+      .pp-num { font-size: 11px; }
+      .pp-karat { font-size: 8px; }
+      .converter-value-label {
+        flex-wrap: wrap;
+      }
+    }
+    @media (max-width: 480px) {
+      .pp-num { font-size: 10px; }
+      .pp-karat { font-size: 7px; }
+      .purity-preset { min-height: 32px; padding: 4px 2px !important; }
+      .buyback-pct-chip input,
+      .making-pct-chip input {
+        width: 24px !important;
+        font-size: 10px !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -3377,7 +3575,7 @@
             <div class="converter-value-label">
               <span class="converter-value-label-text">
                 <span class="cvl-main">Replacement Cost</span>
-                <span class="cvl-sub">· new jewellery</span>
+                <span class="cvl-sub">· new</span>
               </span>
               <label class="making-pct-chip" for="convMakingPct">
                 <input type="number" id="convMakingPct" value="10" min="0" max="50" step="0.5" oninput="updateConverter()" />
@@ -4293,16 +4491,16 @@
   // Preset purity chips (common values, but any number 1-999 is valid)
   const PURITY_PRESETS = {
     gold: [
-      { v: 999, lbl: "999" },
-      { v: 916, lbl: "916" },
-      { v: 750, lbl: "750" },
-      { v: 585, lbl: "585" },
-      { v: 375, lbl: "375" },
+      { v: 999, lbl: "999", kt: "24K" },
+      { v: 916, lbl: "916", kt: "22K" },
+      { v: 750, lbl: "750", kt: "18K" },
+      { v: 585, lbl: "585", kt: "14K" },
+      { v: 375, lbl: "375", kt: "9K"  },
     ],
     silver: [
-      { v: 999, lbl: "999" },
-      { v: 925, lbl: "925" },
-      { v: 900, lbl: "900" },
+      { v: 999, lbl: "999", kt: "Fine" },
+      { v: 925, lbl: "925", kt: "Sterl" },
+      { v: 900, lbl: "900", kt: "Coin" },
     ]
   };
 
@@ -4333,10 +4531,10 @@
     const outputCurrent = parseInt(document.getElementById('convOutputPurity').value);
 
     inputPresetsEl.innerHTML = PURITY_PRESETS[inputMetal].map(p =>
-      `<button type="button" class="purity-preset${p.v === inputCurrent ? ' active' : ''}" onclick="setPurityPreset('input', ${p.v})">${p.lbl}</button>`
+      `<button type="button" class="purity-preset${p.v === inputCurrent ? ' active' : ''}" onclick="setPurityPreset('input', ${p.v})"><span class="pp-num">${p.lbl}</span><span class="pp-karat">${p.kt}</span></button>`
     ).join('');
     outputPresetsEl.innerHTML = PURITY_PRESETS[outputMetal].map(p =>
-      `<button type="button" class="purity-preset${p.v === outputCurrent ? ' active' : ''}" onclick="setPurityPreset('output', ${p.v})">${p.lbl}</button>`
+      `<button type="button" class="purity-preset${p.v === outputCurrent ? ' active' : ''}" onclick="setPurityPreset('output', ${p.v})"><span class="pp-num">${p.lbl}</span><span class="pp-karat">${p.kt}</span></button>`
     ).join('');
 
     document.getElementById('converterCard').setAttribute('data-target-metal', outputMetal);
