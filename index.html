@@ -3876,6 +3876,296 @@
       .hero-rate-title .source-badge { margin-left: 0 !important; }
     }
 
+    /* =========================================================
+       POLISH v8 — addresses ALL items from this round:
+       1. Value labels: clean single phrase, perfectly aligned
+       2. Daychange inline next to price (no "today")
+       3. Formula collapsed by default, expand on info-button click
+       4. Dubai footer: FX top-left, 3 bullets in 2x2 grid
+       5. "0%" spacing fixed
+       6. Hero column heights match
+       ========================================================= */
+
+    /* ---- VALUE CARD LABELS: clean uniform single-line text ---- */
+    .converter-value-label-text {
+      display: flex !important;
+      align-items: center;
+      flex: 1 1 0;
+      min-width: 0;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      color: var(--text-1) !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    /* Status dot prefix on label */
+    .converter-value-label-text::before {
+      content: '';
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .converter-value-card.theoretical .converter-value-label-text::before { background: var(--green); }
+    .converter-value-card.buyback     .converter-value-label-text::before { background: var(--red); }
+    .converter-value-card.replacement .converter-value-label-text::before { background: var(--orange); }
+    /* Suppress any legacy cvl- styles */
+    .cvl-main, .cvl-sub, .cvl-sep { all: unset; }
+
+    /* ---- HERO: price + daychange on same line ---- */
+    .dual-rate-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--s-3);
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+    .dual-rate-price-row .dual-rate-main {
+      flex: 0 1 auto;
+      margin: 0 !important;
+      min-height: 0 !important;
+      line-height: 1.1;
+    }
+    .dual-rate-price-row .dual-rate-daychange {
+      margin: 0 !important;
+      min-height: 0 !important;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+
+    /* ---- HERO: meta-row with info button ---- */
+    .dual-rate-meta-row {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: var(--s-3) !important;
+      margin: 4px 0 var(--s-3) !important;
+      flex-wrap: nowrap !important;
+      min-width: 0;
+    }
+    .dual-rate-purity {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+    .dual-rate-info {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(212,168,83,0.08);
+      border: 1px solid var(--border-gold);
+      color: var(--gold);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-family: var(--mono);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .dual-rate-info:hover {
+      background: rgba(212,168,83,0.16);
+      color: var(--gold-bright);
+    }
+    .dual-rate-info svg {
+      opacity: 0.7;
+    }
+    body.silver-mode .dual-rate-info {
+      background: rgba(168,184,200,0.08);
+      border-color: rgba(168,184,200,0.20);
+      color: var(--silver);
+    }
+    body.silver-mode .dual-rate-info:hover {
+      background: rgba(168,184,200,0.16);
+      color: var(--silver-bright);
+    }
+
+    /* ---- FORMULA: collapsed by default, expands on click ---- */
+    .dual-rate-formula {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      padding: 0 12px !important;
+      margin: 0 !important;
+      overflow: hidden;
+      border: 1px solid transparent !important;
+      transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.2s ease, margin 0.2s ease, border-color 0.2s ease;
+    }
+    .dual-rate-col.show-formula .dual-rate-formula {
+      max-height: 80px !important;
+      opacity: 1 !important;
+      padding: 9px 12px !important;
+      margin-top: var(--s-3) !important;
+      border-color: var(--border) !important;
+      background: rgba(255,255,255,0.025) !important;
+      border-radius: 8px !important;
+      font-size: 11px !important;
+      gap: 6px !important;
+      color: var(--text-2) !important;
+      line-height: 1.5;
+      flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+    }
+    .dual-rate-formula-label {
+      font-size: 9px !important;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-4);
+      font-weight: 600;
+      padding-right: 6px;
+      border-right: 1px solid var(--border);
+      margin-right: 4px;
+    }
+
+    /* ---- DUBAI FOOTER: 2x2 grid layout ---- */
+    .dubai-footer-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      grid-template-rows: auto auto !important;
+      gap: 10px var(--s-4) !important;
+      padding: var(--s-3) var(--s-4) !important;
+    }
+    .dubai-footer-cell {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+    .dubai-footer-fx {
+      grid-row: 1 / 3;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      padding-right: var(--s-4);
+      border-right: 1px solid var(--border);
+      justify-content: center;
+    }
+    .dubai-footer-fx .dxb-fx-pair {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+    .dubai-footer-fx .dxb-fx-k {
+      color: var(--text-3);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      min-width: 60px;
+    }
+    .dubai-footer-fx .dxb-fx-v {
+      font-size: 13px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .dubai-footer-bullet {
+      gap: 8px;
+      color: var(--text-3);
+      font-size: 11px;
+      font-family: var(--mono);
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+    }
+    .dubai-bullet-dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--aed-color);
+      flex-shrink: 0;
+    }
+    /* Hide old dubai-note styles */
+    .dubai-fx-inline { display: none !important; }
+
+    /* ---- "0%" SPACING FIX ---- */
+    .pct-sym {
+      margin-left: 1px;
+      letter-spacing: 0;
+    }
+    .buyback-pct-chip,
+    .making-pct-chip {
+      gap: 3px !important;
+    }
+    .buyback-pct-chip span,
+    .making-pct-chip span {
+      letter-spacing: 0.04em;
+    }
+    .converter-value-note,
+    .converter-loss-strip ul li {
+      letter-spacing: 0.02em;
+      word-spacing: 0.5px;
+    }
+    /* Ensure all monospace percentages have tabular nums */
+    .converter-value-note,
+    .converter-loss-strip,
+    .dual-rate-daychange,
+    .hero-hist-cval {
+      font-feature-settings: "tnum" 1, "kern" 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---- HEADER ALIGN: column heights match ---- */
+    .dual-rate-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: stretch;
+    }
+    .dual-rate-col {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    .dual-rate-sub-grid {
+      margin-top: auto;
+    }
+
+    /* ---- RESPONSIVE: hero stacking + footer 1col on mobile ---- */
+    @media (max-width: 1100px) {
+      .dual-rate-price-row .dual-rate-daychange { font-size: 12px; }
+      .dual-rate-info span { display: none; }
+      .dual-rate-info { padding: 3px 5px; }
+    }
+    @media (max-width: 640px) {
+      .dubai-footer-grid {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto auto auto auto !important;
+      }
+      .dubai-footer-fx {
+        grid-row: 1 !important;
+        border-right: none !important;
+        padding-right: 0 !important;
+        padding-bottom: var(--s-3) !important;
+        border-bottom: 1px solid var(--border);
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px var(--s-3);
+      }
+      .dubai-footer-fx .dxb-fx-k { min-width: auto; }
+      .dual-rate-price-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .dual-rate-price-row .dual-rate-daychange { font-size: 13px; }
+    }
+
   </style>
 </head>
 <body>
@@ -3943,10 +4233,16 @@
 
         <div class="dual-rate-box">
           <div class="dual-rate-col">
-            <div class="dual-rate-main" id="intl-24k">--</div>
-            <div class="dual-rate-meta-row">
+            <div class="dual-rate-price-row">
+              <div class="dual-rate-main" id="intl-24k">--</div>
               <div class="dual-rate-daychange" id="intl-daychange"></div>
+            </div>
+            <div class="dual-rate-meta-row">
               <div class="dual-rate-purity">999 · 24K · ₹/gram</div>
+              <button type="button" class="dual-rate-info" aria-label="How this is calculated" onclick="this.closest('.dual-rate-col').classList.toggle('show-formula')">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="4.2" r="0.7" fill="currentColor"/><path d="M7 6.5v3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                <span>How?</span>
+              </button>
             </div>
             <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val intl-sub" id="intl-995">--</div></div>
@@ -3954,6 +4250,7 @@
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val intl-sub" id="intl-750">--</div></div>
             </div>
             <div class="dual-rate-formula">
+              <span class="dual-rate-formula-label">Calculation</span>
               <span style="color:var(--usd-color);font-weight:600" id="intl-xau">--</span>
               <span>USD/oz ÷ 31.1035g ×</span>
               <span style="color:var(--inr-color);font-weight:600" id="intl-inr">--</span>
@@ -3962,9 +4259,11 @@
             </div>
           </div>
           <div class="dual-rate-col">
-            <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
-            <div class="dual-rate-meta-row">
+            <div class="dual-rate-price-row">
+              <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
               <div class="dual-rate-daychange" id="ibja-daychange"></div>
+            </div>
+            <div class="dual-rate-meta-row">
               <div class="dual-rate-purity">999 · 24K · ₹/gram</div>
             </div>
             <div class="dual-rate-sub-grid">
@@ -4092,17 +4391,24 @@
         <span id="ds-spreadpct" style="display:none"></span>
         <span id="dxb-verdict" style="display:none"></span>
 
-        <!-- Footer strip: duty info on left, FX rates on right -->
-        <div class="dubai-footer">
-          <ul class="dubai-note">
-            <li>Dubai: no import duty</li>
-            <li>India: 15% customs + 3% GST</li>
-            <li>Personal allowance: 20g (women) / 10g (men) duty-free</li>
-          </ul>
-          <div class="dubai-fx-inline">
-            <span class="dxb-fx-pair"><span class="dxb-fx-k">USD/INR</span> <span id="dxb-usd-inr" class="dxb-fx-v" style="color:var(--usd-color)">--</span></span>
-            <span class="dxb-fx-pair"><span class="dxb-fx-k">AED/INR</span> <span id="dxb-aed-inr-strip" class="dxb-fx-v" style="color:var(--aed-color)">--</span></span>
-            <span class="dxb-fx-pair"><span class="dxb-fx-k">XAU/USD</span> <span id="dxb-xau-usd" class="dxb-fx-v" style="color:var(--gold-bright)">--</span></span>
+        <!-- Footer: FX top-left + duty info distributed 2x2 -->
+        <div class="dubai-footer dubai-footer-grid">
+          <div class="dubai-footer-cell dubai-footer-fx">
+            <div class="dxb-fx-pair"><span class="dxb-fx-k">USD/INR</span> <span id="dxb-usd-inr" class="dxb-fx-v" style="color:var(--usd-color)">--</span></div>
+            <div class="dxb-fx-pair"><span class="dxb-fx-k">AED/INR</span> <span id="dxb-aed-inr-strip" class="dxb-fx-v" style="color:var(--aed-color)">--</span></div>
+            <div class="dxb-fx-pair"><span class="dxb-fx-k">XAU/USD</span> <span id="dxb-xau-usd" class="dxb-fx-v" style="color:var(--gold-bright)">--</span></div>
+          </div>
+          <div class="dubai-footer-cell dubai-footer-bullet">
+            <span class="dubai-bullet-dot"></span>
+            <span>Dubai: no import duty</span>
+          </div>
+          <div class="dubai-footer-cell dubai-footer-bullet">
+            <span class="dubai-bullet-dot"></span>
+            <span>India: 15% customs + 3% GST</span>
+          </div>
+          <div class="dubai-footer-cell dubai-footer-bullet">
+            <span class="dubai-bullet-dot"></span>
+            <span>Personal allowance: 20g (women) / 10g (men) duty-free</span>
           </div>
         </div>
       </div>
@@ -4172,18 +4478,14 @@
         <div class="converter-values">
           <div class="converter-value-card theoretical">
             <div class="converter-value-label">
-              <span class="converter-value-label-text">
-                <span class="cvl-main">Theoretical Value <span class="cvl-sep">·</span> <span class="cvl-sub">IBJA Spot</span></span>
-              </span>
+              <span class="converter-value-label-text">Theoretical Value</span>
             </div>
             <div class="converter-value-amount" id="convTheoretical">--</div>
             <div class="converter-value-note" id="convTheoreticalNote">pure metal at today's spot rate</div>
           </div>
           <div class="converter-value-card buyback">
             <div class="converter-value-label">
-              <span class="converter-value-label-text">
-                <span class="cvl-main">Jeweller <span class="cvl-sep">·</span> <span class="cvl-sub">Buy-Back</span></span>
-              </span>
+              <span class="converter-value-label-text">Jeweller Buy-Back</span>
               <label class="buyback-pct-chip" for="convBuybackPct">
                 <input type="number" id="convBuybackPct" value="6" min="0" max="50" step="0.5" oninput="updateConverter()" />
                 <span>% off</span>
@@ -4194,9 +4496,7 @@
           </div>
           <div class="converter-value-card replacement">
             <div class="converter-value-label">
-              <span class="converter-value-label-text">
-                <span class="cvl-main">Replacement <span class="cvl-sep">·</span> <span class="cvl-sub">New</span></span>
-              </span>
+              <span class="converter-value-label-text">Replacement Cost – New</span>
               <label class="making-pct-chip" for="convMakingPct">
                 <input type="number" id="convMakingPct" value="10" min="0" max="50" step="0.5" oninput="updateConverter()" />
                 <span>% making</span>
@@ -4209,7 +4509,7 @@
 
         <div class="converter-loss-strip" id="convLossStrip" style="display:none;">
           <ul>
-            <li>At <strong id="convLossPctDisplay">--</strong>% deduction, you'd lose <strong id="convLossAmount">--</strong> selling to this jeweller.</li>
+            <li>At <strong id="convLossPctDisplay">--</strong><span class="pct-sym">%</span> deduction, you'd lose <strong id="convLossAmount">--</strong> selling to this jeweller.</li>
             <li>Replacing as new jewellery costs <strong id="convExchangeGap">--</strong> more than the buy-back.</li>
             <li><strong>MMTC-PAMP</strong> and refineries typically offer 2-4% deduction vs 6-8% at local jewellers.</li>
           </ul>
@@ -4217,11 +4517,10 @@
 
         <div class="converter-footnote">
           <ul>
-            <li>Pure metal content = <code>weight × (purity ÷ 1000)</code></li>
-            <li>Theoretical value uses live IBJA 24K (999) rate</li>
-            <li>Edit the buyback % to match your jeweller's actual quote</li>
-            <li>Replacement cost adds 10% making charges + 3% GST (varies by design)</li>
-            <li>Cross-metal swap uses live gold:silver value ratio</li>
+            <li>Pure metal = <code>weight × purity ÷ 1000</code></li>
+            <li>Theoretical value uses live IBJA 24K (999)</li>
+            <li>Edit buyback % to match your jeweller's quote</li>
+            <li>Replacement = new gold + making + 3% GST</li>
           </ul>
         </div>
       </div>
@@ -4246,15 +4545,22 @@
 
         <div class="dual-rate-box">
           <div class="dual-rate-col">
-            <div class="dual-rate-main silver-val" id="sil-intl-gram">--</div>
+            <div class="dual-rate-price-row">
+              <div class="dual-rate-main silver-val" id="sil-intl-gram">--</div>
+            </div>
             <div class="dual-rate-meta-row">
               <div class="dual-rate-purity">999 · Fine · ₹/gram</div>
+              <button type="button" class="dual-rate-info" aria-label="How this is calculated" onclick="this.closest('.dual-rate-col').classList.toggle('show-formula')">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="4.2" r="0.7" fill="currentColor"/><path d="M7 6.5v3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                <span>How?</span>
+              </button>
             </div>
             <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per 100g</div><div class="dual-rate-sub-val" id="sil-intl-100g">--</div></div>
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per Kg</div><div class="dual-rate-sub-val" id="sil-intl-kg">--</div></div>
             </div>
             <div class="dual-rate-formula">
+              <span class="dual-rate-formula-label">Calculation</span>
               <span>XAG/USD <span id="sil-xag" style="color:var(--text-2)">--</span></span>
               <span>÷ 31.1035g ×</span>
               <span id="sil-inr" style="color:var(--text-2)">--</span>
@@ -4263,7 +4569,9 @@
             </div>
           </div>
           <div class="dual-rate-col">
-            <div class="dual-rate-main silver-val" id="sil-india-gram">--</div>
+            <div class="dual-rate-price-row">
+              <div class="dual-rate-main silver-val" id="sil-india-gram">--</div>
+            </div>
             <div class="dual-rate-meta-row">
               <div class="dual-rate-purity">999 · Fine · ₹/gram</div>
               <div class="dual-rate-perkg" id="sil-india-kg-hero">-- / kg</div>
@@ -4923,7 +5231,7 @@
         const el = document.getElementById(elId);
         if (!el || pct == null) return;
         const up = pct >= 0;
-        el.textContent = (up ? "▲ +" : "▼ ") + (pct * 100).toFixed(2) + "% today";
+        el.textContent = (up ? "▲ +" : "▼ ") + (pct * 100).toFixed(2) + "%";
         el.style.color = up ? "var(--green)" : "var(--red)";
       };
       showDayChange("intl-daychange", goldDailyPct);
