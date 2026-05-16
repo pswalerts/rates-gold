@@ -2824,6 +2824,243 @@
       .making-pct-chip input { width: 32px; font-size: 12px; }
     }
 
+    /* =========================================================
+       FINAL POLISH v4 — Hero titles outside, converter compact,
+       presets 1-row, label alignment, formula no-wrap
+       ========================================================= */
+
+    /* ---- HERO: twin section titles outside the dual rate box ---- */
+    .hero-rate-titles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-3);
+      margin-top: var(--s-7);
+      margin-bottom: var(--s-3);
+    }
+    .hero-rate-title {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      flex-wrap: nowrap !important;
+      gap: var(--s-2);
+      align-items: center;
+    }
+    .hero-rate-title .source-badge {
+      margin-left: auto !important;
+      flex-shrink: 0;
+    }
+    .hero-rate-title .section-title-sub {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Compact dual rate box (titles are now outside) */
+    .dual-rate-box {
+      margin-top: 0 !important;
+    }
+    .dual-rate-col {
+      padding: var(--s-4) var(--s-5) !important;
+    }
+    /* Hide old in-box title elements (no longer used in gold/silver hero) */
+    .dual-rate-col-header,
+    .dual-rate-purity-line {
+      display: none !important;
+    }
+    .dual-rate-main {
+      min-height: 50px !important;
+    }
+
+    /* Formula bar: keep result+/g together, smaller */
+    .formula-result { white-space: nowrap; }
+    .dual-rate-formula {
+      font-size: 10px !important;
+      opacity: 0.6 !important;
+      padding: 6px 10px !important;
+      margin-top: var(--s-2) !important;
+    }
+
+    /* ---- CONVERTER: compact 3-col with 1-row presets ---- */
+    .converter-row-3col {
+      display: grid !important;
+      grid-template-columns: 1.25fr 1.25fr 1fr !important;
+      gap: var(--s-3) !important;
+      align-items: stretch !important;
+    }
+    .converter-panel {
+      padding: var(--s-4) !important;
+      gap: var(--s-3) !important;
+      min-height: auto !important;
+    }
+    .converter-panel-label {
+      font-size: 10px !important;
+      letter-spacing: 0.10em !important;
+      color: var(--text-3) !important;
+      font-weight: 600;
+      margin-bottom: 0 !important;
+    }
+    /* Inputs slightly smaller */
+    .converter-input {
+      font-size: 18px !important;
+      padding: 9px 12px !important;
+    }
+    .purity-input {
+      font-size: 15px !important;
+      padding: 9px 12px !important;
+    }
+    .converter-unit, .purity-suffix {
+      padding: 0 12px !important;
+      font-size: 11px !important;
+    }
+    .converter-input-stack {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: var(--s-2) !important;
+    }
+    /* For input panel: weight + purity side by side on desktop */
+    .converter-row-3col > .converter-panel:first-child .converter-input-stack {
+      gap: var(--s-2);
+    }
+    .converter-row-3col > .converter-panel:first-child .converter-input-stack > * {
+      width: 100%;
+    }
+
+    /* Preset chips: force into ONE row using grid */
+    .purity-presets {
+      display: grid !important;
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 4px !important;
+      margin-top: 0 !important;
+    }
+    .converter-card[data-target-metal="silver"] #convOutputPresets,
+    body.silver-mode #convInputPresets {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+    .purity-preset {
+      text-align: center;
+      padding: 5px 4px !important;
+      font-size: 10px !important;
+      letter-spacing: 0 !important;
+      font-weight: 600 !important;
+      white-space: nowrap;
+    }
+    .purity-helper {
+      font-size: 10px !important;
+      margin-top: 0 !important;
+      letter-spacing: 0.04em !important;
+    }
+
+    /* Result panel: compact and centered */
+    .converter-panel-result {
+      padding: var(--s-3) var(--s-4) !important;
+    }
+    .converter-result-block {
+      padding: 0 !important;
+      gap: var(--s-1) !important;
+    }
+    .converter-panel-result .converter-result-amount {
+      font-size: clamp(26px, 3.5vw, 34px) !important;
+    }
+    .converter-panel-result .converter-result-sub {
+      font-size: 11px !important;
+      letter-spacing: 0.04em !important;
+    }
+
+    /* ---- VALUE CARD LABELS: forced 2-line consistency ---- */
+    .converter-value-label-text {
+      display: flex !important;
+      flex-direction: column;
+      gap: 1px;
+      flex: 1 1 auto;
+      min-width: 0;
+      line-height: 1.2;
+    }
+    .cvl-main {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cvl-sub {
+      display: block;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-4);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* Value card uniform layout */
+    .converter-value-card {
+      padding: var(--s-4) !important;
+      min-height: 120px !important;
+    }
+    .converter-value-label {
+      display: flex !important;
+      align-items: flex-start !important;
+      justify-content: space-between;
+      gap: var(--s-2);
+      min-height: 36px !important;
+      margin-bottom: var(--s-2) !important;
+    }
+    /* Hide the colored dot before label (was a separate ::before on label) - use it on cvl-main */
+    .converter-value-card .converter-value-label::before { display: none; }
+    .converter-value-card.theoretical .cvl-main::before,
+    .converter-value-card.buyback .cvl-main::before,
+    .converter-value-card.replacement .cvl-main::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .converter-value-card.theoretical .cvl-main::before { background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,0.5); }
+    .converter-value-card.buyback .cvl-main::before     { background: var(--red); }
+    .converter-value-card.replacement .cvl-main::before { background: var(--orange); }
+
+    /* ---- MOBILE adjustments ---- */
+    @media (max-width: 768px) {
+      .hero-rate-titles {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .hero-rate-title:nth-child(2) {
+        margin-top: var(--s-4) !important;
+      }
+      .converter-row-3col {
+        grid-template-columns: 1fr !important;
+      }
+      .converter-input-stack {
+        flex-direction: row !important;
+      }
+      .converter-input-stack > * { flex: 1; }
+      .purity-presets {
+        grid-template-columns: repeat(5, 1fr) !important;
+      }
+      .converter-panel-result .converter-result-amount {
+        font-size: 26px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .converter-input-stack { flex-direction: column !important; }
+      .converter-input-stack > * { width: 100%; }
+      .hero-rate-title {
+        flex-wrap: wrap !important;
+        gap: 4px;
+      }
+      .hero-rate-title .section-title-sub {
+        font-size: 10px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2877,13 +3114,20 @@
     <!-- GOLD SECTION -->
     <div class="gold-section" id="goldratesection">
       <div class="hero">
+        <!-- Twin section titles above the dual-rate box -->
+        <div class="hero-rate-titles">
+          <div class="section-title hero-rate-title">
+            International Spot → INR <span class="section-title-sub">· 999 · 24K · ₹/gram</span>
+            <span class="source-badge calc-src" id="intlSourceBadge">Calculated</span>
+          </div>
+          <div class="section-title hero-rate-title">
+            India Gold Rate <span class="section-title-sub">· 999 · 24K · ₹/gram</span>
+            <span class="source-badge calc-src" id="ibjaLiveBadge">Loading</span>
+          </div>
+        </div>
+
         <div class="dual-rate-box">
           <div class="dual-rate-col">
-            <div class="dual-rate-col-header">
-              <div class="dual-rate-col-title">International Spot → INR</div>
-              <span class="source-badge calc-src" id="intlSourceBadge">Calculated</span>
-            </div>
-            <div class="dual-rate-purity-line">999 · 24K · ₹/gram</div>
             <div class="dual-rate-main" id="intl-24k">--</div>
             <div class="dual-rate-daychange" id="intl-daychange"></div>
             <div class="dual-rate-sub-grid">
@@ -2896,16 +3140,10 @@
               <span>USD/oz ÷ 31.1035g ×</span>
               <span style="color:var(--inr-color);font-weight:600" id="intl-inr">--</span>
               <span>=</span>
-              <span style="color:var(--gold-bright);font-weight:600" id="intl-result">--</span>
-              <span>/g</span>
+              <span class="formula-result"><span style="color:var(--gold-bright);font-weight:600" id="intl-result">--</span>/g</span>
             </div>
           </div>
           <div class="dual-rate-col">
-            <div class="dual-rate-col-header">
-              <div class="dual-rate-col-title">India Gold Rate</div>
-              <span class="source-badge calc-src" id="ibjaLiveBadge">Loading</span>
-            </div>
-            <div class="dual-rate-purity-line">999 · 24K · ₹/gram</div>
             <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
             <div class="dual-rate-daychange" id="ibja-daychange"></div>
             <div class="dual-rate-sub-grid">
@@ -2914,7 +3152,7 @@
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val" id="ibja750">--</div></div>
             </div>
             <div class="dual-rate-stale" id="ibjaStaleMsg" style="display:none;">Showing previous session IBJA rate. Live data unavailable right now.</div>
-            <div class="dual-rate-unavail" id="ibjaCalcMsg" style="display:none;">Estimated from international spot + ~5% India duty. IBJA publishes official rates at ~10 AM IST on trading days.</div>
+            <div class="dual-rate-unavail" id="ibjaCalcMsg" style="display:none;">Estimated from international spot + ~5% India duty.</div>
           </div>
         </div>
 
@@ -3003,7 +3241,7 @@
             <div class="dxb-th dxb-th-aed"><span class="dxb-flag">🇦🇪</span> Dubai · AED</div>
             <div class="dxb-th dxb-th-dubai"><span class="dxb-flag">🇦🇪</span> Dubai · INR</div>
             <div class="dxb-th dxb-th-india"><span class="dxb-flag">🇮🇳</span> India · INR</div>
-            <div class="dxb-th dxb-th-diff">Saving</div>
+            <div class="dxb-th dxb-th-diff">Difference</div>
           </div>
           <div class="dxb-table-row">
             <div class="dxb-td dxb-td-purity">24K <span class="dxb-purity-num">999</span></div>
@@ -3113,14 +3351,20 @@
         <div class="converter-values">
           <div class="converter-value-card theoretical">
             <div class="converter-value-label">
-              <span class="converter-value-label-text">Theoretical Value · IBJA spot</span>
+              <span class="converter-value-label-text">
+                <span class="cvl-main">Theoretical Value</span>
+                <span class="cvl-sub">· IBJA spot</span>
+              </span>
             </div>
             <div class="converter-value-amount" id="convTheoretical">--</div>
             <div class="converter-value-note" id="convTheoreticalNote">pure metal at today's spot rate</div>
           </div>
           <div class="converter-value-card buyback">
             <div class="converter-value-label">
-              <span class="converter-value-label-text">Jeweller Buy-Back</span>
+              <span class="converter-value-label-text">
+                <span class="cvl-main">Jeweller</span>
+                <span class="cvl-sub">· Buy-Back</span>
+              </span>
               <label class="buyback-pct-chip" for="convBuybackPct">
                 <input type="number" id="convBuybackPct" value="6" min="0" max="50" step="0.5" oninput="updateConverter()" />
                 <span>% off</span>
@@ -3131,7 +3375,10 @@
           </div>
           <div class="converter-value-card replacement">
             <div class="converter-value-label">
-              <span class="converter-value-label-text">Replacement Cost · new</span>
+              <span class="converter-value-label-text">
+                <span class="cvl-main">Replacement Cost</span>
+                <span class="cvl-sub">· new jewellery</span>
+              </span>
               <label class="making-pct-chip" for="convMakingPct">
                 <input type="number" id="convMakingPct" value="10" min="0" max="50" step="0.5" oninput="updateConverter()" />
                 <span>% making</span>
@@ -3719,16 +3966,15 @@
     const chg = current - past, pct = (chg/past)*100, dir = chg >= 0 ? "up" : "dn", sign = chg >= 0 ? "+" : "-";
     const periodLabel = tabKey==="1d" ? "Prior Session" : tabKey==="ytd" ? "Price Jan 1" : `Price ${cfg.label.replace("vs ","")}`;
     const cells = [
-      { label: "Current Price",            val: fmt(current),                            chg: null },
-      { label: `Change · ${cfg.label}`,    val: sign + fmt(Math.abs(chg)),               chg: dir, chgTxt: sign + Math.abs(pct).toFixed(2) + "%" },
-      { label: periodLabel,                val: fmt(past),                               chg: null },
-      { label: tabKey.toUpperCase() + " Performance", val: sign + Math.abs(pct).toFixed(2) + "%", chg: dir, chgTxt: dir==="up"?"Gain":"Loss" },
+      { label: "Current Price",            val: fmt(current),                                                            chg: null },
+      { label: `Change · ${cfg.label}`,    val: sign + fmt(Math.abs(chg)) + ` (${sign}${Math.abs(pct).toFixed(2)}%)`,    chg: dir },
+      { label: periodLabel,                val: fmt(past),                                                                chg: null },
+      { label: tabKey.toUpperCase() + " Performance", val: sign + Math.abs(pct).toFixed(2) + "%",                          chg: dir },
     ];
     bodyEl.innerHTML = cells.map(c => `
       <div class="hero-hist-cell">
         <div class="hero-hist-clabel">${c.label}</div>
         <div class="hero-hist-cval ${c.chg?("hero-hist-cchg "+c.chg):""}">${c.val}</div>
-        ${c.chg?`<div class="hero-hist-cchg ${c.chg}">${c.chgTxt}</div>`:""}
       </div>`).join("");
   }
 
@@ -4199,10 +4445,14 @@
     const outputSubEl = document.getElementById('convOutputSub');
     if (weight > 0 && equivWeight > 0 && inputPurity > 0 && outputPurity > 0) {
       outputEl.textContent = equivWeight.toLocaleString('en-IN', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' g';
+      // Sub-text: karat + fine weight (no "contains")
+      const targetKaratStr = outputMetal === 'gold'
+        ? (outputPurity >= 999 ? '24K' : `${((outputPurity/1000)*24).toFixed(1).replace('.0','')}K`)
+        : outputPurity + '/1000';
       if (_convSwapMode) {
-        outputSubEl.textContent = `equal value · ${fineInput.toFixed(3)}g fine ${inputMetal} → ${outputMetal}`;
+        outputSubEl.textContent = `${targetKaratStr} · ${fineInput.toFixed(3)}g fine ${inputMetal} swapped`;
       } else {
-        outputSubEl.textContent = `contains ${fineInput.toFixed(3)} g fine ${inputMetal}`;
+        outputSubEl.textContent = `${targetKaratStr} · ${fineInput.toFixed(3)}g fine ${inputMetal}`;
       }
     } else {
       outputEl.textContent = '0.000 g';
