@@ -49,7 +49,9 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23d4a853' stroke='%23ffe066' stroke-width='4.5'/%3E%3Ccircle cx='50' cy='50' r='38' fill='none' stroke='rgba(255,240,150,0.3)' stroke-width='1.5'/%3E%3Ctext x='50' y='64' text-anchor='middle' font-family='Georgia,serif' font-size='50' font-weight='bold' fill='%23fff8e1'%3EG%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" /></noscript>
 
   <style>
     /* ============================================================
@@ -1490,10 +1492,10 @@
       color: var(--text-2);
     }
 
-    /* 3-column main row */
+    /* 2-column main row (Option A: Convert | Equivalent with result on top) */
     .converter-row {
       display: grid;
-      grid-template-columns: 1.3fr 1.3fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: var(--s-3);
       margin-bottom: var(--s-4);
       align-items: stretch;
@@ -1618,46 +1620,41 @@
     .purity-preset.active .pp-karat { color: inherit; opacity: 0.85; }
     .purity-helper { display: none; }
 
-    /* Result panel — now shows GMS + ₹ value */
-    .converter-panel-result {
-      background: linear-gradient(135deg, rgba(212,168,83,0.10) 0%, rgba(212,168,83,0.02) 100%);
-      border-color: var(--border-gold);
-      justify-content: center;
-      text-align: center;
+    /* Option A: Equiv panel with result banner on top */
+    .converter-panel-equiv {
+      gap: var(--s-3);
     }
-    body.silver-mode .converter-panel-result,
-    .converter-card[data-target-metal="silver"] .converter-panel-result {
-      background: linear-gradient(135deg, rgba(168,184,200,0.10) 0%, rgba(168,184,200,0.02) 100%);
-      border-color: var(--border-silver);
-    }
-    .converter-result-block {
+    .converter-equiv-result {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      flex: 1;
-      padding: var(--s-2) 0;
+      gap: 6px;
+      padding: var(--s-4) var(--s-3);
+      background: linear-gradient(135deg, rgba(212,168,83,0.10) 0%, rgba(212,168,83,0.02) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--r-md);
+      text-align: center;
+      min-height: 110px;
+    }
+    body.silver-mode .converter-equiv-result,
+    .converter-card[data-target-metal="silver"] .converter-equiv-result {
+      background: linear-gradient(135deg, rgba(168,184,200,0.10) 0%, rgba(168,184,200,0.02) 100%);
+      border-color: var(--border-silver);
     }
     .converter-result-amount {
       font-family: var(--mono);
-      font-size: clamp(22px, 3vw, 28px);
+      font-size: clamp(26px, 3.2vw, 34px);
       font-weight: 700;
       color: var(--gold-bright);
       letter-spacing: -0.02em;
       font-variant-numeric: tabular-nums;
-      line-height: 1.1;
+      line-height: 1.05;
       white-space: nowrap;
     }
     body.silver-mode .converter-result-amount,
     .converter-card[data-target-metal="silver"] .converter-result-amount {
       color: var(--silver-bright);
-    }
-    .converter-result-divider {
-      width: 60%;
-      height: 1px;
-      background: var(--border);
-      margin: 4px 0;
     }
     .converter-result-rupee {
       font-family: var(--mono);
@@ -1676,6 +1673,8 @@
       letter-spacing: 0.04em;
       margin-top: 2px;
     }
+    /* Legacy result-block / divider — no longer used, keep dormant */
+    .converter-result-block, .converter-result-divider { display: none; }
 
     /* Value cards — 2-LINE labels by design */
     .converter-values {
@@ -1705,12 +1704,15 @@
       border-color: rgba(251,146,60,0.30);
       background: linear-gradient(135deg, rgba(251,146,60,0.04), transparent);
     }
-    /* Label row: title on first line, chip BELOW on second line */
+    /* value card: position-relative for absolute-positioned chip */
+    .converter-value-card { position: relative; }
+    /* Label: single line now (chip is positioned absolutely) */
     .converter-value-label {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      align-items: center;
       margin-bottom: var(--s-3);
+      padding-right: 80px; /* space for absolute-positioned chip */
+      min-height: 22px;
     }
     .converter-value-label-text {
       display: flex;
@@ -1736,17 +1738,20 @@
     .converter-value-card.buyback     .converter-value-label-text::before { background: var(--red); }
     .converter-value-card.replacement .converter-value-label-text::before { background: var(--orange); }
 
-    /* Chips inside label */
-    .buyback-pct-chip, .making-pct-chip {
+    /* Chip positioned at top-right corner of card */
+    .pct-chip-corner {
+      position: absolute;
+      top: 12px;
+      right: 12px;
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      align-self: flex-start;
       padding: 3px 10px;
       border-radius: 999px;
       font-family: var(--mono);
       cursor: text;
       transition: all 0.15s ease;
+      z-index: 1;
     }
     .buyback-pct-chip {
       background: rgba(248,113,113,0.12);
@@ -1961,7 +1966,7 @@
     /* Narrow laptops / iPad landscape */
     @media (max-width: 1100px) {
       #etfGrid, #physicalGrid, #digitalGrid, .pr-grid { grid-template-columns: 1fr; }
-      .converter-row { grid-template-columns: 1fr 1fr 0.9fr; gap: var(--s-2); }
+      .converter-row { gap: var(--s-2); }
       .dual-rate-info span { display: none; }
       .dual-rate-info { padding: 3px 5px; }
     }
@@ -1970,15 +1975,6 @@
     @media (max-width: 900px) {
       .hero-rate-titles { grid-template-columns: 1fr 1fr; gap: var(--s-3); }
       .hero-rate-title { font-size: 11px; }
-      .converter-row {
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-          "convert equivalent"
-          "amount amount";
-      }
-      .converter-row > .converter-panel:nth-child(1) { grid-area: convert; }
-      .converter-row > .converter-panel:nth-child(2) { grid-area: equivalent; }
-      .converter-row > .converter-panel:nth-child(3) { grid-area: amount; min-height: 110px; }
       .converter-values { grid-template-columns: 1fr; }
       .converter-footnote ul { grid-template-columns: 1fr; }
       .hero-hist-body { grid-template-columns: repeat(2, 1fr); }
@@ -2009,9 +2005,14 @@
 
       .converter-row {
         grid-template-columns: 1fr;
-        grid-template-areas: none;
       }
-      .converter-row > .converter-panel { grid-area: auto; }
+      /* On mobile, chip moves back inline (below label) to avoid overlap */
+      .pct-chip-corner {
+        position: static;
+        align-self: flex-start;
+        margin-bottom: var(--s-2);
+      }
+      .converter-value-label { padding-right: 0; }
 
       .dxb-table-head { display: none; }
       .dxb-table-row {
@@ -2340,12 +2341,14 @@
           </div>
         </div>
 
+        <div class="section-title dubai-section-title">Dubai vs India <span class="section-title-sub">· same metal, lower price abroad</span></div>
         <div class="dubai-callout" id="dubaiCallout" style="display:none;">
           <span class="dubai-callout-flag">🇦🇪</span>
           <span class="dubai-callout-text">Dubai 24K is <strong id="dubaiCalloutSave" style="color:var(--green)">--</strong>/g (<span id="dubaiCalloutPct">--</span>%) <span id="dubaiCalloutDir">cheaper</span> than India · <strong id="dubaiCalloutRate">--</strong>/g</span>
           <a class="dubai-callout-link" href="#dubai-section">Full comparison →</a>
         </div>
 
+        <div class="section-title hist-section-title">Price History <span class="section-title-sub">· track gold's performance over time</span></div>
         <div class="hero-hist-panel" id="heroHistPanel" style="display:none;">
           <div class="hero-hist-tabs">
             <button class="hero-hist-tab active" onclick="showHistTab('1d',this)">1D</button>
@@ -2488,7 +2491,7 @@
           </label>
         </div>
 
-        <div class="converter-row converter-row-3col">
+        <div class="converter-row converter-row-2col">
           <!-- COL 1: CONVERT (weight + input purity) -->
           <div class="converter-panel">
             <div class="converter-panel-label" id="convInputLabel">Convert</div>
@@ -2506,9 +2509,16 @@
             <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
           </div>
 
-          <!-- COL 2: EQUIVALENT (target purity) -->
-          <div class="converter-panel">
+          <!-- COL 2: EQUIVALENT (result on TOP + purity controls below) -->
+          <div class="converter-panel converter-panel-equiv">
             <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
+            <!-- BIG RESULT BANNER -->
+            <div class="converter-equiv-result">
+              <div class="converter-result-amount" id="convOutputWeight">--</div>
+              <div class="converter-result-rupee" id="convOutputRupee">--</div>
+              <div class="converter-result-sub" id="convOutputSub">at today's rate</div>
+            </div>
+            <!-- PURITY CONTROLS BELOW -->
             <div class="converter-input-stack">
               <div class="purity-input-group">
                 <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
@@ -2517,17 +2527,6 @@
             </div>
             <div class="purity-presets" id="convOutputPresets"></div>
             <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
-          </div>
-
-          <!-- COL 3: AMOUNT (result with both grams + ₹ value) -->
-          <div class="converter-panel converter-panel-result">
-            <div class="converter-panel-label">Amount</div>
-            <div class="converter-result-block">
-              <div class="converter-result-amount" id="convOutputWeight">--</div>
-              <div class="converter-result-divider"></div>
-              <div class="converter-result-rupee" id="convOutputRupee">--</div>
-              <div class="converter-result-sub" id="convOutputSub">at today's IBJA rate</div>
-            </div>
           </div>
         </div>
 
@@ -2542,22 +2541,22 @@
           <div class="converter-value-card buyback">
             <div class="converter-value-label">
               <span class="converter-value-label-text">Jeweller Buy-Back</span>
-              <label class="buyback-pct-chip" for="convBuybackPct">
-                <input type="number" id="convBuybackPct" value="6" min="0" max="50" step="0.5" oninput="updateConverter()" />
-                <span>% off</span>
-              </label>
             </div>
+            <label class="buyback-pct-chip pct-chip-corner" for="convBuybackPct">
+              <input type="number" id="convBuybackPct" value="6" min="0" max="50" step="0.5" oninput="updateConverter()" />
+              <span>% off</span>
+            </label>
             <div class="converter-value-amount" id="convBuyback">--</div>
             <div class="converter-value-note" id="convBuybackNote">edit % to match jeweller's quote</div>
           </div>
           <div class="converter-value-card replacement">
             <div class="converter-value-label">
               <span class="converter-value-label-text">Replacement Cost – New</span>
-              <label class="making-pct-chip" for="convMakingPct">
-                <input type="number" id="convMakingPct" value="10" min="0" max="50" step="0.5" oninput="updateConverter()" />
-                <span>% making</span>
-              </label>
             </div>
+            <label class="making-pct-chip pct-chip-corner" for="convMakingPct">
+              <input type="number" id="convMakingPct" value="10" min="0" max="50" step="0.5" oninput="updateConverter()" />
+              <span>% making</span>
+            </label>
             <div class="converter-value-amount" id="convReplacement">--</div>
             <div class="converter-value-note" id="convReplacementNote">new gold + making + 3% GST</div>
           </div>
@@ -2574,9 +2573,9 @@
         <div class="converter-footnote">
           <ul>
             <li>Pure metal = <code>weight × purity ÷ 1000</code></li>
-            <li>Theoretical value uses live IBJA 24K (999)</li>
-            <li>Edit buyback % to match your jeweller's quote</li>
-            <li>Replacement = new gold + making + 3% GST</li>
+            <li>Theoretical uses live IBJA 24K (999)</li>
+            <li>Edit buyback % to match jeweller</li>
+            <li>Replacement = gold + making + 3% GST</li>
           </ul>
         </div>
       </div>
@@ -2636,6 +2635,7 @@
           </div>
         </div>
 
+        <div class="section-title hist-section-title">Price History <span class="section-title-sub">· track silver's performance over time</span></div>
         <div class="hero-hist-panel" id="silverHistPanel" style="display:none;">
           <div class="hero-hist-tabs">
             <button class="hero-hist-tab active" onclick="showSilverHistTab('1d',this)">1D</button>
