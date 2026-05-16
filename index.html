@@ -3259,6 +3259,623 @@
       }
     }
 
+    /* =========================================================
+       RESPONSIVE OVERHAUL v6 — fixes Windows laptops + all mobiles
+       Addresses: section title wrapping, sub-value truncation,
+       Best Buy collapse, Digital Gold overlap, value card vertical text,
+       Dubai AED, converter Amount column, footnote
+       Applies to BOTH gold AND silver sections
+       ========================================================= */
+
+    /* ---- UNIVERSAL: prevent everything-collapses-to-1-char-wide ---- */
+    .pr-card, .pr-info, .pr-right,
+    .etf-card, .etf-info, .etf-right,
+    .converter-value-card,
+    .converter-value-label,
+    .converter-value-label-text,
+    .tl-compact-card,
+    .dual-rate-col,
+    .converter-panel,
+    .converter-panel-result {
+      min-width: 0;
+    }
+    .pr-info,
+    .etf-info,
+    .converter-value-label-text {
+      flex: 1 1 0;
+      overflow: hidden;
+    }
+
+    /* Force the result column to never go below 110px (avoids "9.169 g" wrapping) */
+    .converter-panel-result {
+      min-width: 110px;
+    }
+
+    /* ---- VALUE CARDS: prevent vertical-text printing ---- */
+    /* The vertical printing happened because the label text container had
+       width 0 and characters wrapped individually. Force it to a horizontal block. */
+    .converter-value-label-text {
+      display: block !important;
+      width: 100%;
+    }
+    .cvl-main, .cvl-sub {
+      display: block !important;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cvl-main {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+    }
+    .cvl-sub {
+      font-size: 9px;
+      letter-spacing: 0.04em;
+    }
+    .converter-value-label {
+      flex-wrap: nowrap !important;
+      align-items: flex-start !important;
+      gap: 6px !important;
+    }
+    /* Chip never grows beyond its content */
+    .buyback-pct-chip, .making-pct-chip {
+      flex: 0 0 auto !important;
+      width: auto !important;
+    }
+
+    /* ---- BEST BUY TODAY CARDS: prevent vertical text on narrow screens ---- */
+    .tl-compact-card {
+      min-width: 0;
+    }
+    .tl-compact-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    /* ---- DIGITAL GOLD / PHYSICAL: prevent name overlap on icon ---- */
+    .pr-card {
+      position: relative;
+    }
+    .pr-info {
+      padding-left: 0;
+      max-width: calc(100% - 56px - var(--s-3) - 100px);
+    }
+    .pr-name {
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      max-width: 100% !important;
+      display: block;
+    }
+    .pr-fund, .pr-source {
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      max-width: 100% !important;
+      display: block;
+    }
+    .pr-right {
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    /* ---- DUAL RATE SUB-VALUES: don't truncate to "₹ 13..." ---- */
+    .dual-rate-sub-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .dual-rate-sub-box {
+      min-width: 0;
+      padding: 8px 6px !important;
+    }
+    .dual-rate-sub-label {
+      font-size: 9px !important;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dual-rate-sub-val {
+      font-size: 12px !important;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.02em;
+    }
+
+    /* ---- HERO RATE TITLES: never wrap vertically ---- */
+    .hero-rate-titles {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-3);
+    }
+    .hero-rate-title {
+      min-width: 0 !important;
+      flex-wrap: nowrap !important;
+      overflow: hidden;
+    }
+    .hero-rate-title > * {
+      white-space: nowrap;
+    }
+    .hero-rate-title::before {
+      flex-shrink: 0;
+    }
+
+    /* ---- DUBAI TABLE: AED column needs guaranteed width for the د.إ symbol ---- */
+    .dxb-table-head, .dxb-table-row {
+      grid-template-columns: 0.6fr 1.1fr 1.1fr 1.1fr 1.2fr !important;
+    }
+    .dxb-td-aed {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 13px !important;
+      direction: ltr;
+    }
+
+    /* ---- FOOTNOTE: 2 cols only when there's room ---- */
+    .converter-footnote ul {
+      gap: 8px var(--s-4) !important;
+    }
+    .converter-footnote ul li {
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       BREAKPOINT 1: Windows laptops (≤1400px) — your typical
+       Dell/HP/Lenovo 14"–15.6" displays. ~1240-1280px usable.
+       Symptoms shown: titles wrap, sub-values truncate, cards crowd
+       ========================================================= */
+    @media (max-width: 1400px) {
+      .page-wrap { padding: 16px 14px 32px !important; }
+
+      /* Header: shrink logo, ensure single line */
+      .logo-rate, .logo-dot, .logo-gold-word {
+        font-size: 26px !important;
+      }
+      .logo-tagline { font-size: 10px !important; }
+
+      /* Hero titles: keep on one line each, shrink sub */
+      .hero-rate-title {
+        font-size: 11px !important;
+      }
+      .hero-rate-title .source-badge {
+        font-size: 9px !important;
+        padding: 2px 7px !important;
+        margin-left: 8px !important;
+      }
+
+      /* Dual rate box: compact */
+      .dual-rate-col { padding: var(--s-4) !important; }
+      .dual-rate-main { font-size: clamp(28px, 4vw, 36px) !important; }
+      .dual-rate-formula {
+        font-size: 9px !important;
+        padding: 6px 10px !important;
+        gap: 5px !important;
+      }
+
+      /* Sub-rate cards: critical fix to avoid "₹ 13..." */
+      .dual-rate-sub-grid { gap: 4px !important; }
+      .dual-rate-sub-box { padding: 6px 4px !important; }
+      .dual-rate-sub-val { font-size: 11px !important; }
+      .dual-rate-sub-label { font-size: 8px !important; }
+
+      /* Physical/Digital cards: keep horizontal, shrink */
+      .pr-card { padding: 12px !important; gap: 10px !important; }
+      .pr-icon { width: 36px !important; height: 36px !important; font-size: 13px !important; }
+      .pr-name { font-size: 13px !important; }
+      .pr-price { font-size: 16px !important; }
+      .pr-fund, .pr-source { font-size: 10px !important; }
+      .pr-info { max-width: calc(100% - 48px - 8px - 90px); }
+
+      /* ETF cards: same compaction */
+      .etf-card { padding: 12px !important; gap: 10px !important; }
+      .etf-icon { width: 36px !important; height: 36px !important; font-size: 13px !important; }
+      .etf-name { font-size: 13px !important; }
+      .etf-price { font-size: 16px !important; }
+      .etf-fund, .etf-note { font-size: 10px !important; }
+
+      /* Best Buy compact cards */
+      .tl-body { gap: 6px !important; }
+      .tl-compact-card { padding: 10px 8px !important; }
+      .tl-compact-name { font-size: 12px !important; }
+      .tl-compact-price { font-size: 13px !important; }
+      .tl-compact-rank, .tl-compact-benefit { font-size: 9px !important; }
+
+      /* Dubai table */
+      .dxb-th { font-size: 9px !important; padding: 8px 10px !important; }
+      .dxb-td { font-size: 13px !important; padding: 12px 10px !important; }
+      .dxb-td-purity { font-size: 14px !important; }
+
+      /* Converter inputs */
+      .converter-input { font-size: 16px !important; padding: 8px 10px !important; }
+      .purity-input { font-size: 14px !important; padding: 8px 10px !important; }
+      .purity-preset { min-height: 32px !important; }
+      .pp-num { font-size: 10px !important; }
+      .pp-karat { font-size: 7px !important; }
+
+      /* Value cards: keep label single-line via ellipsis */
+      .cvl-main { font-size: 10px !important; }
+      .cvl-sub { font-size: 8px !important; }
+      .converter-value-amount { font-size: 16px !important; }
+      .converter-value-note { font-size: 10px !important; }
+
+      .converter-panel-result .converter-result-amount {
+        font-size: 24px !important;
+      }
+    }
+
+    /* =========================================================
+       BREAKPOINT 2: Narrow laptops + iPads landscape (≤1100px)
+       ========================================================= */
+    @media (max-width: 1100px) {
+      /* ETF / Physical grids drop to 1 column when too cramped */
+      #etfGrid, #physicalGrid, #digitalGrid {
+        grid-template-columns: 1fr !important;
+      }
+      /* Converter row: still 3-col but tighter */
+      .converter-row-3col {
+        grid-template-columns: 1fr 1fr 0.8fr !important;
+        gap: var(--s-2) !important;
+      }
+      .converter-panel { padding: var(--s-3) !important; }
+    }
+
+    /* =========================================================
+       BREAKPOINT 3: Tablets + landscape phones (≤900px)
+       Converter goes to 2-col (Convert+Equivalent side by side, Amount below)
+       Value cards stack
+       ========================================================= */
+    @media (max-width: 900px) {
+      /* Hero titles still 2-col but font tighter */
+      .hero-rate-titles {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .hero-rate-title {
+        font-size: 10px !important;
+      }
+      .dual-rate-box {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      /* Converter: Convert | Equivalent on top row, Amount below */
+      .converter-row-3col {
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-areas:
+          "convert equivalent"
+          "amount amount" !important;
+        gap: var(--s-3) !important;
+      }
+      .converter-row-3col > .converter-panel:nth-child(1) { grid-area: convert; }
+      .converter-row-3col > .converter-panel:nth-child(2) { grid-area: equivalent; }
+      .converter-row-3col > .converter-panel:nth-child(3) { grid-area: amount; min-height: 100px; }
+      .converter-panel-result .converter-result-amount { font-size: 28px !important; }
+
+      /* Value cards: 1 column stack */
+      .converter-values {
+        grid-template-columns: 1fr !important;
+        gap: var(--s-2) !important;
+      }
+
+      /* Footnote: 1 col */
+      .converter-footnote ul { grid-template-columns: 1fr !important; }
+    }
+
+    /* =========================================================
+       BREAKPOINT 4: Phones (≤640px) — iPhone/Android portrait
+       FULL stack — but Dubai table & Best Buy stay in 2-col grids
+       so they don't waste space
+       ========================================================= */
+    @media (max-width: 640px) {
+      .page-wrap { padding: 12px 10px 24px !important; }
+
+      /* Hero: stack rate columns */
+      .hero-rate-titles {
+        grid-template-columns: 1fr !important;
+        gap: var(--s-2) !important;
+      }
+      .hero-rate-title {
+        font-size: 11px !important;
+      }
+      .dual-rate-box {
+        grid-template-columns: 1fr !important;
+        gap: var(--s-3) !important;
+      }
+      .dual-rate-main { font-size: clamp(26px, 7vw, 32px) !important; }
+
+      /* Best Buy: 2 cols on phones, not 5 */
+      .tl-body {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      /* Physical/Digital/ETF: 1 col on phones */
+      #physicalGrid, #digitalGrid, #etfGrid {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Converter: full stack */
+      .converter-row-3col {
+        grid-template-columns: 1fr !important;
+        grid-template-areas: none !important;
+        gap: var(--s-2) !important;
+      }
+      .converter-row-3col > .converter-panel { grid-area: auto !important; }
+
+      /* Dubai table: 2-col stacked card per row */
+      .dxb-table-head { display: none !important; }
+      .dxb-table-row {
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-areas:
+          "purity diff"
+          "aed inr-d"
+          "inr-i inr-i" !important;
+        padding: 10px !important;
+        gap: 4px 8px !important;
+      }
+      .dxb-td { padding: 4px 6px !important; font-size: 12px !important; }
+      .dxb-td-purity { grid-area: purity; font-size: 13px !important; }
+      .dxb-td-aed { grid-area: aed; opacity: 0.85; }
+      .dxb-td-dubai { grid-area: inr-d; text-align: right; }
+      .dxb-td-india {
+        grid-area: inr-i;
+        text-align: left;
+        border-top: 1px dashed var(--border);
+        padding-top: 4px !important;
+        margin-top: 2px;
+      }
+      .dxb-td-india::before {
+        content: '🇮🇳 India: ';
+        opacity: 0.7;
+        font-size: 10px;
+      }
+      .dxb-td-aed::before {
+        content: '🇦🇪 ';
+        font-size: 10px;
+        margin-right: 2px;
+      }
+      .dxb-td-dubai::before {
+        content: 'INR ';
+        font-size: 10px;
+        opacity: 0.6;
+        margin-right: 2px;
+      }
+      .dxb-td-diff { grid-area: diff; text-align: right; font-size: 12px !important; }
+
+      /* Dubai footer: stack */
+      .dubai-footer {
+        grid-template-columns: 1fr !important;
+        gap: var(--s-2) !important;
+      }
+      .dubai-fx-inline {
+        padding-left: 0 !important;
+        border-left: none !important;
+        padding-top: var(--s-2) !important;
+        border-top: 1px solid var(--border) !important;
+        flex-wrap: wrap;
+        gap: var(--s-2) !important;
+      }
+    }
+
+    /* =========================================================
+       BREAKPOINT 5: Tiny phones (≤380px) — iPhone SE, older Androids
+       ========================================================= */
+    @media (max-width: 380px) {
+      .logo-rate, .logo-dot, .logo-gold-word { font-size: 22px !important; }
+      .logo-tagline { display: none !important; }
+      .toggle-btn { font-size: 10px !important; padding: 4px 10px !important; }
+      .dual-rate-main { font-size: 26px !important; }
+      .converter-input { font-size: 14px !important; }
+      .purity-input { font-size: 13px !important; }
+      .pp-num { font-size: 9px !important; }
+      .pp-karat { font-size: 7px !important; }
+      .converter-value-amount { font-size: 15px !important; }
+    }
+
+    /* =========================================================
+       POLISH v7 — addresses exact items from previous message
+       1. Inline single-line value labels (Replacement won't 3-line)
+       2. Chip input text → white (clearly editable, not gaudy)
+       3. Formula bar more readable (better contrast + spacing)
+       4. Hero title never wraps to second line
+       5. "gms" unit (HTML already updated)
+       ========================================================= */
+
+    /* ---- VALUE CARD LABELS: single line, em-dash separator ---- */
+    .converter-value-label-text {
+      display: block !important;
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .cvl-main {
+      display: inline !important;
+      width: auto !important;
+      font-size: 11px !important;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .cvl-sub {
+      display: inline !important;
+      width: auto !important;
+      font-size: 11px !important;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-3);
+      text-transform: uppercase;
+    }
+    .cvl-sep {
+      color: var(--text-4);
+      opacity: 0.7;
+      margin: 0 2px;
+      font-weight: 400;
+    }
+    /* Remove the colored dot from ::before — we'll re-add via dedicated dot span */
+    .converter-value-card.theoretical .cvl-main::before,
+    .converter-value-card.buyback .cvl-main::before,
+    .converter-value-card.replacement .cvl-main::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 7px;
+      vertical-align: 2px;
+    }
+    .converter-value-card.theoretical .cvl-main::before { background: var(--green); }
+    .converter-value-card.buyback .cvl-main::before { background: var(--red); }
+    .converter-value-card.replacement .cvl-main::before { background: var(--orange); }
+
+    /* Label container: keep label + chip on one line, chip never wraps */
+    .converter-value-label {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between;
+      gap: var(--s-2);
+      flex-wrap: nowrap !important;
+      min-height: 32px !important;
+      margin-bottom: var(--s-2) !important;
+    }
+
+    /* ---- CHIP INPUTS: white text (editable affordance, not gaudy) ---- */
+    .buyback-pct-chip input,
+    .making-pct-chip input {
+      color: var(--text-1) !important;
+      font-weight: 700;
+    }
+    /* Subtle border + background keeps the semantic color hint */
+    .buyback-pct-chip {
+      background: rgba(248,113,113,0.10) !important;
+      border-color: rgba(248,113,113,0.30) !important;
+    }
+    .buyback-pct-chip:hover, .buyback-pct-chip:focus-within {
+      background: rgba(248,113,113,0.16) !important;
+      border-color: rgba(248,113,113,0.45) !important;
+    }
+    .buyback-pct-chip span {
+      color: var(--text-3) !important;
+      font-weight: 600;
+    }
+    .making-pct-chip {
+      background: rgba(251,146,60,0.10) !important;
+      border-color: rgba(251,146,60,0.30) !important;
+    }
+    .making-pct-chip:hover, .making-pct-chip:focus-within {
+      background: rgba(251,146,60,0.16) !important;
+      border-color: rgba(251,146,60,0.45) !important;
+    }
+    .making-pct-chip span {
+      color: var(--text-3) !important;
+      font-weight: 600;
+    }
+
+    /* ---- FORMULA BAR: more readable, lifted from background ---- */
+    .dual-rate-formula {
+      font-size: 11px !important;
+      padding: 8px 12px !important;
+      gap: 6px !important;
+      opacity: 1 !important;
+      background: rgba(255,255,255,0.025) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px !important;
+      color: var(--text-2) !important;
+      letter-spacing: 0.02em;
+      font-feature-settings: "tnum" 1;
+      line-height: 1.5;
+    }
+    .dual-rate-formula > span {
+      color: var(--text-3);
+    }
+    /* Operator words ("USD/oz ÷ 31.1035g ×", "=") stay subtle */
+    .dual-rate-formula > span:not([style]) {
+      opacity: 0.75;
+    }
+
+    /* ---- HERO RATE TITLES: hard no-wrap guarantee ---- */
+    .hero-rate-titles {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-4);
+    }
+    .hero-rate-title {
+      display: flex !important;
+      align-items: center !important;
+      flex-wrap: nowrap !important;
+      gap: var(--s-2) !important;
+      overflow: hidden;
+      min-width: 0;
+      white-space: nowrap;
+    }
+    .hero-rate-title > * { flex-shrink: 0; }
+    /* The title text gets the only allowed flex-grow + ellipsis */
+    .hero-rate-title {
+      font-size: 12px !important;
+    }
+    .hero-rate-title .source-badge {
+      margin-left: auto !important;
+      flex-shrink: 0 !important;
+      font-size: 10px;
+      padding: 3px 10px;
+    }
+
+    /* ---- HERO META-ROW: purity sits next to daychange ---- */
+    .dual-rate-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--s-3);
+      margin-top: 6px;
+      margin-bottom: var(--s-3);
+      flex-wrap: nowrap;
+    }
+    .dual-rate-meta-row .dual-rate-daychange {
+      margin: 0;
+      flex-shrink: 0;
+    }
+    .dual-rate-purity {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: right;
+      flex: 0 1 auto;
+    }
+
+    /* ---- Responsive: hero title scales down before wrapping ---- */
+    @media (max-width: 1400px) {
+      .hero-rate-title { font-size: 11px !important; }
+      .hero-rate-title .source-badge { font-size: 9px; padding: 2px 8px; }
+      .dual-rate-purity { font-size: 10px; }
+      .dual-rate-formula { font-size: 10px !important; padding: 7px 10px !important; }
+    }
+    @media (max-width: 1100px) {
+      .hero-rate-title { font-size: 10px !important; gap: 6px !important; }
+      .hero-rate-title .source-badge { font-size: 8px; padding: 2px 6px; letter-spacing: 0.04em; }
+    }
+    @media (max-width: 640px) {
+      .hero-rate-title { font-size: 11px !important; }
+      .hero-rate-title .source-badge { font-size: 9px; }
+      .dual-rate-meta-row { gap: var(--s-2); }
+      .dual-rate-purity { font-size: 10px; }
+    }
+    @media (max-width: 440px) {
+      .hero-rate-title {
+        white-space: normal !important;
+        flex-wrap: wrap !important;
+      }
+      .hero-rate-title .source-badge { margin-left: 0 !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -3312,14 +3929,14 @@
     <!-- GOLD SECTION -->
     <div class="gold-section" id="goldratesection">
       <div class="hero">
-        <!-- Twin section titles above the dual-rate box -->
+        <!-- Twin section titles (just title + badge) -->
         <div class="hero-rate-titles">
           <div class="section-title hero-rate-title">
-            International Spot → INR <span class="section-title-sub">· 999 · 24K · ₹/gram</span>
+            International Spot → INR
             <span class="source-badge calc-src" id="intlSourceBadge">Calculated</span>
           </div>
           <div class="section-title hero-rate-title">
-            India Gold Rate <span class="section-title-sub">· 999 · 24K · ₹/gram</span>
+            India Gold Rate
             <span class="source-badge calc-src" id="ibjaLiveBadge">Loading</span>
           </div>
         </div>
@@ -3327,7 +3944,10 @@
         <div class="dual-rate-box">
           <div class="dual-rate-col">
             <div class="dual-rate-main" id="intl-24k">--</div>
-            <div class="dual-rate-daychange" id="intl-daychange"></div>
+            <div class="dual-rate-meta-row">
+              <div class="dual-rate-daychange" id="intl-daychange"></div>
+              <div class="dual-rate-purity">999 · 24K · ₹/gram</div>
+            </div>
             <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val intl-sub" id="intl-995">--</div></div>
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val intl-sub" id="intl-916">--</div></div>
@@ -3343,7 +3963,10 @@
           </div>
           <div class="dual-rate-col">
             <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
-            <div class="dual-rate-daychange" id="ibja-daychange"></div>
+            <div class="dual-rate-meta-row">
+              <div class="dual-rate-daychange" id="ibja-daychange"></div>
+              <div class="dual-rate-purity">999 · 24K · ₹/gram</div>
+            </div>
             <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val" id="ibja995">--</div></div>
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="ibja22k">--</div></div>
@@ -3512,7 +4135,7 @@
             <div class="converter-input-stack">
               <div class="converter-input-group">
                 <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
-                <div class="converter-unit">g</div>
+                <div class="converter-unit">gms</div>
               </div>
               <div class="purity-input-group">
                 <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
@@ -3550,8 +4173,7 @@
           <div class="converter-value-card theoretical">
             <div class="converter-value-label">
               <span class="converter-value-label-text">
-                <span class="cvl-main">Theoretical Value</span>
-                <span class="cvl-sub">· IBJA spot</span>
+                <span class="cvl-main">Theoretical Value <span class="cvl-sep">·</span> <span class="cvl-sub">IBJA Spot</span></span>
               </span>
             </div>
             <div class="converter-value-amount" id="convTheoretical">--</div>
@@ -3560,8 +4182,7 @@
           <div class="converter-value-card buyback">
             <div class="converter-value-label">
               <span class="converter-value-label-text">
-                <span class="cvl-main">Jeweller</span>
-                <span class="cvl-sub">· Buy-Back</span>
+                <span class="cvl-main">Jeweller <span class="cvl-sep">·</span> <span class="cvl-sub">Buy-Back</span></span>
               </span>
               <label class="buyback-pct-chip" for="convBuybackPct">
                 <input type="number" id="convBuybackPct" value="6" min="0" max="50" step="0.5" oninput="updateConverter()" />
@@ -3574,8 +4195,7 @@
           <div class="converter-value-card replacement">
             <div class="converter-value-label">
               <span class="converter-value-label-text">
-                <span class="cvl-main">Replacement Cost</span>
-                <span class="cvl-sub">· new</span>
+                <span class="cvl-main">Replacement <span class="cvl-sep">·</span> <span class="cvl-sub">New</span></span>
               </span>
               <label class="making-pct-chip" for="convMakingPct">
                 <input type="number" id="convMakingPct" value="10" min="0" max="50" step="0.5" oninput="updateConverter()" />
@@ -3612,15 +4232,24 @@
     <!-- SILVER SECTION -->
     <div class="silver-section" id="silversection">
       <div class="hero" style="margin-top:var(--s-6);">
-        <div class="silver-hero-label">Silver · India · ₹ per gram</div>
+        <!-- Twin section titles outside the box (matches gold pattern) -->
+        <div class="hero-rate-titles">
+          <div class="section-title hero-rate-title">
+            International Spot → INR
+            <span class="source-badge calc-src">Calculated</span>
+          </div>
+          <div class="section-title hero-rate-title">
+            India Silver Rate
+            <span class="source-badge calc-src" id="silIbjaLiveBadge">Calc</span>
+          </div>
+        </div>
+
         <div class="dual-rate-box">
           <div class="dual-rate-col">
-            <div class="dual-rate-col-header">
-              <div class="dual-rate-col-title">International Spot → INR</div>
-              <span class="source-badge calc-src">Calculated</span>
-            </div>
-            <div class="dual-rate-purity-line">999 · Fine Silver · ₹/gram</div>
             <div class="dual-rate-main silver-val" id="sil-intl-gram">--</div>
+            <div class="dual-rate-meta-row">
+              <div class="dual-rate-purity">999 · Fine · ₹/gram</div>
+            </div>
             <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per 100g</div><div class="dual-rate-sub-val" id="sil-intl-100g">--</div></div>
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per Kg</div><div class="dual-rate-sub-val" id="sil-intl-kg">--</div></div>
@@ -3630,23 +4259,20 @@
               <span>÷ 31.1035g ×</span>
               <span id="sil-inr" style="color:var(--text-2)">--</span>
               <span>=</span>
-              <span id="sil-result" style="color:var(--silver-bright)">--</span>
-              <span>/g</span>
+              <span class="formula-result"><span id="sil-result" style="color:var(--silver-bright)">--</span>/g</span>
             </div>
           </div>
           <div class="dual-rate-col">
-            <div class="dual-rate-col-header">
-              <div class="dual-rate-col-title">India Silver Rate (est.)</div>
-              <span class="source-badge calc-src" id="silIbjaLiveBadge">Calc</span>
-            </div>
-            <div class="dual-rate-purity-line">999 · Fine Silver · ₹/gram</div>
             <div class="dual-rate-main silver-val" id="sil-india-gram">--</div>
-            <div class="dual-rate-perkg" id="sil-india-kg-hero">-- / kg</div>
+            <div class="dual-rate-meta-row">
+              <div class="dual-rate-purity">999 · Fine · ₹/gram</div>
+              <div class="dual-rate-perkg" id="sil-india-kg-hero">-- / kg</div>
+            </div>
             <div class="dual-rate-sub-grid" style="margin-top:var(--s-3);">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per 100g</div><div class="dual-rate-sub-val" id="sil-india-100g">--</div></div>
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per Kg</div><div class="dual-rate-sub-val" id="sil-india-kg">--</div></div>
             </div>
-            <div class="dual-rate-unavail">Estimated from international spot + ~9% India duty (6% customs + 3% IGST).</div>
+            <div class="dual-rate-unavail">Estimated from international spot + ~9% India duty.</div>
           </div>
         </div>
 
@@ -4642,7 +5268,7 @@
     const outputEl    = document.getElementById('convOutputWeight');
     const outputSubEl = document.getElementById('convOutputSub');
     if (weight > 0 && equivWeight > 0 && inputPurity > 0 && outputPurity > 0) {
-      outputEl.textContent = equivWeight.toLocaleString('en-IN', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' g';
+      outputEl.textContent = equivWeight.toLocaleString('en-IN', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' gms';
       // Sub-text: karat + fine weight (no "contains")
       const targetKaratStr = outputMetal === 'gold'
         ? (outputPurity >= 999 ? '24K' : `${((outputPurity/1000)*24).toFixed(1).replace('.0','')}K`)
@@ -4653,7 +5279,7 @@
         outputSubEl.textContent = `${targetKaratStr} · ${fineInput.toFixed(3)}g fine ${inputMetal}`;
       }
     } else {
-      outputEl.textContent = '0.000 g';
+      outputEl.textContent = '0.000 gms';
       outputSubEl.textContent = inputPurity > 0 ? 'enter a weight to convert' : 'enter input purity (1-999)';
     }
 
