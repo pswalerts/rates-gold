@@ -747,14 +747,6 @@
     }
     body.silver-mode .hist-toggle-btn.active { background: var(--silver); color: #0e141c; }
 
-    #histModeLabel, #silverHistModeLabel {
-      padding: 10px var(--s-4) 0;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--green);
-      letter-spacing: 0.04em;
-    }
-
     .hero-hist-body {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -927,7 +919,7 @@
     /* =========================================================
        8. PHYSICAL / DIGITAL CARDS
        ========================================================= */
-    #physicalGrid, #digitalGrid {
+    #physicalGrid, #digitalGrid, .pr-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--s-3);
@@ -1968,7 +1960,7 @@
 
     /* Narrow laptops / iPad landscape */
     @media (max-width: 1100px) {
-      #etfGrid, #physicalGrid, #digitalGrid { grid-template-columns: 1fr; }
+      #etfGrid, #physicalGrid, #digitalGrid, .pr-grid { grid-template-columns: 1fr; }
       .converter-row { grid-template-columns: 1fr 1fr 0.9fr; gap: var(--s-2); }
       .dual-rate-info span { display: none; }
       .dual-rate-info { padding: 3px 5px; }
@@ -2013,7 +2005,7 @@
       }
 
       .tl-body { grid-template-columns: 1fr 1fr; }
-      #physicalGrid, #digitalGrid, #etfGrid { grid-template-columns: 1fr; }
+      #physicalGrid, #digitalGrid, #etfGrid, .pr-grid { grid-template-columns: 1fr; }
 
       .converter-row {
         grid-template-columns: 1fr;
@@ -2070,6 +2062,170 @@
       }
     }
 
+    /* =========================================================
+       P0 + P1 + P2 FIXES — column heads, density, polish
+       ========================================================= */
+
+    /* ---- COLUMN HEAD: title + badge inside each rate column ---- */
+    .dual-rate-col-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s-3);
+      margin-bottom: var(--s-3);
+      padding-bottom: var(--s-3);
+      border-bottom: 1px solid var(--border);
+      min-width: 0;
+    }
+    .dual-rate-col-title {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .dual-rate-col-title::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px rgba(212,168,83,0.5);
+      flex-shrink: 0;
+    }
+    body.silver-mode .dual-rate-col-title { color: var(--silver); }
+    body.silver-mode .dual-rate-col-title::before {
+      background: var(--silver);
+      box-shadow: 0 0 8px rgba(168,184,200,0.5);
+    }
+
+    /* Hide the old hero-rate-titles row (legacy) */
+    .hero-rate-titles { display: none; }
+
+    /* ---- DENSITY: tighter pr-card / etf-card padding ---- */
+    .pr-card, .etf-card {
+      padding: 12px var(--s-4);
+      gap: var(--s-3);
+    }
+    .pr-info, .etf-info { gap: 1px; }
+    .pr-name, .etf-name {
+      font-size: 14px;
+      line-height: 1.2;
+    }
+    .pr-fund, .etf-fund {
+      font-size: 11px;
+      line-height: 1.3;
+    }
+    /* The ~IBJA tag should be inline, not break to its own line */
+    .pr-source {
+      display: inline !important;
+      font-size: 10px;
+      padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      color: var(--text-4) !important;
+      text-transform: none !important;
+      letter-spacing: 0.02em !important;
+      width: auto !important;
+    }
+    .pr-source.live {
+      display: inline-flex !important;
+      padding: 1px 6px !important;
+      background: rgba(74,222,128,0.10) !important;
+      border: 1px solid rgba(74,222,128,0.20) !important;
+      color: var(--green) !important;
+      border-radius: 3px;
+      text-transform: uppercase !important;
+      letter-spacing: 0.06em !important;
+      font-size: 9px;
+    }
+    /* Right side prices tighter */
+    .pr-right, .etf-right {
+      gap: 1px;
+    }
+    .pr-price, .etf-price {
+      font-size: 16px;
+      line-height: 1.2;
+    }
+    .pr-note, .etf-note {
+      font-size: 10px;
+      line-height: 1.3;
+    }
+    /* Cards get slimmer min-height */
+    .pr-card { min-height: 60px; }
+    .etf-card { min-height: 60px; }
+
+    /* ETF "TAP FOR CHART" pill — make it small and inline */
+    .pr-source.live[onclick],
+    .etf-info .pr-source.live {
+      display: inline-block !important;
+      margin-top: 2px;
+    }
+
+    /* ---- DUBAI CALLOUT: tone down ---- */
+    .dubai-callout {
+      padding: 10px var(--s-4) !important;
+      background: rgba(251,146,60,0.04) !important;
+      border-color: rgba(251,146,60,0.15) !important;
+    }
+    .dubai-callout-text {
+      font-size: 12px !important;
+      color: var(--text-3) !important;
+    }
+    /* Inside callout: tone down individual color spans */
+    .dubai-callout-text strong { font-weight: 700; }
+    .dubai-callout-link {
+      font-size: 10px !important;
+      letter-spacing: 0.08em !important;
+    }
+
+    /* ---- BEST BUY TODAY: tighter spread strip ---- */
+    .tl-spread-strip {
+      padding: 8px var(--s-3) !important;
+      font-size: 11px !important;
+      background: rgba(74,222,128,0.03) !important;
+      border-color: rgba(74,222,128,0.12) !important;
+    }
+    .tl-panel {
+      padding: var(--s-3) var(--s-4) !important;
+    }
+
+    /* ---- DISCLAIMER: distinct from footnote ---- */
+    .disclaimer {
+      margin-top: var(--s-6) !important;
+      padding: var(--s-3) var(--s-4) !important;
+      font-size: 10px !important;
+      color: var(--text-4) !important;
+      line-height: 1.6;
+      background: transparent !important;
+      border: none !important;
+      border-top: 1px solid var(--border) !important;
+      border-radius: 0 !important;
+    }
+
+    /* ---- RESPONSIVE: col-head adjustments ---- */
+    @media (max-width: 1400px) {
+      .dual-rate-col-title { font-size: 10px; }
+      .source-badge { font-size: 9px; padding: 2px 8px; }
+    }
+    @media (max-width: 900px) {
+      .dual-rate-col-head { padding-bottom: var(--s-2); margin-bottom: var(--s-2); }
+    }
+    @media (max-width: 640px) {
+      .dual-rate-col-title { font-size: 10px; letter-spacing: 0.08em; }
+      .pr-card, .etf-card { padding: 10px 12px; }
+      .pr-name, .etf-name { font-size: 13px; }
+      .pr-price, .etf-price { font-size: 15px; }
+    }
+
   </style>
 </head>
 <body>
@@ -2123,20 +2279,12 @@
     <!-- GOLD SECTION -->
     <div class="gold-section" id="goldratesection">
       <div class="hero">
-        <!-- Twin section titles (just title + badge) -->
-        <div class="hero-rate-titles">
-          <div class="section-title hero-rate-title">
-            International Spot → INR
-            <span class="source-badge calc-src" id="intlSourceBadge">Calculated</span>
-          </div>
-          <div class="section-title hero-rate-title">
-            India Gold Rate
-            <span class="source-badge calc-src" id="ibjaLiveBadge">Loading</span>
-          </div>
-        </div>
-
         <div class="dual-rate-box">
           <div class="dual-rate-col">
+            <div class="dual-rate-col-head">
+              <div class="dual-rate-col-title">International Spot → INR</div>
+              <span class="source-badge calc-src" id="intlSourceBadge">Calculated</span>
+            </div>
             <div class="dual-rate-price-row">
               <div class="dual-rate-main" id="intl-24k">--</div>
               <div class="dual-rate-daychange" id="intl-daychange"></div>
@@ -2163,17 +2311,29 @@
             </div>
           </div>
           <div class="dual-rate-col">
+            <div class="dual-rate-col-head">
+              <div class="dual-rate-col-title">India Gold Rate</div>
+              <span class="source-badge calc-src" id="ibjaLiveBadge">Loading</span>
+            </div>
             <div class="dual-rate-price-row">
               <div class="dual-rate-main ibja-val" id="ibja24k">--</div>
               <div class="dual-rate-daychange" id="ibja-daychange"></div>
             </div>
             <div class="dual-rate-meta-row">
               <div class="dual-rate-purity">999 · 24K · ₹/gram</div>
+              <button type="button" class="dual-rate-info" aria-label="What this rate means" onclick="this.closest('.dual-rate-col').classList.toggle('show-formula')">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="4.2" r="0.7" fill="currentColor"/><path d="M7 6.5v3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                <span>Source</span>
+              </button>
             </div>
             <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">995 · Fine</div><div class="dual-rate-sub-val" id="ibja995">--</div></div>
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">916 · 22K</div><div class="dual-rate-sub-val" id="ibja22k">--</div></div>
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">750 · 18K</div><div class="dual-rate-sub-val" id="ibja750">--</div></div>
+            </div>
+            <div class="dual-rate-formula">
+              <span class="dual-rate-formula-label">Source</span>
+              <span>Published daily by India Bullion &amp; Jewellers Association (IBJA) at ~10 AM IST. Standard benchmark used by jewellers, banks, and digital gold platforms.</span>
             </div>
             <div class="dual-rate-stale" id="ibjaStaleMsg" style="display:none;">Showing previous session IBJA rate. Live data unavailable right now.</div>
             <div class="dual-rate-unavail" id="ibjaCalcMsg" style="display:none;">Estimated from international spot + ~5% India duty.</div>
@@ -2182,7 +2342,7 @@
 
         <div class="dubai-callout" id="dubaiCallout" style="display:none;">
           <span class="dubai-callout-flag">🇦🇪</span>
-          <span class="dubai-callout-text">Dubai 24K ≈ <strong id="dubaiCalloutRate" style="color:var(--aed-color)">--</strong>/g · <strong id="dubaiCalloutSave">--</strong>/g (<span id="dubaiCalloutPct">--</span>%) <span id="dubaiCalloutDir">cheaper</span> than India</span>
+          <span class="dubai-callout-text">Dubai 24K is <strong id="dubaiCalloutSave" style="color:var(--green)">--</strong>/g (<span id="dubaiCalloutPct">--</span>%) <span id="dubaiCalloutDir">cheaper</span> than India · <strong id="dubaiCalloutRate">--</strong>/g</span>
           <a class="dubai-callout-link" href="#dubai-section">Full comparison →</a>
         </div>
 
@@ -2202,9 +2362,6 @@
               <button class="hist-toggle-btn active-int" id="histModeInt" onclick="setHistMode('int',this)">Intl</button>
               <button class="hist-toggle-btn" id="histModeInd" onclick="setHistMode('ind',this)">Ind</button>
             </div>
-          </div>
-          <div style="padding:6px 14px 0;font-size:10px;font-family:var(--mono);letter-spacing:0.04em;" id="histModeLabel">
-            <span style="color:var(--green)">International Spot · XAU/USD → ₹/gram (no import duty)</span>
           </div>
           <div class="hero-hist-body" id="heroHistBody"></div>
         </div>
@@ -2430,20 +2587,12 @@
     <!-- SILVER SECTION -->
     <div class="silver-section" id="silversection">
       <div class="hero" style="margin-top:var(--s-6);">
-        <!-- Twin section titles outside the box (matches gold pattern) -->
-        <div class="hero-rate-titles">
-          <div class="section-title hero-rate-title">
-            International Spot → INR
-            <span class="source-badge calc-src">Calculated</span>
-          </div>
-          <div class="section-title hero-rate-title">
-            India Silver Rate
-            <span class="source-badge calc-src" id="silIbjaLiveBadge">Calc</span>
-          </div>
-        </div>
-
         <div class="dual-rate-box">
           <div class="dual-rate-col">
+            <div class="dual-rate-col-head">
+              <div class="dual-rate-col-title">International Spot → INR</div>
+              <span class="source-badge calc-src">Calculated</span>
+            </div>
             <div class="dual-rate-price-row">
               <div class="dual-rate-main silver-val" id="sil-intl-gram">--</div>
             </div>
@@ -2468,6 +2617,10 @@
             </div>
           </div>
           <div class="dual-rate-col">
+            <div class="dual-rate-col-head">
+              <div class="dual-rate-col-title">India Silver Rate</div>
+              <span class="source-badge calc-src" id="silIbjaLiveBadge">Calc</span>
+            </div>
             <div class="dual-rate-price-row">
               <div class="dual-rate-main silver-val" id="sil-india-gram">--</div>
             </div>
@@ -2475,7 +2628,7 @@
               <div class="dual-rate-purity">999 · Fine · ₹/gram</div>
               <div class="dual-rate-perkg" id="sil-india-kg-hero">-- / kg</div>
             </div>
-            <div class="dual-rate-sub-grid" style="margin-top:var(--s-3);">
+            <div class="dual-rate-sub-grid">
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per 100g</div><div class="dual-rate-sub-val" id="sil-india-100g">--</div></div>
               <div class="dual-rate-sub-box"><div class="dual-rate-sub-label">Per Kg</div><div class="dual-rate-sub-val" id="sil-india-kg">--</div></div>
             </div>
@@ -2906,11 +3059,6 @@
     _histMode = mode;
     document.querySelectorAll(".hist-toggle-btn").forEach(b => b.classList.remove("active-int", "active-ind"));
     if (btn) btn.classList.add(mode === "int" ? "active-int" : "active-ind");
-    const label = document.getElementById("histModeLabel");
-    const premPct = _histIbjaFactor > 1 ? ((_histIbjaFactor - 1) * 100).toFixed(1) : "~5";
-    if (label) label.innerHTML = mode === "int"
-      ? `<span style="color:var(--green)">International Spot · 999 · 24K · ₹/gram (no import duty)</span>`
-      : `<span style="color:var(--inr-color)">India Rate (IBJA) · 999 · 24K · ₹/gram (duty-adjusted · +${premPct}%)</span>`;
     showHistTab(_histActiveTab, document.querySelector("#heroHistPanel .hero-hist-tab.active"));
   }
 
