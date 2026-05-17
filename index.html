@@ -1284,24 +1284,24 @@
     /* === Dubai redesign: tabbed compare === */
     .dxb-tabs {
       display: flex;
-      gap: 4px;
-      padding: 4px;
+      gap: 3px;
+      padding: 3px;
       background: var(--bg-2);
       border: 1px solid var(--border);
       border-radius: 999px;
-      margin-bottom: var(--s-4);
+      margin-bottom: var(--s-3);
       width: fit-content;
     }
     .dxb-tab {
       display: inline-flex;
       align-items: baseline;
-      gap: 6px;
-      padding: 8px 18px;
+      gap: 4px;
+      padding: 5px 12px;
       background: transparent;
       border: none;
       color: var(--text-3);
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.04em;
       border-radius: 999px;
@@ -1314,7 +1314,7 @@
     }
     .dxb-tab.active .dxb-tab-sub { color: rgba(26,10,0,0.65); }
     .dxb-tab-sub {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 500;
       color: var(--text-4);
       letter-spacing: 0.02em;
@@ -1455,22 +1455,26 @@
     .dxb-diff-arrow { font-size: 13px; margin-right: 2px; }
     .dxb-diff-pct { font-size: 11px; opacity: 0.7; font-weight: 500; }
 
-    /* Footer: simple 2-row strip */
+    /* Footer: single combined strip (FX + duty bullets in one row) */
     .dubai-footer {
       display: flex;
-      flex-direction: column;
-      gap: var(--s-2);
-      padding: var(--s-3) var(--s-4);
+      padding: 10px var(--s-4);
       background: rgba(255,255,255,0.02);
       border: 1px solid var(--border);
       border-radius: var(--r-md);
     }
-    .dubai-fx-row {
+    .dubai-footer-combined {
       display: flex;
-      gap: var(--s-5);
+      align-items: center;
+      gap: var(--s-4);
       flex-wrap: wrap;
-      padding-bottom: var(--s-2);
-      border-bottom: 1px solid var(--border);
+      width: 100%;
+    }
+    .dubai-divider {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+      flex-shrink: 0;
     }
     .dxb-fx-pair {
       display: inline-flex;
@@ -1486,33 +1490,31 @@
       text-transform: uppercase;
     }
     .dxb-fx-v {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
-    }
-    .dubai-bullets-row {
-      display: flex;
-      gap: var(--s-5);
-      flex-wrap: wrap;
     }
     .dubai-bullet {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-family: var(--mono);
       font-size: 11px;
       color: var(--text-3);
       letter-spacing: 0.02em;
+      white-space: nowrap;
     }
     .dubai-bullet::before {
       content: '';
       display: inline-block;
-      width: 5px;
-      height: 5px;
+      width: 4px;
+      height: 4px;
       border-radius: 50%;
       background: var(--orange);
       flex-shrink: 0;
     }
+    /* Legacy 2-row classes — no longer used */
+    .dubai-fx-row, .dubai-bullets-row { display: contents; }
 
     /* =========================================================
       11. CONVERTER
@@ -1834,25 +1836,18 @@
       background: linear-gradient(135deg, rgba(168,184,200,0.10) 0%, rgba(168,184,200,0.02) 100%);
       border-color: var(--border-silver);
     }
-    /* gms + ₹ on SAME LINE */
-    .converter-equiv-main-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-      gap: var(--s-3);
-      flex-wrap: nowrap;
-      min-width: 0;
-      width: 100%;
-    }
     .converter-result-amount {
       font-family: var(--mono);
-      font-size: clamp(22px, 2.6vw, 28px);
+      font-size: clamp(18px, 2.2vw, 26px);
       font-weight: 700;
       color: var(--gold-bright);
       letter-spacing: -0.02em;
       font-variant-numeric: tabular-nums;
-      line-height: 1.05;
+      line-height: 1.1;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
     body.silver-mode .converter-result-amount,
     .converter-card[data-target-metal="silver"] .converter-result-amount {
@@ -1860,34 +1855,42 @@
     }
     .converter-result-rupee {
       font-family: var(--mono);
-      font-size: clamp(16px, 2vw, 20px);
+      font-size: clamp(16px, 1.9vw, 22px);
       font-weight: 700;
       color: var(--green);
       letter-spacing: -0.02em;
       font-variant-numeric: tabular-nums;
-      line-height: 1.05;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    /* Sub-text as pill chip */
+    .converter-result-sub-chip {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 3px 10px;
+      background: rgba(212,168,83,0.10);
+      border: 1px solid var(--border-gold);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
       white-space: nowrap;
     }
-    .converter-equiv-divider {
-      width: 1px;
-      align-self: stretch;
-      background: var(--border);
-      margin: 4px 0;
+    body.silver-mode .converter-result-sub-chip,
+    .converter-card[data-target-metal="silver"] .converter-result-sub-chip {
+      background: rgba(168,184,200,0.10);
+      border-color: var(--border-silver);
+      color: var(--silver);
     }
-    /* Sub-text ribbon below, single line */
-    .converter-result-sub {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text-3);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding-top: 4px;
-      border-top: 1px dashed var(--border);
-      width: 100%;
-      text-align: center;
-      margin-top: 4px;
-    }
-    /* Legacy result-block / divider — no longer used */
+    /* Legacy equiv-divider/main-row/result-sub — no longer used */
+    .converter-equiv-divider, .converter-equiv-main-row { display: none; }
+    .converter-result-sub { display: none; }
     .converter-result-block, .converter-result-divider { display: none; }
 
     /* Value cards — 2-LINE labels by design */
@@ -2029,13 +2032,14 @@
       word-spacing: 0.5px;
     }
 
-    /* Loss strip */
+    /* Loss strip with merged formula footer */
     .converter-loss-strip {
-      padding: var(--s-4);
+      padding: var(--s-3) var(--s-4) 0;
       background: rgba(250,204,21,0.06);
       border: 1px solid rgba(250,204,21,0.25);
       border-radius: var(--r-md);
       margin-bottom: var(--s-3);
+      overflow: hidden;
     }
     .converter-loss-strip ul {
       list-style: none;
@@ -2070,49 +2074,44 @@
     }
     .pct-sym { margin-left: 1px; }
 
-    /* Footnote */
-    .converter-footnote {
-      padding: var(--s-3) var(--s-4);
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
+    /* Formula footer inside loss strip */
+    .converter-loss-formula {
+      display: flex;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+      align-items: center;
+      margin: var(--s-3) calc(-1 * var(--s-4)) 0;
+      padding: 8px var(--s-4);
+      background: rgba(255,255,255,0.025);
+      border-top: 1px solid rgba(250,204,21,0.15);
     }
-    .converter-footnote ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px var(--s-5);
-    }
-    .converter-footnote li {
-      position: relative;
-      padding-left: 14px;
-      font-family: var(--mono);
-      font-size: 11px;
-      line-height: 1.5;
-      color: var(--text-3);
-      letter-spacing: 0.02em;
-    }
-    .converter-footnote li::before {
-      content: '·';
-      position: absolute;
-      left: 4px;
-      top: 0;
-      font-size: 16px;
-      line-height: 1;
-      color: var(--gold);
-      font-weight: 700;
-    }
-    .converter-footnote code {
+    .cl-formula-item {
       font-family: var(--mono);
       font-size: 10px;
-      padding: 1px 6px;
-      background: rgba(212,168,83,0.08);
-      color: var(--gold-bright);
-      border-radius: 3px;
+      color: var(--text-3);
+      letter-spacing: 0.02em;
       white-space: nowrap;
     }
+    .cl-formula-item code {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 1px 5px;
+      background: rgba(212,168,83,0.10);
+      color: var(--gold-bright);
+      border-radius: 3px;
+    }
+    .cl-divider {
+      width: 1px;
+      height: 12px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* Footnote — no longer rendered (merged into loss strip) */
+    .converter-footnote { display: none; }
+    .converter-footnote ul,
+    .converter-footnote li,
+    .converter-footnote code { /* legacy, no-op */ }
 
     /* =========================================================
       12. DISCLAIMER / FOOTER
@@ -2277,8 +2276,15 @@
       .dxb-compare-panel { padding: var(--s-3); }
       .dxb-panel-price { font-size: 22px; }
       .dxb-tabs { width: 100%; justify-content: space-between; }
-      .dxb-tab { flex: 1; padding: 8px 4px; font-size: 12px; }
+      .dxb-tab { flex: 1; padding: 5px 4px; font-size: 11px; justify-content: center; }
       .hero-hist-body { grid-template-columns: 1fr 1fr; }
+      /* Formula footer wraps cleanly on mobile */
+      .converter-loss-formula { gap: var(--s-2); padding: 6px var(--s-4); }
+      .cl-divider { display: none; }
+      .cl-formula-item { font-size: 9px; }
+      /* Dubai footer combined wraps */
+      .dubai-divider { display: none; }
+      .dubai-footer-combined { gap: var(--s-3); }
     }
 
     /* Tiny phones */
@@ -2699,17 +2705,16 @@
           <span id="dxb-verdict"></span>
         </span>
 
-        <!-- Footer: 2-row strip, FX above, bullets below -->
+        <!-- Combined footer strip: FX rates + duty bullets in one row -->
         <div class="dubai-footer">
-          <div class="dubai-fx-row">
+          <div class="dubai-footer-combined">
             <div class="dxb-fx-pair"><span class="dxb-fx-k">USD/INR</span> <span id="dxb-usd-inr" class="dxb-fx-v" style="color:var(--usd-color)">--</span></div>
             <div class="dxb-fx-pair"><span class="dxb-fx-k">AED/INR</span> <span id="dxb-aed-inr-strip" class="dxb-fx-v" style="color:var(--aed-color)">--</span></div>
             <div class="dxb-fx-pair"><span class="dxb-fx-k">XAU/USD</span> <span id="dxb-xau-usd" class="dxb-fx-v" style="color:var(--gold-bright)">--</span></div>
-          </div>
-          <div class="dubai-bullets-row">
-            <span class="dubai-bullet">Dubai: no import duty</span>
-            <span class="dubai-bullet">India: 15% customs + 3% GST</span>
-            <span class="dubai-bullet">Personal allowance: 20g (women) / 10g (men) duty-free</span>
+            <span class="dubai-divider"></span>
+            <span class="dubai-bullet">Dubai duty-free</span>
+            <span class="dubai-bullet">India 15% + 3% GST</span>
+            <span class="dubai-bullet">Allowance 20g/10g</span>
           </div>
         </div>
       </div>
@@ -2767,12 +2772,9 @@
           <div class="converter-panel converter-panel-result-only">
             <div class="converter-panel-label">Value</div>
             <div class="converter-equiv-result">
-              <div class="converter-equiv-main-row">
-                <div class="converter-result-amount" id="convOutputWeight">--</div>
-                <div class="converter-equiv-divider"></div>
-                <div class="converter-result-rupee" id="convOutputRupee">--</div>
-              </div>
-              <div class="converter-result-sub" id="convOutputSub">at today's rate</div>
+              <div class="converter-result-amount" id="convOutputWeight">--</div>
+              <div class="converter-result-rupee" id="convOutputRupee">--</div>
+              <div class="converter-result-sub-chip" id="convOutputSub">24K · at today's rate</div>
             </div>
           </div>
         </div>
@@ -2810,20 +2812,18 @@
         </div>
 
         <div class="converter-loss-strip" id="convLossStrip" style="display:none;">
-          <ul>
+          <ul class="converter-loss-insights">
             <li>At <strong id="convLossPctDisplay">--</strong><span class="pct-sym">%</span> deduction, you'd lose <strong id="convLossAmount">--</strong> selling to this jeweller.</li>
             <li>Replacing as new jewellery costs <strong id="convExchangeGap">--</strong> more than the buy-back.</li>
             <li><strong>MMTC-PAMP</strong> and refineries typically offer 2-4% deduction vs 6-8% at local jewellers.</li>
           </ul>
-        </div>
-
-        <div class="converter-footnote">
-          <ul>
-            <li>Pure metal = <code>weight × purity ÷ 1000</code></li>
-            <li>Theoretical uses live IBJA 24K (999)</li>
-            <li>Edit buyback % to match jeweller</li>
-            <li>Replacement = gold + making + 3% GST</li>
-          </ul>
+          <div class="converter-loss-formula">
+            <span class="cl-formula-item"><code>weight × purity ÷ 1000</code> = pure metal</span>
+            <span class="cl-divider"></span>
+            <span class="cl-formula-item">Theoretical uses IBJA 24K (999)</span>
+            <span class="cl-divider"></span>
+            <span class="cl-formula-item">Replacement = gold + making + 3% GST</span>
+          </div>
         </div>
       </div>
 
