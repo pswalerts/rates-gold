@@ -975,15 +975,17 @@
       position: absolute;
       top: 0;
       right: 0;
-      padding: 3px 10px;
+      padding: 2px 8px;
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       background: var(--green);
       color: #001a05;
       border-radius: 0 var(--r-md) 0 var(--r-md);
+      pointer-events: none;
+      line-height: 1.4;
     }
     .pr-badge.badge-discount { background: rgba(74,222,128,0.18); color: var(--green); }
     .pr-badge.badge-premium  { background: rgba(251,146,60,0.18); color: var(--orange); }
@@ -1054,6 +1056,11 @@
       flex-shrink: 0;
       text-align: right;
       min-width: 0;
+    }
+    /* When ribbon present, give the price room to breathe */
+    .pr-card.pr-best .pr-right,
+    .etf-card.etf-best .etf-right {
+      padding-top: 14px;
     }
     .pr-price {
       font-family: var(--mono);
@@ -1263,10 +1270,19 @@
       margin-bottom: var(--s-4);
     }
     .dxb-table-head, .dxb-table-row {
-      display: grid;
-      grid-template-columns: 70px 1.1fr 1.2fr 1.4fr 1.3fr;
+      display: flex;
       align-items: center;
+      width: 100%;
     }
+    .dxb-th, .dxb-td {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .dxb-th.dxb-th-purity, .dxb-td.dxb-td-purity { flex: 0 0 90px; }
+    .dxb-th.dxb-th-aed,    .dxb-td.dxb-td-aed    { flex: 1 1 0; text-align: left; }
+    .dxb-th.dxb-th-dubai,  .dxb-td.dxb-td-dubai  { flex: 1 1 0; text-align: right; padding-right: var(--s-5); }
+    .dxb-th.dxb-th-india,  .dxb-td.dxb-td-india  { flex: 1 1 0; text-align: right; padding-right: var(--s-3); }
+    .dxb-th.dxb-th-diff,   .dxb-td.dxb-td-diff   { flex: 0 0 170px; text-align: right; padding-left: 0; }
     .dxb-table-head {
       background: rgba(251,146,60,0.05);
       border-bottom: 1px solid var(--border);
@@ -1318,12 +1334,8 @@
     .dxb-td-aed { color: var(--orange); opacity: 0.75; direction: ltr; font-size: 12px; }
     .dxb-td-dubai { color: var(--orange); opacity: 0.85; }
     .dxb-td-india { color: var(--text-1); }
-    .dxb-td-diff {
-      text-align: right;
-      font-size: 13px;
-      padding-left: 4px;
-    }
-    .dxb-th-diff   { text-align: right; color: var(--text-3); padding-left: 4px; }
+    .dxb-td-diff { font-size: 13px; }
+    .dxb-th-diff { color: var(--text-3); }
     .dxb-diff-arrow { font-size: 13px; margin-right: 2px; }
     .dxb-diff-pct { font-size: 11px; opacity: 0.7; font-weight: 500; }
 
@@ -1517,10 +1529,10 @@
       color: var(--text-2);
     }
 
-    /* 2-column main row (Option A: Convert | Equivalent with result on top) */
+    /* 3-column main row: Input | Output Purity | Result */
     .converter-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: var(--s-3);
       margin-bottom: var(--s-4);
       align-items: stretch;
@@ -1528,7 +1540,7 @@
     .converter-panel {
       display: flex;
       flex-direction: column;
-      gap: var(--s-3);
+      gap: var(--s-2);
       padding: var(--s-4);
       background: var(--bg-2);
       border: 1px solid var(--border);
@@ -1542,6 +1554,7 @@
       letter-spacing: 0.10em;
       text-transform: uppercase;
       color: var(--text-3);
+      margin-bottom: var(--s-1);
     }
 
     /* Weight + purity stacked inputs (legacy support) */
@@ -1550,12 +1563,12 @@
       flex-direction: column;
       gap: var(--s-2);
     }
-    /* INLINE ROW — weight + purity + chips in one horizontal flow */
+    /* INLINE ROW — weight + purity inputs stacked or side-by-side */
     .converter-inline-row {
       display: flex;
       align-items: stretch;
       gap: var(--s-2);
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
     .converter-input-group, .purity-input-group {
       display: flex;
@@ -1565,11 +1578,8 @@
       border-radius: var(--r-sm);
       overflow: hidden;
       min-width: 0;
-      flex-shrink: 0;
+      flex: 1 1 0;
     }
-    /* Sized-to-content inputs */
-    .converter-input-weight { width: 110px; }
-    .converter-input-purity { width: 120px; }
     .converter-input, .purity-input {
       min-width: 0;
       width: 100%;
@@ -1588,7 +1598,7 @@
     .converter-unit, .purity-suffix {
       display: flex;
       align-items: center;
-      padding: 0 8px;
+      padding: 0 10px;
       font-family: var(--mono);
       font-size: 10px;
       font-weight: 600;
@@ -1597,30 +1607,29 @@
       background: rgba(255,255,255,0.02);
       border-left: 1px solid var(--border);
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    /* Preset chips: 2-line (number + karat) */
+    /* Preset chips: 2-line (number + karat) — bottom-aligned in panel */
     .purity-presets {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 4px;
+      margin-top: auto;
     }
-    /* Inline chips — sit next to inputs, sized to content */
-    .purity-presets-inline {
-      display: flex;
-      gap: 4px;
-      flex: 1 1 auto;
-      min-width: 0;
-      flex-wrap: wrap;
-    }
-    .purity-presets-inline .purity-preset {
-      flex: 1 1 auto;
-      min-width: 50px;
-    }
+    /* For silver, 3 cols since silver only has 3 purity options */
     .converter-card[data-target-metal="silver"] #convOutputPresets,
     body.silver-mode #convInputPresets {
       grid-template-columns: repeat(3, 1fr);
     }
+    /* Legacy: chips inline next to inputs (no longer used in 3-col layout) */
+    .purity-presets-inline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      margin-top: auto;
+    }
+    .purity-presets-inline .purity-preset { min-width: 0; }
     .purity-preset {
       display: flex;
       flex-direction: column;
@@ -1678,12 +1687,18 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      padding: var(--s-3) var(--s-4);
+      padding: var(--s-4) var(--s-4);
       background: linear-gradient(135deg, rgba(212,168,83,0.10) 0%, rgba(212,168,83,0.02) 100%);
       border: 1px solid var(--border-gold);
       border-radius: var(--r-md);
       text-align: center;
-      min-height: auto;
+      flex: 1 1 auto;
+    }
+    /* When the result is in its own 3rd column, fill the panel */
+    .converter-panel-result-only .converter-equiv-result {
+      margin: 0;
+      height: 100%;
+      box-sizing: border-box;
     }
     body.silver-mode .converter-equiv-result,
     .converter-card[data-target-metal="silver"] .converter-equiv-result {
@@ -2036,7 +2051,17 @@
     /* Narrow laptops / iPad landscape */
     @media (max-width: 1100px) {
       #etfGrid, #physicalGrid, #digitalGrid, .pr-grid { grid-template-columns: 1fr; }
-      .converter-row { gap: var(--s-2); }
+      /* Converter: 3-col → input + output side-by-side, result below full-width */
+      .converter-row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "input output"
+          "result result";
+        gap: var(--s-3);
+      }
+      .converter-row > .converter-panel:nth-child(1) { grid-area: input; }
+      .converter-row > .converter-panel:nth-child(2) { grid-area: output; }
+      .converter-row > .converter-panel:nth-child(3) { grid-area: result; min-height: 90px; }
       .dual-rate-info span { display: none; }
       .dual-rate-info { padding: 3px 5px; }
     }
@@ -2075,22 +2100,11 @@
 
       .converter-row {
         grid-template-columns: 1fr;
+        grid-template-areas: none;
       }
-      /* On mobile, chips drop below inputs as a full-width grid */
-      .converter-inline-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .converter-input-weight, .converter-input-purity { width: 100%; }
-      .purity-presets-inline {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 4px;
-      }
-      .converter-card[data-target-metal="silver"] #convOutputPresets.purity-presets-inline,
-      body.silver-mode #convInputPresets.purity-presets-inline {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      .converter-row > .converter-panel:nth-child(1),
+      .converter-row > .converter-panel:nth-child(2),
+      .converter-row > .converter-panel:nth-child(3) { grid-area: auto; }
       /* On mobile, chip moves back inline (below label) to avoid overlap */
       .pct-chip-corner {
         position: static;
@@ -2101,6 +2115,7 @@
 
       .dxb-table-head { display: none; }
       .dxb-table-row {
+        display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-areas:
           "purity diff"
@@ -2109,7 +2124,7 @@
         padding: 10px;
         gap: 4px;
       }
-      .dxb-td { padding: 4px 6px; font-size: 12px; }
+      .dxb-td { padding: 4px 6px; font-size: 12px; flex: initial; }
       .dxb-td-purity { grid-area: purity; font-size: 13px; }
       .dxb-td-aed    { grid-area: aed; opacity: 0.85; }
       .dxb-td-dubai  { grid-area: inrd; text-align: right; }
@@ -2576,28 +2591,36 @@
           </label>
         </div>
 
-        <div class="converter-row converter-row-2col">
-          <!-- COL 1: CONVERT (weight + purity + chips, one row) -->
+        <div class="converter-row converter-row-3col">
+          <!-- COL 1: INPUT (weight + purity stacked, then chips bottom-aligned) -->
           <div class="converter-panel">
             <div class="converter-panel-label" id="convInputLabel">Convert</div>
-            <div class="converter-inline-row">
-              <div class="converter-input-group converter-input-weight">
-                <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
-                <div class="converter-unit">gms</div>
-              </div>
-              <div class="purity-input-group converter-input-purity">
-                <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
-                <span class="purity-suffix">/1000</span>
-              </div>
-              <div class="purity-presets purity-presets-inline" id="convInputPresets"></div>
+            <div class="converter-input-group">
+              <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
+              <div class="converter-unit">gms</div>
             </div>
-            <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
+            <div class="purity-input-group">
+              <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
+              <span class="purity-suffix">/1000</span>
+            </div>
+            <div class="purity-presets" id="convInputPresets"></div>
+            <div class="purity-helper" id="convInputKarat" style="display:none;">22K · 91.6% pure</div>
           </div>
 
-          <!-- COL 2: EQUIVALENT (result banner + inline purity row) -->
-          <div class="converter-panel converter-panel-equiv">
+          <!-- COL 2: OUTPUT PURITY -->
+          <div class="converter-panel">
             <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
-            <!-- BIG RESULT BANNER -->
+            <div class="purity-input-group">
+              <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
+              <span class="purity-suffix">/1000</span>
+            </div>
+            <div class="purity-presets" id="convOutputPresets"></div>
+            <div class="purity-helper" id="convOutputKarat" style="display:none;">24K · 99.9% pure</div>
+          </div>
+
+          <!-- COL 3: RESULT (big number, centered vertically) -->
+          <div class="converter-panel converter-panel-result-only">
+            <div class="converter-panel-label">Value</div>
             <div class="converter-equiv-result">
               <div class="converter-equiv-main-row">
                 <div class="converter-result-amount" id="convOutputWeight">--</div>
@@ -2606,15 +2629,6 @@
               </div>
               <div class="converter-result-sub" id="convOutputSub">at today's rate</div>
             </div>
-            <!-- PURITY + CHIPS INLINE -->
-            <div class="converter-inline-row">
-              <div class="purity-input-group converter-input-purity">
-                <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
-                <span class="purity-suffix">/1000</span>
-              </div>
-              <div class="purity-presets purity-presets-inline" id="convOutputPresets"></div>
-            </div>
-            <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
           </div>
         </div>
 
