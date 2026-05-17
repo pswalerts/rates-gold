@@ -220,7 +220,8 @@
       display: flex;
       align-items: center;
       gap: var(--s-3);
-      margin: var(--s-6) 0 var(--s-3);
+      margin: var(--s-6) 0 var(--s-2);
+      padding-left: var(--s-3);
       font-family: var(--sans);
       font-size: 11px;
       font-weight: 700;
@@ -228,6 +229,7 @@
       text-transform: uppercase;
       color: var(--gold);
       flex-wrap: wrap;
+      position: relative;
     }
     .section-title::before {
       content: '';
@@ -237,6 +239,24 @@
       background: var(--gold);
       box-shadow: 0 0 8px rgba(212,168,83,0.5);
       flex-shrink: 0;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    /* Vertical line connecting title to card below */
+    .section-title::after {
+      content: '';
+      position: absolute;
+      left: 2.5px;
+      top: 100%;
+      width: 1px;
+      height: var(--s-2);
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      opacity: 0.4;
+    }
+    body.silver-mode .section-title::after {
+      background: linear-gradient(to bottom, var(--silver), transparent);
     }
     body.silver-mode .section-title { color: var(--silver); }
     body.silver-mode .section-title::before {
@@ -1261,14 +1281,110 @@
       letter-spacing: 0.04em;
     }
 
-    /* Table */
-    .dxb-table {
+    /* === Dubai redesign: tabbed compare === */
+    .dxb-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      margin-bottom: var(--s-4);
+      width: fit-content;
+    }
+    .dxb-tab {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 8px 18px;
+      background: transparent;
+      border: none;
+      color: var(--text-3);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border-radius: 999px;
+      transition: all 0.15s ease;
+    }
+    .dxb-tab:hover { color: var(--text-1); }
+    .dxb-tab.active {
+      background: var(--orange);
+      color: #1a0a00;
+    }
+    .dxb-tab.active .dxb-tab-sub { color: rgba(26,10,0,0.65); }
+    .dxb-tab-sub {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-4);
+      letter-spacing: 0.02em;
+    }
+    .dxb-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--s-3);
+      margin-bottom: var(--s-4);
+    }
+    .dxb-compare-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: var(--s-4);
       background: var(--bg-2);
       border: 1px solid var(--border);
       border-radius: var(--r-md);
-      overflow: hidden;
-      margin-bottom: var(--s-4);
+      min-width: 0;
     }
+    .dxb-panel-dubai {
+      background: linear-gradient(135deg, rgba(251,146,60,0.06), transparent);
+      border-color: rgba(251,146,60,0.25);
+    }
+    .dxb-panel-india {
+      background: linear-gradient(135deg, rgba(212,168,83,0.06), transparent);
+      border-color: var(--border-gold);
+    }
+    .dxb-panel-saving {
+      background: linear-gradient(135deg, rgba(74,222,128,0.08), transparent);
+      border-color: rgba(74,222,128,0.30);
+    }
+    .dxb-panel-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dxb-panel-price {
+      font-family: var(--mono);
+      font-size: clamp(22px, 2.6vw, 28px);
+      font-weight: 700;
+      color: var(--text-1);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dxb-panel-dubai .dxb-panel-price { color: var(--orange); }
+    .dxb-panel-india .dxb-panel-price { color: var(--gold-bright); }
+    .dxb-saving-price { color: var(--green) !important; }
+    .dxb-panel-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Legacy table — no longer used, hidden */
+    .dxb-table { display: none; }
     .dxb-table-head, .dxb-table-row {
       display: flex;
       align-items: center;
@@ -1472,21 +1588,26 @@
     .converter-mode-btn.active-gold   { background: var(--gold); color: #1a1500; }
     .converter-mode-btn.active-silver { background: var(--silver); color: #0e141c; }
 
-    /* Cross-metal swap row */
-    .converter-swap-row {
+    /* Header controls (Gold/Silver toggle + Swap toggle) inline */
+    .converter-header-controls {
       display: flex;
-      justify-content: center;
-      padding: 10px var(--s-3);
-      margin-bottom: var(--s-4);
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
+      align-items: center;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
+    /* Cross-metal swap row — no longer used (moved to header), kept hidden */
+    .converter-swap-row { display: none; }
     .converter-swap-label {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       cursor: pointer;
+    }
+    .converter-swap-label-inline .converter-swap-text {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
     }
     .converter-swap-label input { display: none; }
     .converter-swap-toggle {
@@ -1587,20 +1708,20 @@
       border: none;
       color: var(--text-1);
       font-family: var(--mono);
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
-      padding: 8px 10px;
+      padding: 14px 12px;
       outline: none;
       font-variant-numeric: tabular-nums;
       text-align: center;
     }
-    .purity-input { font-size: 14px; }
+    .purity-input { font-size: 16px; }
     .converter-unit, .purity-suffix {
       display: flex;
       align-items: center;
-      padding: 0 10px;
+      padding: 0 12px;
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.04em;
       color: var(--text-3);
@@ -1609,6 +1730,14 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
+    /* Side-by-side weight + purity inputs */
+    .converter-input-pair {
+      display: flex;
+      gap: var(--s-2);
+      align-items: stretch;
+    }
+    .converter-input-pair > .converter-input-group { flex: 1.1 1 0; }
+    .converter-input-pair > .purity-input-group { flex: 1 1 0; }
 
     /* Preset chips: 2-line (number + karat) — bottom-aligned in panel */
     .purity-presets {
@@ -1636,13 +1765,13 @@
       align-items: center;
       justify-content: center;
       gap: 1px;
-      padding: 4px 6px;
+      padding: 3px 4px;
       background: var(--bg-1);
       border: 1px solid var(--border);
       border-radius: var(--r-sm);
       color: var(--text-3);
       transition: all 0.15s ease;
-      min-height: 38px;
+      min-height: 32px;
     }
     .purity-preset:hover {
       background: rgba(212,168,83,0.06);
@@ -1662,7 +1791,7 @@
     }
     .pp-num {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       line-height: 1;
     }
@@ -2143,6 +2272,12 @@
       .dubai-fx-row, .dubai-bullets-row {
         gap: var(--s-3);
       }
+      /* Dubai compare panels stack on phones */
+      .dxb-compare { grid-template-columns: 1fr; gap: var(--s-2); }
+      .dxb-compare-panel { padding: var(--s-3); }
+      .dxb-panel-price { font-size: 22px; }
+      .dxb-tabs { width: 100%; justify-content: space-between; }
+      .dxb-tab { flex: 1; padding: 8px 4px; font-size: 12px; }
       .hero-hist-body { grid-template-columns: 1fr 1fr; }
     }
 
@@ -2518,42 +2653,51 @@
           <div class="dubai-updated" id="dubaiUpdated">--</div>
         </div>
 
-        <!-- 5-column comparison table: Purity | Dubai AED | Dubai INR | India INR | Saving -->
-        <div class="dxb-table">
-          <div class="dxb-table-head">
-            <div class="dxb-th dxb-th-purity">Purity</div>
-            <div class="dxb-th dxb-th-aed"><span class="dxb-flag">🇦🇪</span> Dubai · AED</div>
-            <div class="dxb-th dxb-th-dubai"><span class="dxb-flag">🇦🇪</span> Dubai · INR</div>
-            <div class="dxb-th dxb-th-india"><span class="dxb-flag">🇮🇳</span> India · INR</div>
-            <div class="dxb-th dxb-th-diff">Difference</div>
+        <!-- Purity tabs -->
+        <div class="dxb-tabs">
+          <button class="dxb-tab active" data-purity="24" onclick="setDxbPurity(24, this)">24K <span class="dxb-tab-sub">999</span></button>
+          <button class="dxb-tab"        data-purity="22" onclick="setDxbPurity(22, this)">22K <span class="dxb-tab-sub">916</span></button>
+          <button class="dxb-tab"        data-purity="18" onclick="setDxbPurity(18, this)">18K <span class="dxb-tab-sub">750</span></button>
+        </div>
+
+        <!-- Big 3-panel comparison: Dubai | India | Saving -->
+        <div class="dxb-compare">
+          <div class="dxb-compare-panel dxb-panel-dubai">
+            <div class="dxb-panel-label"><span class="dxb-flag">🇦🇪</span> Dubai</div>
+            <div class="dxb-panel-price" id="dxbActiveDubaiInr">--</div>
+            <div class="dxb-panel-sub" id="dxbActiveDubaiAed">--</div>
           </div>
-          <div class="dxb-table-row">
-            <div class="dxb-td dxb-td-purity">24K <span class="dxb-purity-num">999</span></div>
-            <div class="dxb-td dxb-td-aed"   id="dxb-24k-aed">--</div>
-            <div class="dxb-td dxb-td-dubai" id="dxb-24k-inr">--</div>
-            <div class="dxb-td dxb-td-india" id="ds-india">--</div>
-            <div class="dxb-td dxb-td-diff"  id="dxb-verdict-24">--</div>
+          <div class="dxb-compare-panel dxb-panel-india">
+            <div class="dxb-panel-label"><span class="dxb-flag">🇮🇳</span> India</div>
+            <div class="dxb-panel-price" id="dxbActiveIndiaInr">--</div>
+            <div class="dxb-panel-sub" id="dxbActivePuritySub">999 · 24K · ₹/gram</div>
           </div>
-          <div class="dxb-table-row">
-            <div class="dxb-td dxb-td-purity">22K <span class="dxb-purity-num">916</span></div>
-            <div class="dxb-td dxb-td-aed"   id="dxb-22k-aed">--</div>
-            <div class="dxb-td dxb-td-dubai" id="dxb-22k-inr">--</div>
-            <div class="dxb-td dxb-td-india" id="ds-india-22">--</div>
-            <div class="dxb-td dxb-td-diff"  id="dxb-verdict-22">--</div>
-          </div>
-          <div class="dxb-table-row">
-            <div class="dxb-td dxb-td-purity">18K <span class="dxb-purity-num">750</span></div>
-            <div class="dxb-td dxb-td-aed"   id="dxb-18k-aed">--</div>
-            <div class="dxb-td dxb-td-dubai" id="dxb-18k-inr">--</div>
-            <div class="dxb-td dxb-td-india" id="ds-india-18">--</div>
-            <div class="dxb-td dxb-td-diff"  id="dxb-verdict-18">--</div>
+          <div class="dxb-compare-panel dxb-panel-saving">
+            <div class="dxb-panel-label">You Save</div>
+            <div class="dxb-panel-price dxb-saving-price" id="dxbActiveSaving">--</div>
+            <div class="dxb-panel-sub" id="dxbActiveSavingPct">--</div>
           </div>
         </div>
 
-        <span id="dxb-aed-inr" style="display:none"></span>
-        <span id="ds-spread" style="display:none"></span>
-        <span id="ds-spreadpct" style="display:none"></span>
-        <span id="dxb-verdict" style="display:none"></span>
+        <!-- Legacy IDs preserved as hidden spans so JS can still write data -->
+        <span style="display:none">
+          <span id="dxb-24k-aed"></span>
+          <span id="dxb-24k-inr"></span>
+          <span id="ds-india"></span>
+          <span id="dxb-verdict-24"></span>
+          <span id="dxb-22k-aed"></span>
+          <span id="dxb-22k-inr"></span>
+          <span id="ds-india-22"></span>
+          <span id="dxb-verdict-22"></span>
+          <span id="dxb-18k-aed"></span>
+          <span id="dxb-18k-inr"></span>
+          <span id="ds-india-18"></span>
+          <span id="dxb-verdict-18"></span>
+          <span id="dxb-aed-inr"></span>
+          <span id="ds-spread"></span>
+          <span id="ds-spreadpct"></span>
+          <span id="dxb-verdict"></span>
+        </span>
 
         <!-- Footer: 2-row strip, FX above, bullets below -->
         <div class="dubai-footer">
@@ -2577,31 +2721,32 @@
       <div class="converter-card" id="converterCard" data-target-metal="gold">
         <div class="converter-header">
           <div class="converter-title">Convert &amp; Value Your Metal</div>
-          <div class="converter-mode-toggle">
-            <button class="converter-mode-btn active-gold" id="convBtnGold"   onclick="setConverterMetal('gold')">Gold</button>
-            <button class="converter-mode-btn"             id="convBtnSilver" onclick="setConverterMetal('silver')">Silver</button>
+          <div class="converter-header-controls">
+            <label class="converter-swap-label converter-swap-label-inline">
+              <input type="checkbox" id="convSwapToggle" onchange="toggleSwapMode()" />
+              <span class="converter-swap-toggle"></span>
+              <span class="converter-swap-text" id="convSwapLabel">Cross-metal swap</span>
+            </label>
+            <div class="converter-mode-toggle">
+              <button class="converter-mode-btn active-gold" id="convBtnGold"   onclick="setConverterMetal('gold')">Gold</button>
+              <button class="converter-mode-btn"             id="convBtnSilver" onclick="setConverterMetal('silver')">Silver</button>
+            </div>
           </div>
-        </div>
-
-        <div class="converter-swap-row">
-          <label class="converter-swap-label">
-            <input type="checkbox" id="convSwapToggle" onchange="toggleSwapMode()" />
-            <span class="converter-swap-toggle"></span>
-            <span class="converter-swap-text" id="convSwapLabel">Cross-metal swap (gold ↔ silver)</span>
-          </label>
         </div>
 
         <div class="converter-row converter-row-3col">
           <!-- COL 1: INPUT (weight + purity stacked, then chips bottom-aligned) -->
           <div class="converter-panel">
             <div class="converter-panel-label" id="convInputLabel">Convert</div>
-            <div class="converter-input-group">
-              <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
-              <div class="converter-unit">gms</div>
-            </div>
-            <div class="purity-input-group">
-              <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
-              <span class="purity-suffix">/1000</span>
+            <div class="converter-input-pair">
+              <div class="converter-input-group">
+                <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
+                <div class="converter-unit">gms</div>
+              </div>
+              <div class="purity-input-group">
+                <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
+                <span class="purity-suffix">/1000</span>
+              </div>
             </div>
             <div class="purity-presets" id="convInputPresets"></div>
             <div class="purity-helper" id="convInputKarat" style="display:none;">22K · 91.6% pure</div>
@@ -2829,6 +2974,35 @@
   function fmtAED(n) { return "د.إ " + Number(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function fmtUSD(n) { return "$ " + Number(n).toFixed(2); }
   function timeStr(iso) { const d = iso ? new Date(iso) : new Date(); return d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) + " IST"; }
+
+  // Dubai tab switcher
+  window._dxbActivePurity = 24;
+  function setDxbPurity(p, btn) {
+    window._dxbActivePurity = p;
+    document.querySelectorAll('.dxb-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderDxbActive();
+  }
+  function renderDxbActive() {
+    const data = window._dxbData;
+    if (!data) return;
+    const p = window._dxbActivePurity || 24;
+    const row = data[p];
+    if (!row) return;
+    document.getElementById('dxbActiveDubaiInr').textContent = fmt(row.inr);
+    document.getElementById('dxbActiveDubaiAed').textContent = fmtAED(row.aed) + ' /gram';
+    document.getElementById('dxbActiveIndiaInr').textContent = fmt(row.india);
+    document.getElementById('dxbActivePuritySub').textContent = row.label;
+    const diff = row.india - row.inr;
+    const diffAbs = Math.abs(diff);
+    const pct = (diffAbs / row.india * 100).toFixed(1);
+    const dubaiCheaper = diff > 0;
+    const savingEl = document.getElementById('dxbActiveSaving');
+    const savingPctEl = document.getElementById('dxbActiveSavingPct');
+    savingEl.textContent = (dubaiCheaper ? '▼ ' : '▲ ') + fmt(diffAbs);
+    savingEl.style.color = dubaiCheaper ? 'var(--green)' : 'var(--red)';
+    savingPctEl.textContent = pct + '% · ' + (dubaiCheaper ? 'Dubai cheaper' : 'India cheaper');
+  }
 
   function setMode(mode) {
     const tld = document.getElementById("logoTld");
@@ -3443,6 +3617,14 @@
       renderVerdict("dxb-verdict-24", dubai24Inr, india24);
       renderVerdict("dxb-verdict-22", dubai22Inr, ibja22);
       renderVerdict("dxb-verdict-18", dubai18Aed * aedInr, ibja24 * 0.75);
+
+      // Store data for tab switcher
+      window._dxbData = {
+        24: { aed: dubai24Aed, inr: dubai24Inr, india: india24,           label: '999 · 24K · ₹/gram' },
+        22: { aed: dubai22Aed, inr: dubai22Inr, india: ibja22,            label: '916 · 22K · ₹/gram' },
+        18: { aed: dubai18Aed, inr: dubai18Aed * aedInr, india: ibja24 * 0.75, label: '750 · 18K · ₹/gram' },
+      };
+      renderDxbActive();
 
       const callout = document.getElementById("dubaiCallout");
       if (callout && dubai24Inr > 0 && india24 > 0) {
