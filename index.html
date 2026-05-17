@@ -1244,7 +1244,7 @@
     }
     .dxb-table-head, .dxb-table-row {
       display: grid;
-      grid-template-columns: 0.7fr 1.1fr 1.1fr 1.1fr 1.2fr;
+      grid-template-columns: 0.6fr 1fr 1fr 1fr 1.1fr;
       align-items: center;
     }
     .dxb-table-head {
@@ -1252,7 +1252,7 @@
       border-bottom: 1px solid var(--border);
     }
     .dxb-th {
-      padding: 10px 12px;
+      padding: 8px 12px;
       font-family: var(--mono);
       font-size: 10px;
       font-weight: 700;
@@ -1276,7 +1276,7 @@
     .dxb-table-row:last-child { border-bottom: none; }
     .dxb-table-row:hover { background: rgba(255,255,255,0.02); }
     .dxb-td {
-      padding: 14px 12px;
+      padding: 10px 12px;
       font-family: var(--mono);
       font-size: 14px;
       font-weight: 700;
@@ -1287,7 +1287,7 @@
     }
     .dxb-td-purity {
       color: var(--gold-bright);
-      font-size: 15px;
+      font-size: 14px;
     }
     .dxb-purity-num {
       color: var(--text-3);
@@ -1295,9 +1295,10 @@
       font-weight: 500;
       margin-left: 4px;
     }
-    .dxb-td-aed { color: var(--orange); opacity: 0.9; direction: ltr; font-size: 13px; }
-    .dxb-td-dubai { color: var(--orange); }
-    .dxb-td-india { color: var(--inr-color); }
+    /* Dubai = orange/dim, India = white (the customer's actual price) */
+    .dxb-td-aed { color: var(--orange); opacity: 0.75; direction: ltr; font-size: 12px; }
+    .dxb-td-dubai { color: var(--orange); opacity: 0.85; }
+    .dxb-td-india { color: var(--text-1); }
     .dxb-td-diff {
       text-align: right;
       font-size: 13px;
@@ -1457,27 +1458,30 @@
     .converter-swap-label input { display: none; }
     .converter-swap-toggle {
       position: relative;
-      width: 36px;
-      height: 20px;
-      background: var(--bg-3);
-      border: 1px solid var(--border);
+      width: 38px;
+      height: 22px;
+      background: rgba(212,168,83,0.12);
+      border: 1px solid rgba(212,168,83,0.30);
       border-radius: 999px;
-      transition: background 0.2s ease;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
     }
     .converter-swap-toggle::after {
       content: '';
       position: absolute;
-      top: 1px;
-      left: 1px;
+      top: 2px;
+      left: 2px;
       width: 16px;
       height: 16px;
-      background: var(--text-3);
+      background: var(--gold-bright);
       border-radius: 50%;
       transition: transform 0.2s ease, background 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
     }
     .converter-swap-label input:checked + .converter-swap-toggle {
       background: var(--gold);
       border-color: var(--gold);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
     }
     .converter-swap-label input:checked + .converter-swap-toggle::after {
       transform: translateX(16px);
@@ -1620,7 +1624,7 @@
     .purity-preset.active .pp-karat { color: inherit; opacity: 0.85; }
     .purity-helper { display: none; }
 
-    /* Option A: Equiv panel with result banner on top */
+    /* Option A: Equiv panel with result banner on top - inline layout */
     .converter-panel-equiv {
       gap: var(--s-3);
     }
@@ -1629,22 +1633,32 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: var(--s-4) var(--s-3);
+      gap: 4px;
+      padding: var(--s-3) var(--s-4);
       background: linear-gradient(135deg, rgba(212,168,83,0.10) 0%, rgba(212,168,83,0.02) 100%);
       border: 1px solid var(--border-gold);
       border-radius: var(--r-md);
       text-align: center;
-      min-height: 110px;
+      min-height: auto;
     }
     body.silver-mode .converter-equiv-result,
     .converter-card[data-target-metal="silver"] .converter-equiv-result {
       background: linear-gradient(135deg, rgba(168,184,200,0.10) 0%, rgba(168,184,200,0.02) 100%);
       border-color: var(--border-silver);
     }
+    /* gms + ₹ on SAME LINE */
+    .converter-equiv-main-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: var(--s-3);
+      flex-wrap: nowrap;
+      min-width: 0;
+      width: 100%;
+    }
     .converter-result-amount {
       font-family: var(--mono);
-      font-size: clamp(26px, 3.2vw, 34px);
+      font-size: clamp(22px, 2.6vw, 28px);
       font-weight: 700;
       color: var(--gold-bright);
       letter-spacing: -0.02em;
@@ -1658,22 +1672,34 @@
     }
     .converter-result-rupee {
       font-family: var(--mono);
-      font-size: clamp(18px, 2.4vw, 22px);
+      font-size: clamp(16px, 2vw, 20px);
       font-weight: 700;
       color: var(--green);
       letter-spacing: -0.02em;
       font-variant-numeric: tabular-nums;
-      line-height: 1.1;
+      line-height: 1.05;
       white-space: nowrap;
     }
+    .converter-equiv-divider {
+      width: 1px;
+      align-self: stretch;
+      background: var(--border);
+      margin: 4px 0;
+    }
+    /* Sub-text ribbon below, single line */
     .converter-result-sub {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-3);
-      letter-spacing: 0.04em;
-      margin-top: 2px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding-top: 4px;
+      border-top: 1px dashed var(--border);
+      width: 100%;
+      text-align: center;
+      margin-top: 4px;
     }
-    /* Legacy result-block / divider — no longer used, keep dormant */
+    /* Legacy result-block / divider — no longer used */
     .converter-result-block, .converter-result-divider { display: none; }
 
     /* Value cards — 2-LINE labels by design */
@@ -2514,8 +2540,11 @@
             <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
             <!-- BIG RESULT BANNER -->
             <div class="converter-equiv-result">
-              <div class="converter-result-amount" id="convOutputWeight">--</div>
-              <div class="converter-result-rupee" id="convOutputRupee">--</div>
+              <div class="converter-equiv-main-row">
+                <div class="converter-result-amount" id="convOutputWeight">--</div>
+                <div class="converter-equiv-divider"></div>
+                <div class="converter-result-rupee" id="convOutputRupee">--</div>
+              </div>
               <div class="converter-result-sub" id="convOutputSub">at today's rate</div>
             </div>
             <!-- PURITY CONTROLS BELOW -->
