@@ -905,6 +905,26 @@
       text-overflow: ellipsis;
       margin-top: auto;
     }
+    /* Link cards (SGB/EGR — external NSE links) */
+    a.tl-compact-card.tl-compact-link {
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+    }
+    a.tl-compact-card.tl-compact-link:hover {
+      border-color: var(--border-gold);
+      transform: translateY(-1px);
+      background: rgba(212,168,83,0.04);
+    }
+    .tl-compact-price.tl-compact-cta {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+    a.tl-compact-card.tl-compact-link:hover .tl-compact-cta {
+      color: var(--gold-bright);
+    }
     .tl-spread-strip {
       margin-top: var(--s-3);
       padding: 10px var(--s-3);
@@ -1244,7 +1264,7 @@
     }
     .dxb-table-head, .dxb-table-row {
       display: grid;
-      grid-template-columns: 0.6fr 1fr 1fr 1fr 1.1fr;
+      grid-template-columns: 70px 1.1fr 1.2fr 1.4fr 1.3fr;
       align-items: center;
     }
     .dxb-table-head {
@@ -1264,7 +1284,6 @@
     .dxb-th-aed    { color: var(--orange); }
     .dxb-th-dubai  { color: var(--orange); }
     .dxb-th-india  { color: var(--inr-color); }
-    .dxb-th-diff   { text-align: right; color: var(--text-3); }
     .dxb-flag {
       font-size: 12px;
       margin-right: 4px;
@@ -1302,7 +1321,9 @@
     .dxb-td-diff {
       text-align: right;
       font-size: 13px;
+      padding-left: 4px;
     }
+    .dxb-th-diff   { text-align: right; color: var(--text-3); padding-left: 4px; }
     .dxb-diff-arrow { font-size: 13px; margin-right: 2px; }
     .dxb-diff-pct { font-size: 11px; opacity: 0.7; font-weight: 500; }
 
@@ -1523,11 +1544,18 @@
       color: var(--text-3);
     }
 
-    /* Weight + purity stacked inputs */
+    /* Weight + purity stacked inputs (legacy support) */
     .converter-input-stack {
       display: flex;
       flex-direction: column;
       gap: var(--s-2);
+    }
+    /* INLINE ROW — weight + purity + chips in one horizontal flow */
+    .converter-inline-row {
+      display: flex;
+      align-items: stretch;
+      gap: var(--s-2);
+      flex-wrap: wrap;
     }
     .converter-input-group, .purity-input-group {
       display: flex;
@@ -1537,28 +1565,32 @@
       border-radius: var(--r-sm);
       overflow: hidden;
       min-width: 0;
+      flex-shrink: 0;
     }
+    /* Sized-to-content inputs */
+    .converter-input-weight { width: 110px; }
+    .converter-input-purity { width: 120px; }
     .converter-input, .purity-input {
-      flex: 1;
       min-width: 0;
       width: 100%;
       background: transparent;
       border: none;
       color: var(--text-1);
       font-family: var(--mono);
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
-      padding: 10px 12px;
+      padding: 8px 10px;
       outline: none;
       font-variant-numeric: tabular-nums;
+      text-align: center;
     }
-    .purity-input { font-size: 15px; }
+    .purity-input { font-size: 14px; }
     .converter-unit, .purity-suffix {
       display: flex;
       align-items: center;
-      padding: 0 12px;
+      padding: 0 8px;
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.04em;
       color: var(--text-3);
@@ -1573,6 +1605,18 @@
       grid-template-columns: repeat(5, 1fr);
       gap: 4px;
     }
+    /* Inline chips — sit next to inputs, sized to content */
+    .purity-presets-inline {
+      display: flex;
+      gap: 4px;
+      flex: 1 1 auto;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+    .purity-presets-inline .purity-preset {
+      flex: 1 1 auto;
+      min-width: 50px;
+    }
     .converter-card[data-target-metal="silver"] #convOutputPresets,
     body.silver-mode #convInputPresets {
       grid-template-columns: repeat(3, 1fr);
@@ -1583,13 +1627,13 @@
       align-items: center;
       justify-content: center;
       gap: 1px;
-      padding: 5px 4px;
+      padding: 4px 6px;
       background: var(--bg-1);
       border: 1px solid var(--border);
       border-radius: var(--r-sm);
       color: var(--text-3);
       transition: all 0.15s ease;
-      min-height: 34px;
+      min-height: 38px;
     }
     .purity-preset:hover {
       background: rgba(212,168,83,0.06);
@@ -2031,6 +2075,21 @@
 
       .converter-row {
         grid-template-columns: 1fr;
+      }
+      /* On mobile, chips drop below inputs as a full-width grid */
+      .converter-inline-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .converter-input-weight, .converter-input-purity { width: 100%; }
+      .purity-presets-inline {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+      }
+      .converter-card[data-target-metal="silver"] #convOutputPresets.purity-presets-inline,
+      body.silver-mode #convInputPresets.purity-presets-inline {
+        grid-template-columns: repeat(3, 1fr);
       }
       /* On mobile, chip moves back inline (below label) to avoid overlap */
       .pct-chip-corner {
@@ -2518,24 +2577,24 @@
         </div>
 
         <div class="converter-row converter-row-2col">
-          <!-- COL 1: CONVERT (weight + input purity) -->
+          <!-- COL 1: CONVERT (weight + purity + chips, one row) -->
           <div class="converter-panel">
             <div class="converter-panel-label" id="convInputLabel">Convert</div>
-            <div class="converter-input-stack">
-              <div class="converter-input-group">
+            <div class="converter-inline-row">
+              <div class="converter-input-group converter-input-weight">
                 <input type="number" class="converter-input" id="convInputWeight" value="10" min="0" step="0.001" inputmode="decimal" oninput="updateConverter()" />
                 <div class="converter-unit">gms</div>
               </div>
-              <div class="purity-input-group">
+              <div class="purity-input-group converter-input-purity">
                 <input type="number" class="purity-input" id="convInputPurity" value="916" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('input')" />
-                <span class="purity-suffix">/ 1000</span>
+                <span class="purity-suffix">/1000</span>
               </div>
+              <div class="purity-presets purity-presets-inline" id="convInputPresets"></div>
             </div>
-            <div class="purity-presets" id="convInputPresets"></div>
             <div class="purity-helper" id="convInputKarat">22K · 91.6% pure</div>
           </div>
 
-          <!-- COL 2: EQUIVALENT (result on TOP + purity controls below) -->
+          <!-- COL 2: EQUIVALENT (result banner + inline purity row) -->
           <div class="converter-panel converter-panel-equiv">
             <div class="converter-panel-label" id="convOutputLabel">Equivalent in</div>
             <!-- BIG RESULT BANNER -->
@@ -2547,14 +2606,14 @@
               </div>
               <div class="converter-result-sub" id="convOutputSub">at today's rate</div>
             </div>
-            <!-- PURITY CONTROLS BELOW -->
-            <div class="converter-input-stack">
-              <div class="purity-input-group">
+            <!-- PURITY + CHIPS INLINE -->
+            <div class="converter-inline-row">
+              <div class="purity-input-group converter-input-purity">
                 <input type="number" class="purity-input" id="convOutputPurity" value="999" min="1" max="999" step="1" inputmode="numeric" oninput="onPurityInput('output')" />
-                <span class="purity-suffix">/ 1000</span>
+                <span class="purity-suffix">/1000</span>
               </div>
+              <div class="purity-presets purity-presets-inline" id="convOutputPresets"></div>
             </div>
-            <div class="purity-presets" id="convOutputPresets"></div>
             <div class="purity-helper" id="convOutputKarat">24K · 99.9% pure</div>
           </div>
         </div>
@@ -3197,23 +3256,35 @@
     const etfEntry = bestEtf * 1.001;
     const digi     = india24 * 1.01 * 1.03;
     const phys24   = india24 * 1.007 * 1.03;
-    const sgbPrice = india24 * 1.001;
-    const egrPrice = india24 * 1.001;
     const opts = [
-      { name: "Physical Coin", benefit: "Instant ownership", price: phys24,   rank: "Highest Cost", rankKey: "rank-high" },
-      { name: "Digital Gold",  benefit: "Easy buy",          price: digi,     rank: "Moderate",     rankKey: "rank-mod" },
-      { name: "Gold ETF",      benefit: "Zero GST",          price: etfEntry, rank: "Best Entry",   rankKey: "rank-best" },
-      { name: "SGB",           benefit: "+2.5% p.a.",        price: sgbPrice, rank: "Long-Term",    rankKey: "rank-ltbuy" },
-      { name: "EGR",           benefit: "NSE-traded",        price: egrPrice, rank: "Newest",       rankKey: "rank-new" },
+      { name: "Physical Coin", benefit: "Instant ownership", price: phys24,   rank: "Highest Cost", rankKey: "rank-high", priced: true },
+      { name: "Digital Gold",  benefit: "Easy buy",          price: digi,     rank: "Moderate",     rankKey: "rank-mod",  priced: true },
+      { name: "Gold ETF",      benefit: "Zero GST",          price: etfEntry, rank: "Best Entry",   rankKey: "rank-best", priced: true },
+      { name: "SGB",           benefit: "+2.5% p.a. · 60+ tranches", rank: "Long-Term", rankKey: "rank-ltbuy", priced: false,
+        url: "https://www.nseindia.com/market-data/sovereign-gold-bond" },
+      { name: "EGR",           benefit: "NSE-traded · daily",         rank: "Newest",    rankKey: "rank-new",   priced: false,
+        url: "https://www.nseindia.com/market-data/electronic-gold-receipts" },
     ];
     const savVsPhys = phys24 - etfEntry, savVsPhysPct = ((savVsPhys / phys24) * 100).toFixed(1);
-    document.getElementById("tlBody").innerHTML = opts.map(opt => `
-      <div class="tl-compact-card">
-        <div class="tl-compact-rank ${opt.rankKey}">${opt.rank}</div>
-        <div class="tl-compact-name">${opt.name}</div>
-        <div class="tl-compact-benefit">${opt.benefit}</div>
-        <div class="tl-compact-price">${fmt(opt.price)}</div>
-      </div>`).join("");
+    document.getElementById("tlBody").innerHTML = opts.map(opt => {
+      if (opt.priced) {
+        return `
+          <div class="tl-compact-card">
+            <div class="tl-compact-rank ${opt.rankKey}">${opt.rank}</div>
+            <div class="tl-compact-name">${opt.name}</div>
+            <div class="tl-compact-benefit">${opt.benefit}</div>
+            <div class="tl-compact-price">${fmt(opt.price)}</div>
+          </div>`;
+      } else {
+        return `
+          <a class="tl-compact-card tl-compact-link" href="${opt.url}" target="_blank" rel="noopener">
+            <div class="tl-compact-rank ${opt.rankKey}">${opt.rank}</div>
+            <div class="tl-compact-name">${opt.name}</div>
+            <div class="tl-compact-benefit">${opt.benefit}</div>
+            <div class="tl-compact-price tl-compact-cta">View on NSE →</div>
+          </a>`;
+      }
+    }).join("");
     document.getElementById("tlVerdict").innerHTML = `
       <div style="font-family:var(--mono);font-size:11px;color:var(--text-2);line-height:1.6;padding:var(--s-3) var(--s-4);background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.20);border-radius:8px;">
         <span style="color:var(--green);font-weight:600;">Gold ETF saves ${fmt(savVsPhys)}/g (${savVsPhysPct}%)</span> vs physical · Zero GST + 0.1% brokerage only
