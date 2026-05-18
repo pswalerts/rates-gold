@@ -8,7 +8,8 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=(), interest-cohort=()" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.exchangerate.host https://www.goldapi.io; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests" />
 
   <!-- ── BRANDING ── -->
   <meta name="theme-color" content="#0b0a08" />
@@ -275,12 +276,6 @@
     }
 
     /* Generic card */
-    .card-base {
-      background: var(--bg-1);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
-      padding: var(--s-4);
-    }
 
     /* Ads */
     .ad-banner, .ad-side, .ad-inline { display: none; }
@@ -324,11 +319,6 @@
       flex-direction: column;
       gap: 4px;
       text-decoration: none;
-    }
-    .logo-line {
-      display: flex;
-      align-items: baseline;
-      gap: 2px;
     }
     .logo-rate, .logo-dot, .logo-gold-word {
       font-family: var(--sans);
@@ -389,22 +379,6 @@
     .hero { display: flex; flex-direction: column; gap: 0; }
 
     /* Two section titles above the rate box */
-    .hero-rate-titles {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--s-4);
-      margin-top: var(--s-6);
-      margin-bottom: var(--s-3);
-    }
-    .hero-rate-title {
-      display: flex !important;
-      align-items: center;
-      gap: var(--s-3);
-      flex-wrap: nowrap;
-      min-width: 0;
-      margin: 0 !important;
-      overflow: hidden;
-    }
     .hero-rate-title > .source-badge {
       margin-left: auto;
       flex-shrink: 0;
@@ -838,24 +812,6 @@
       margin-bottom: var(--s-3);
       flex-wrap: wrap;
     }
-    .tl-title {
-      font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-1);
-      letter-spacing: -0.01em;
-    }
-    .tl-updated {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text-3);
-      letter-spacing: 0.04em;
-      padding: 3px 10px;
-      background: rgba(74,222,128,0.08);
-      border: 1px solid rgba(74,222,128,0.20);
-      border-radius: var(--r-sm);
-      color: var(--green);
-    }
     .tl-body {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -944,18 +900,6 @@
     }
     a.tl-compact-card.tl-compact-link:hover .tl-compact-cta {
       color: var(--gold-bright);
-    }
-    .tl-spread-strip {
-      margin-top: var(--s-3);
-      padding: 10px var(--s-3);
-      background: rgba(74,222,128,0.04);
-      border: 1px solid rgba(74,222,128,0.20);
-      border-radius: var(--r-md);
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--green);
-      letter-spacing: 0.02em;
-      text-align: center;
     }
 
     /* =========================================================
@@ -1384,7 +1328,6 @@
     }
 
     /* Legacy table — no longer used, hidden */
-    .dxb-table { display: none; }
     .dxb-table-head, .dxb-table-row {
       display: flex;
       align-items: center;
@@ -1399,59 +1342,13 @@
     .dxb-th.dxb-th-dubai,  .dxb-td.dxb-td-dubai  { flex: 1 1 0; text-align: right; padding-right: var(--s-5); }
     .dxb-th.dxb-th-india,  .dxb-td.dxb-td-india  { flex: 1 1 0; text-align: right; padding-right: var(--s-3); }
     .dxb-th.dxb-th-diff,   .dxb-td.dxb-td-diff   { flex: 0 0 170px; text-align: right; padding-left: 0; }
-    .dxb-table-head {
-      background: rgba(251,146,60,0.05);
-      border-bottom: 1px solid var(--border);
-    }
-    .dxb-th {
-      padding: 8px 12px;
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-3);
-    }
-    .dxb-th-purity { color: var(--gold); }
-    .dxb-th-aed    { color: var(--orange); }
-    .dxb-th-dubai  { color: var(--orange); }
-    .dxb-th-india  { color: var(--inr-color); }
     .dxb-flag {
       font-size: 12px;
       margin-right: 4px;
     }
-    .dxb-table-row {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s ease;
-    }
     .dxb-table-row:last-child { border-bottom: none; }
     .dxb-table-row:hover { background: rgba(255,255,255,0.02); }
-    .dxb-td {
-      padding: 10px 12px;
-      font-family: var(--mono);
-      font-size: 14px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .dxb-td-purity {
-      color: var(--gold-bright);
-      font-size: 14px;
-    }
-    .dxb-purity-num {
-      color: var(--text-3);
-      font-size: 11px;
-      font-weight: 500;
-      margin-left: 4px;
-    }
     /* Dubai = orange/dim, India = white (the customer's actual price) */
-    .dxb-td-aed { color: var(--orange); opacity: 0.75; direction: ltr; font-size: 12px; }
-    .dxb-td-dubai { color: var(--orange); opacity: 0.85; }
-    .dxb-td-india { color: var(--text-1); }
-    .dxb-td-diff { font-size: 13px; }
-    .dxb-th-diff { color: var(--text-3); }
     .dxb-diff-arrow { font-size: 13px; margin-right: 2px; }
     .dxb-diff-pct { font-size: 11px; opacity: 0.7; font-weight: 500; }
 
@@ -1599,7 +1496,6 @@
       justify-content: flex-end;
     }
     /* Cross-metal swap row — no longer used (moved to header), kept hidden */
-    .converter-swap-row { display: none; }
     .converter-swap-label {
       display: inline-flex;
       align-items: center;
@@ -1681,18 +1577,7 @@
     }
 
     /* Weight + purity stacked inputs (legacy support) */
-    .converter-input-stack {
-      display: flex;
-      flex-direction: column;
-      gap: var(--s-2);
-    }
     /* INLINE ROW — weight + purity inputs stacked or side-by-side */
-    .converter-inline-row {
-      display: flex;
-      align-items: stretch;
-      gap: var(--s-2);
-      flex-wrap: nowrap;
-    }
     .converter-input-group, .purity-input-group {
       display: flex;
       align-items: stretch;
@@ -1809,9 +1694,6 @@
     .purity-helper { display: none; }
 
     /* Option A: Equiv panel with result banner on top - inline layout */
-    .converter-panel-equiv {
-      gap: var(--s-3);
-    }
     .converter-equiv-result {
       display: flex;
       flex-direction: column;
@@ -1890,7 +1772,6 @@
     }
     /* Legacy equiv-divider/main-row/result-sub — no longer used */
     .converter-equiv-divider, .converter-equiv-main-row { display: none; }
-    .converter-result-sub { display: none; }
     .converter-result-block, .converter-result-divider { display: none; }
 
     /* Value cards — 2-LINE labels by design */
@@ -2108,7 +1989,6 @@
     }
 
     /* Footnote — no longer rendered (merged into loss strip) */
-    .converter-footnote { display: none; }
     .converter-footnote ul,
     .converter-footnote li,
     .converter-footnote code { /* legacy, no-op */ }
@@ -2167,8 +2047,6 @@
       .tl-compact-card { padding: 10px 8px; }
       .tl-compact-name { font-size: 12px; }
       .tl-compact-price { font-size: 13px; }
-      .dxb-td { padding: 12px 10px; font-size: 13px; }
-      .dxb-td-purity { font-size: 14px; }
       .converter-input { font-size: 16px; }
       .purity-input { font-size: 14px; }
       .converter-value-amount { font-size: 18px; }
@@ -2196,8 +2074,6 @@
 
     /* Tablets / large phones landscape */
     @media (max-width: 900px) {
-      .hero-rate-titles { grid-template-columns: 1fr 1fr; gap: var(--s-3); }
-      .hero-rate-title { font-size: 11px; }
       .converter-values { grid-template-columns: 1fr; }
       .converter-footnote ul { grid-template-columns: 1fr; }
       .hero-hist-body { grid-template-columns: repeat(2, 1fr); }
@@ -2209,8 +2085,6 @@
       .header { gap: var(--s-3); }
       .logo-rate, .logo-dot, .logo-gold-word { font-size: 22px; }
       .logo-tagline { font-size: 9px; }
-
-      .hero-rate-titles { grid-template-columns: 1fr; gap: var(--s-2); }
       .dual-rate-box { grid-template-columns: 1fr; }
       .dual-rate-col + .dual-rate-col {
         border-left: none;
@@ -2240,33 +2114,9 @@
         margin-bottom: var(--s-2);
       }
       .converter-value-label { padding-right: 0; }
-
-      .dxb-table-head { display: none; }
-      .dxb-table-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-          "purity diff"
-          "aed inrd"
-          "inri inri";
-        padding: 10px;
-        gap: 4px;
-      }
-      .dxb-td { padding: 4px 6px; font-size: 12px; flex: initial; }
-      .dxb-td-purity { grid-area: purity; font-size: 13px; }
-      .dxb-td-aed    { grid-area: aed; opacity: 0.85; }
-      .dxb-td-dubai  { grid-area: inrd; text-align: right; }
-      .dxb-td-india  {
-        grid-area: inri;
-        text-align: left;
-        border-top: 1px dashed var(--border);
-        padding-top: 6px;
-        margin-top: 2px;
-      }
       .dxb-td-india::before { content: '🇮🇳 India: '; opacity: 0.7; font-size: 10px; }
       .dxb-td-aed::before   { content: '🇦🇪 '; font-size: 10px; margin-right: 2px; }
       .dxb-td-dubai::before { content: 'INR '; font-size: 10px; opacity: 0.6; margin-right: 2px; }
-      .dxb-td-diff { grid-area: diff; text-align: right; font-size: 12px; }
 
       .dubai-fx-row, .dubai-bullets-row {
         gap: var(--s-3);
@@ -2350,7 +2200,6 @@
     }
 
     /* Hide the old hero-rate-titles row (legacy) */
-    .hero-rate-titles { display: none; }
 
     /* ---- DENSITY: tighter pr-card / etf-card padding ---- */
     .pr-card, .etf-card {
@@ -2430,12 +2279,6 @@
     }
 
     /* ---- BEST BUY TODAY: tighter spread strip ---- */
-    .tl-spread-strip {
-      padding: 8px var(--s-3) !important;
-      font-size: 11px !important;
-      background: rgba(74,222,128,0.03) !important;
-      border-color: rgba(74,222,128,0.12) !important;
-    }
     .tl-panel {
       padding: var(--s-3) var(--s-4) !important;
     }
