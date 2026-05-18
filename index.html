@@ -3716,29 +3716,47 @@
       });
   }
 
-  (function preloadFromCache() {
+  // Defer all initialization until after first paint so the browser can render HTML/CSS first.
+  // requestAnimationFrame fires after the next paint; nested rAF guarantees paint flushed.
+  function deferInit() {
+    // 1. Try to fill UI from localStorage cache instantly (one tick after paint)
     try {
       const raw = localStorage.getItem("rateof_price_v2");
-      if (!raw) return;
-      const cached = JSON.parse(raw);
-      const ageMs = Date.now() - (cached._cached || 0);
-      if (ageMs > 4 * 60 * 60 * 1000) return;
-      loadPrice(cached);
-      document.getElementById("statusDot").className = "dot yellow";
-      document.getElementById("statusText").textContent = "refreshing";
+      if (raw) {
+        const cached = JSON.parse(raw);
+        const ageMs = Date.now() - (cached._cached || 0);
+        if (ageMs <= 4 * 60 * 60 * 1000) {
+          loadPrice(cached);
+          const sd = document.getElementById("statusDot");
+          const st = document.getElementById("statusText");
+          if (sd) sd.className = "dot yellow";
+          if (st) st.textContent = "refreshing";
+        }
+      }
     } catch (_) {}
-  })();
 
-  loadPrice();
-  setInterval(loadPrice, 60 * 60 * 1000);
+    // 2. Fire the live fetch (don't await; let it run in background)
+    loadPrice();
 
-  setTimeout(() => {
-    const tl = document.getElementById("tlBody");
-    if (tl && !tl.querySelector(".tl-compact-card")) {
-      const fallback = _india24 > 0 ? _india24 : (ibjaCache?.ibja24k || 9500);
-      try { buildTrafficLight(fallback, {}, {}); } catch(e) { console.error(e); }
-    }
-  }, 4000);
+    // 3. Set hourly refresh after a delay so it doesn't compete with first interaction
+    setTimeout(() => setInterval(loadPrice, 60 * 60 * 1000), 5000);
+
+    // 4. Traffic light fallback after data settles
+    setTimeout(() => {
+      const tl = document.getElementById("tlBody");
+      if (tl && !tl.querySelector(".tl-compact-card")) {
+        const fallback = _india24 > 0 ? _india24 : (ibjaCache?.ibja24k || 9500);
+        try { buildTrafficLight(fallback, {}, {}); } catch(e) { console.error(e); }
+      }
+    }, 4000);
+  }
+
+  // Run after first paint
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(() => requestAnimationFrame(deferInit)));
+  } else {
+    requestAnimationFrame(() => requestAnimationFrame(deferInit));
+  }
 
   function initStickyNav() {
     const stickyNav = document.getElementById('stickyNav');
@@ -3993,17 +4011,24 @@
     }
   }
 
-  // Init converter on load
-  populatePurityPresets();
-  onPurityInput('input');
-  onPurityInput('output');
-  setTimeout(updateConverter, 100);
-  let _convPollCount = 0;
-  const _convPollInterval = setInterval(() => {
-    _convPollCount++;
-    updateConverter();
-    if (_convPollCount > 15) clearInterval(_convPollInterval);
-  }, 2000);
+  // Init converter on load — deferred to after first paint
+  function deferConverterInit() {
+    populatePurityPresets();
+    onPurityInput('input');
+    onPurityInput('output');
+    setTimeout(updateConverter, 100);
+    let _convPollCount = 0;
+    const _convPollInterval = setInterval(() => {
+      _convPollCount++;
+      updateConverter();
+      if (_convPollCount > 15) clearInterval(_convPollInterval);
+    }, 2000);
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(deferConverterInit));
+  } else {
+    requestAnimationFrame(deferConverterInit);
+  }
 
 </script>
 </body>
